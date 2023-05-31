@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{common/sidebar}"
+>
+<head>
+    <meta charset="UTF-8">
+    <title>홈페이지</title>
+</head>
+
+<th:block layout:fragment="script">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script th:src="@{/js/financial/analysis/chartMade.js}"></script>
+    <script th:src="@{/js/financial/analysis/chartData.js}"></script>
+</th:block>
+
+<th:block layout:fragment="css">
+    <link th:href="@{/css/analysis.css}" rel="stylesheet">
+</th:block>
+
+<div class="content" layout:fragment="content">
+    <div class="grid-container">
+        <div class="card shadow mb-4">
+            <div class="card-header">
+                <h6 class="m-0 font-weight-bold text-primary">포괄 손익계산서</h6>
+            </div>
+            <div class="card-body">
+                <div class="card shadow mb-4">
+                    <div class="card-header">
+                        <h6 class="m-0 font-weight-bold text-primary">주요 재무항목</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-area">
+                            <canvas id="key_financial"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="card shadow mb-4">
+                    <div class="card-header">
+                        <h6 class="m-0 font-weight-bold text-primary">수익 성장지표</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-area">
+                            <canvas id="profit_growth"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card shadow mb-4">
+            <div class="card-header">
+                <h6 class="m-0 font-weight-bold text-primary">최근 2년간 분기별 당기 순이익</h6>
+            </div>
+            <div class="card-body">
+                <div class="chart-area">
+                    <canvas id="myChart2"></canvas>
+                    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 18px;">
+                        데이터 없음
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card shadow mb-4">
+            <div class="card-header">
+                <h6 class="m-0 font-weight-bold text-primary">거래처별 거래 금액</h6>
+            </div>
+            <div class="card-body">
+                <div class="chart-area">
+                    <canvas id="myChart3"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="card shadow mb-4">
+            <div class="card-header">
+                <h6 class="m-0 font-weight-bold text-primary">기간별 거래 금액 현황</h6>
+                <select id="amount_year_select">
+                    <option value="1w">1주</option>
+                    <option value="1m">1개월</option>
+                    <option value="6m">6개월</option>
+                    <option value="1y">1년</option>
+                </select>
+            </div>
+            <div class="card-body">
+                <div class="chart-area">
+
+                </div>
+            </div>
+        </div>
+        <div class="card shadow mb-4">
+            <div class="card-header">
+                <h6 class="m-0 font-weight-bold text-primary">기간별 거래 금액 현황</h6>
+            </div>
+            <div class="card-body">
+                <div class="chart-area">
+
+                </div>
+            </div>
+        </div>
+        <div class="card shadow mb-4">
+            <div class="card-header">
+                <h6 class="m-0 font-weight-bold text-primary">기간별 거래 금액 현황</h6>
+            </div>
+            <div class="card-body">
+                <div class="chart-area">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</html>

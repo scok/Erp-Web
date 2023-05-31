@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{common/sidebar}"
+>
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.23/datatables.min.css"/>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.23/datatables.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/responsive/2.2.7/js/dataTables.responsive.min.js"></script>
+
+
+    <script type="text/javascript" src=" https://cdn.datatables.net/buttons/1.5.2/js/dataTables.buttons.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.html5.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/responsive/2.2.3/js/dataTables.responsive.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.dataTables.min.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.2/css/uikit.min.css">
+    <th:block layout:fragment="script">
+        <script th:inline="javascript">
+    $(document).ready(function() {
+         $.fn.dataTable.ext.search.push(
+            function(settings, data, dataIndex){
+                var min = Date.parse($('#fromDate').val());
+                var max = Date.parse($('#toDate').val());
+                var targetDate = Date.parse(data[3]);
+
+                if( (isNaN(min) && isNaN(max) ) ||
+                    (isNaN(min) && targetDate <= max )||
+                    ( min <= targetDate && isNaN(max) ) ||
+                    ( targetDate >= min && targetDate <= max) ){
+                        return true;
+                }
+                return false;
+            }
+         );
+
+          if (!$.fn.DataTable.isDataTable('#myTable')) {
+            var token = $('meta[name="_csrf"]').attr('content');
+            var header = $('meta[name="_csrf_header"]').attr('content');
+
+            var table =  $('#myTable').DataTable({
+                "serverSide": true,
+                "processing": true,
+                "autoWidth": false,
+                searching: true,
+                ordering: true,
+                ajax: {
+                    "url": "/transaction/data",
+                    "type": "POST",
+                    beforeSend:function(xhr){
+                        xhr.setRequestHeader(header, token);
+                    },
+                    "data": function (d) {
+                        d.start = d.start;
+                        d.length = d.length;
+
+                        d.searchType = $("#searchType").val();
+                        d.searchValue = $("#searchValue").val();
+
+                        d.columnIndex = d.order[0].column;
+                        d.orderDir = d.order[0].dir;
+
+                    },
+                  "dataSrc": function (response) {
+                      var dataDate = response.data;
+
+                      for (var i = 0; i < dataDate.length; i++) {
+                        var dateItem = new Date(dataDate[i].trDate) ;
+
+
+                        var Year = dateItem.getFullYear();
+                        var month = ("0" + (dateItem.getMonth() + 1)).slice(-2);
+                        console.log("0" + (dateItem.getMonth(11)+1));
+                        var day = ("0" + dateItem.getDay()).slice(-2);
+
+                        var formatDate = Year + "-"+ month + "-"+day;
+                        dataDate[i].trDate = formatDate ;
+
+
+                      }
+                      return response.data;
+                    }
+                },
+                columns: [
+                    { "data": "id" },
+                    { "data": "companyName" },
+                    { "data": "amount" },
+                    { "data": "trDate" },
+                    { "data": "quarter" },
+                    { "data": "remark" },
+                    { "data": "transactionCategory" }
+                ],
+                "language": {
+                    "emptyTable": "데이터가 없어요.",
+                    "lengthMenu": "Page _MENU_ ",
+                    "info": "현재 _START_ - _END_ / _TOTAL_건",
+                    "infoEmpty": "데이터 없음",
+                    "infoFiltered": "( _MAX_건의 데이터에서 필터링됨 )",
+                    "search": "검색: ",
+                    "zeroRecords": "일치하는 데이터가 없어요.",
+                    "loadingRecords": "로딩중...",
+                    "processing": "잠시만 기다려 주세요...",
+                    "paginate": {
+                        "next": "다음",
+                        "previous": "이전"
+                    }
+                },
+                "footerCallback": function() {
+                    var api = this.api(), data;
+                    var result = 0;
+                    api.column(2, {search:'applied'}).data().each(function(data, index) {
+                        result += parseFloat(data);
+                    });
+                    $(api.column(3).footer()).html(result.toLocaleString() + '원');
+                },
+
+
+              <!--엑셀 파일 전송-->
+               dom: 'Blfrtpa',
+            buttons: [{
+                    extend: 'csvHtml5',
+                    text: 'Export Excel',
+                    footer: true,
+                    className: 'blueBtn',
+                    exportOptions: {
+                        charset: 'euc-kr'
+                    },
+                    bom: true
+                }],
+        });
+
+            <!--검색 기능-->
+
+          $("#searchBtn").click(function () {
+            var numCols = table.columns().nodes().length;
+            for(var i=0; i<numCols; i++) { table.column(i).search(''); }
+
+            var searchType = $("#searchType").val();
+            var searchValue = $("#searchValue").val();
+
+            table.column(searchType).search(searchValue).draw();
+        });
+
+
+           $('#myTable thead th').click(function () {
+        var columnIndex = $(this).index();
+        var orderDir = $(this).hasClass('asc') ? 'desc' : 'asc';
+
+        // DataTables의 정렬 업데이트
+        table.order(columnIndex, orderDir).draw();
+
+        // 현재 클릭한 컬럼에 클래스를 추가하여 정렬 방향을 표시
+        $('#myTable thead th').removeClass('asc').removeClass('desc');
+        $(this).addClass(orderDir);
+
+
+    });
+
+     }
+
+
+        $('#myTable_filter').prepend('<select id="select"></select>&nbsp;');
+        $('#myTable > thead > tr').children().each(function (indexInArray, valueOfElement) {
+            $('#select').append('<option>'+valueOfElement.innerHTML+'</option>');
+        });
+
+        $('.dataTables_filter input').unbind().bind('keyup', function () {
+            var colIndex = document.querySelector('#select').selectedIndex;
+            var table = $('#myTable').DataTable();
+            table.column(colIndex).search(this.value).draw();
+        });
+
+        $("#myTable_filter").attr("hidden", "hidden");
+
+
+
+        $('#myTable_filter').prepend('<input type="text" id="toDate" style="width:90px" placeholder="yyyy-MM-dd"> ');
+        $('#myTable_filter').prepend('<input type="text" id="fromDate" style="width:90px" placeholder="yyyy-MM-dd">&nbsp;~');
+        $('#toDate, #fromDate').unbind().bind('keyup',function(){
+            table.draw();
+        });
+
+        $('.btn-example').click(function(){
+            var $href = $(this).attr('href');
+            layer_popup($href);
+        });
+
+        function layer_popup(el){
+            var $el = $(el);
+            var isDim = $el.prev().hasClass('dimBg');
+
+            isDim ? $('.dim-layer').fadeIn() : $el.fadeIn();
+
+            var $elWidth = ~~($el.outerWidth()),
+                $elHeight = ~~($el.outerHeight()),
+                docWidth = $(document).width(),
+                docHeight = $(document).height();
+
+            if ($elHeight < docHeight || $elWidth < docWidth) {
+                $el.css({
+                    marginTop: -$elHeight /2,
+                    marginLeft: -$elWidth/2
+                });
+            } else {
+                $el.css({top: 0, left: 0});
+            }
+
+            $el.find('a.btn-layerClose').click(function(){
+                isDim ? $('.dim-layer').fadeOut() : $el.fadeOut();
+                return false;
+            });
+
+            $('.layer .dimBg').click(function(){
+                $('.dim-layer').fadeOut();
+                return false;
+            });
+        }
+
+
+
+
+
+    });// ready 닫기
+
+        </script>
+    </th:block>
+<th:block layout:fragment="css">
+    <style>
+    input[type='date']::before {
+      content: attr(data-placeholder);
+      width: 100%;
+    }
+
+    .row {
+        display: block;
+        flex-wrap: wrap;
+        margin-right: 1.25rem;
+        margin-left: 1.25rem;
+        margin-top: 1.25rem;
+        margin-bottom: 1.25rem;
+    }
+
+    .container{
+        padding-left: -3.5rem;
+        padding-right: -3.5rem;
+
+        }
+    .bg-gradient-primary {
+    background-color: #4e73df;
+    background-image: linear-gradient(180deg,#4e73df 10%,#224abe 100%);
+    background-size: cover;
+    margin: -1px;
+    }
+    .o-hidden {
+    overflow: hidden!important;
+    }
+    .mb-5, .my-5 {
+        margin-bottom: 19rem!important;
+    }
+    .mt-5, .my-5 {
+        margin-top: 1rem!important;
+    }
+    .shadow-lg {
+        box-shadow: 0 1rem 3rem rgba(0,0,0,.175)!important;
+    }
+    .border-0 {
+        border: 0!important;
+    }
+    .card {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        word-wrap: break-word;
+        background-color: #fff;
+        background-clip: border-box;
+        border: 1px solid #e3e6f0;
+        border-radius: 0.35rem;
+    }
+
+    .blueBtn {
+      background-color: #4CAF50; /* Green */
+      border: none;
+      color: white;
+      padding: 7px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 17px;
+      margin: 4px -1px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    th {
+        white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+        overflow: hidden; /* 넘치는 부분 숨김 */
+        text-overflow: ellipsis; /* 넘친 부분에 ... 표시 */
+    }
+    #myTable{
+        width=100% ;
+    }
+    #select {
+     width:90px;
+     padding:3px;
+     border:1px solid #999;
+     font-family:'Nanumgothic';
+     border-radius:3px;
+
+    }
+     select::-ms-expand {
+       display: none;
+    }
+
+    /* page button */
+    .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+        background: #4e73df;
+        color: white !important;
+    }
+
+    .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+        background: linear-gradient(to bottom, #585858 0%, #111 100%);
+        color: white !important;
+    }
+
+    table.dataTable tbody  {
+        transition-duration: .28s;
+        transition-timing-function: cubic-bezier(.4, 0, .2, 1);
+        transition-property: background-color;
+    }
+
+    table.dataTable.display tbody tr.odd>.sorting_1,
+    table.dataTable.order-column.stripe tbody tr.odd>.sorting_1,
+    table.dataTable.display tbody tr.even>.sorting_1,
+    table.dataTable.order-column.stripe tbody tr.even>.sorting_1,
+    table.dataTable.hover tbody tr:hover,
+    table.dataTable.display tbody tr:hover {
+        background: #E1F5FE;
+    }
+
+    /*팝업창 css*/
+
+        * {
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      margin: 100px;
+    }
+
+    .pop-layer .pop-container {
+      padding: 20px 25px;
+    }
+
+    .pop-layer p.ctxt {
+      color: #666;
+      line-height: 25px;
+    }
+
+    .pop-layer .btn-r {
+      width: 100%;
+      margin: 10px 0 20px;
+      padding-top: 10px;
+      border-top: 1px solid #DDD;
+      text-align: right;
+    }
+
+    .pop-layer {
+      display: none;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 800px;
+      height: auto;
+      background-color: #fff;
+      border: 5px solid #3571B5;
+      z-index: 10;
+    }
+
+    .dim-layer {
+      display: none;
+      position: fixed;
+      _position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 100;
+    }
+
+    .dim-layer .dimBg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #000;
+      opacity: .5;
+      filter: alpha(opacity=50);
+    }
+
+    .dim-layer .pop-layer {
+      display: block;
+    }
+
+    a.btn-layerClose {
+      display: inline-block;
+      height: 25px;
+      padding: 0 14px 0;
+      border: 1px solid #304a8a;
+      background-color: #3f5a9d;
+      font-size: 13px;
+      color: #fff;
+      line-height: 25px;
+    }
+
+    a.btn-layerClose:hover {
+      border: 1px solid #091940;
+      background-color: #1f326a;
+      color: #fff;
+    }
+    </style>
+</th:block>
+
+</head>
+
+<body class="bg-gradient-primary">
+
+<div class="container" layout:fragment="content" style="margin: 0px -1px -6px -8px;padding: 39px;">
+    <div class="card o-hidden border-0 shadow-lg my-5">
+        <div class="row">
+            <table id="myTable" class="display" >
+                <!-- uk-table uk-table-hover uk-table-striped  -->
+
+                <!-- 팝업 창-->
+                <a href="#layer2" class="btn-example">버튼</a>
+                <div class="dim-layer">
+                    <div class="dimBg"></div>
+                    <div id="layer2" class="pop-layer">
+                        <div class="pop-container">
+                            <div class="pop-conts">
+                                <!--content //-->
+                                <p class="ctxt mb20">거래표<br>
+                                </p>
+                                <div class="input-group">
+                                    <input value="" type="text">
+                                    <input value="" type="text">
+                                </div>
+                                <div class="btn-r">
+                                    <a href="#" class="btn-layerClose">Close</a>
+                                </div>
+                                <!--// content-->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!--검색 기능 -->
+                <div class="form-inline my-2 my-lg-0" style="text-align:center;">
+                    <select id="searchType" class="form-control mr-sm-2">
+                        <option value="0">거래번호</option>
+                        <option value="1">거래처명</option>
+                        <option value="2">거래금액</option>
+                        <option value="3">거래일자</option>
+                        <option value="4">분기</option>
+                        <option value="5">주석</option>
+                        <option value="6">거래분류</option>
+                    </select>
+                    <input class="form-control mr-sm-2" type="search" id="searchValue" placeholder="Search" aria-label="Search">
+                    <button class="btn btn-outline-success my-2 my-sm-0" id="searchBtn" type="button">Search</button>
+                </div>
+                <!--데이터 테이블 -->
+                <thead>
+                <tr>
+                        <th>거래번호</th>
+                        <th>거래처명</th>
+                        <th>거래금액</th>
+                        <th>거래일자</th>
+                        <th>분기</th>
+                        <th>주석</th>
+                        <th>거래분류</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <th colspan="2" style="text-align:right;white-space:nowrap;">TOTAL : </th>
+                        <th colspan="5" style="text-align:left;white-space:nowrap;"></th>
+                    </tr>
+                </tfoot>
+            </table>
+            <canvas id="config"></canvas>
+        </div>
+    </div>
+</div>
+</body>
+
+</html>

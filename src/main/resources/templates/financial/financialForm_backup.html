@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{common/sidebar}"
+>
+<head>
+    <meta charset="UTF-8">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <title>홈페이지</title>
+
+    <link href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css">
+    <link href="https://cdn.datatables.net/buttons/2.3.6/css/buttons.dataTables.min.css" rel="stylesheet" type="text/css">
+    <link th:href="@{/css/financial.css}" rel="stylesheet">
+</head>
+
+<th:block layout:fragment="script">
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.print.min.js"></script>
+<script th:src="@{/js/financial/financialModule/datatables.js}"></script>
+<script th:src="@{/js/financial/financialModule/dataUpdate.js}"></script>
+<script th:inline="none" type="text/javascript">
+
+        $(document).ready(function(){
+
+            // 버튼 클릭시 항목 이벤트
+            $('#asset_btn').on('click', function(){
+
+                var btn = $(this);
+
+                if(btn[0].innerText == '+'){
+                    btn[0].innerText = '-';
+                    $('.asset_group').show();
+                }else if(btn[0].innerText == '-'){
+                    btn[0].innerText = '+';
+                    $('.asset_group').hide();
+                }
+            });
+
+            $('#inven_btn').on('click', function(){
+
+                var btn = $(this);
+
+                if(btn[0].innerText == '+'){
+                    $('.inven_group').show();
+                    btn[0].innerText = '-';
+                }else{
+                    $('.inven_group').hide();
+                    btn[0].innerText = '+';
+                }
+            });
+
+            $('#tangible_btn').on('click', function(){
+
+                var btn = $(this);
+
+                if(btn[0].innerText == '+'){
+                    $('.tangible_group').show();
+                    btn[0].innerText = '-';
+                }else{
+                    $('.tangible_group').hide();
+                    btn[0].innerText = '+';
+                }
+            });
+
+            $('#capital_btn').on('click', function(){
+
+                var btn = $(this);
+
+                if(btn[0].innerText == '+'){
+                    $('.capital_group').show();
+                    btn[0].innerText = '-';
+                }else{
+                    $('.capital_group').hide();
+                    btn[0].innerText = '+';
+                }
+            });
+        });
+    </script>
+</th:block>
+
+<div class="content" layout:fragment="content">
+    <h2 class="title_header">재무 상태표</h2>
+
+    <div class="data-body">
+        <table id="example" class="row-border">
+            <thead>
+            <tr>
+                <th id="num">
+                    재무 번호
+                </th>
+                <th id="quarter">
+                    분기
+                </th>
+                <th id="companyCash" >
+                    회사현금
+                </th>
+                <th id="liability" >
+                    부채
+                </th>
+                <th id="expense" >
+                    비용
+                </th>
+                <th id="advertising" >
+                    광고비
+                </th>
+                <th id="salary" >
+                    급여
+                </th>
+                <th id="profit_loss" >
+                    손익
+                </th>
+                <th id="interestIncome" >
+                    이자수익
+                </th>
+                <th id="NetIncome" >
+                    당기 순이익
+                </th>
+                <th >
+                    원재료(물류)
+                </th>
+                <th id="Fixtures" >
+                    비품
+                </th>
+
+                <th id="capital" >
+                    자본금
+                </th>
+                <th id="asset_sum">
+                    자산 통계
+                </th>
+
+                <th id="year">
+                    year
+                </th>
+            </tr>
+            </thead>
+        </table>
+
+        <table class="data-table shadow" id="data-table" ondragstart="return false">
+            <thead>
+            <tr>
+                <th>
+                    <select id="year_select">
+                    </select>
+                </th>
+                <th></th>
+                <th>1분기</th>
+                <th>2분기</th>
+                <th>3분기</th>
+                <th>4분기</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr class="prKey">
+                <td>재무번호</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td class="data_title" colspan="2">
+                    <button id="asset_btn" class="btn">+</button>
+                    자산
+                </td>
+                <td colspan="4"></td>
+            </tr>
+            <tr class="asset_group data">
+                <td></td>
+                <td class="data_title">회사현금</td>
+                <td class="quarter_1 editable"><span></span></td>
+                <td class="quarter_2 editable"><span></span></td>
+                <td class="quarter_3 editable"><span></span></td>
+                <td class="quarter_4 editable"><span></span></td>
+            </tr>
+            <tr class="asset_group data">
+                <td></td>
+                <td class="data_title">부채</td>
+                <td class="quarter_1 editable"><span></span></td>
+                <td class="quarter_2 editable"><span></span></td>
+                <td class="quarter_3 editable"><span></span></td>
+                <td class="quarter_4 editable"><span></span></td>
+            </tr>
+            <tr class="asset_group data">
+                <td></td>
+                <td class="data_title">비용</td>
+                <td class="quarter_1 editable"><span></span></td>
+                <td class="quarter_2 editable"><span></span></td>
+                <td class="quarter_3 editable"><span></span></td>
+                <td class="quarter_4 editable"><span></span></td>
+            </tr>
+            <tr class="asset_group data">
+                <td></td>
+                <td class="data_title">광고비</td>
+                <td class="quarter_1 editable"><span></span></td>
+                <td class="quarter_2 editable"><span></span></td>
+                <td class="quarter_3 editable"><span></span></td>
+                <td class="quarter_4 editable"><span></span></td>
+            </tr>
+            <tr class="asset_group data">
+                <td></td>
+                <td class="data_title">급여</td>
+                <td class="quarter_1"><span></span></td>
+                <td class="quarter_2"><span></span></td>
+                <td class="quarter_3"><span></span></td>
+                <td class="quarter_4"><span></span></td>
+            </tr>
+            <tr class="asset_group data">
+                <td></td>
+                <td class="data_title">손익</td>
+                <td class="quarter_1 editable"><span></span></td>
+                <td class="quarter_2 editable"><span></span></td>
+                <td class="quarter_3 editable"><span></span></td>
+                <td class="quarter_4 editable"><span></span></td>
+            </tr>
+            <tr class="asset_group data">
+                <td></td>
+                <td class="data_title">이자수익</td>
+                <td class="quarter_1 editable"><span></span></td>
+                <td class="quarter_2 editable"><span></span></td>
+                <td class="quarter_3 editable"><span></span></td>
+                <td class="quarter_4 editable"><span></span></td>
+            </tr>
+            <tr class="asset_group data">
+                <td></td>
+                <td class="data_title">당기 순이익</td>
+                <td class="quarter_1 editable"><span></span></td>
+                <td class="quarter_2 editable"><span></span></td>
+                <td class="quarter_3 editable"><span></span></td>
+                <td class="quarter_4 editable"><span></span></td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="data_title" colspan="2">
+                    <button id="inven_btn" class="btn">+</button>
+                    재고자산
+                </td>
+                <td colspan="4"></td>
+            </tr>
+            <tr class="inven_group data">
+                <td></td>
+                <td class="data_title">원재료(물류)</td>
+                <td class="quarter_1 editable"><span></span></td>
+                <td class="quarter_2 editable"><span></span></td>
+                <td class="quarter_3 editable"><span></span></td>
+                <td class="quarter_4 editable"><span></span></td>
+            </tr>
+
+
+
+
+
+            <tr>
+                <td class="data_title" colspan="2">
+                    <button id="tangible_btn" class="btn">+</button>
+                    유형자산
+                </td>
+                <td colspan="4"></td>
+            </tr>
+            <tr class="tangible_group data">
+                <td></td>
+                <td class="data_title">비품</td>
+                <td class="quarter_1 editable"><span></span></td>
+                <td class="quarter_2 editable"><span></span></td>
+                <td class="quarter_3 editable"><span></span></td>
+                <td class="quarter_4 editable"><span></span></td>
+            </tr>
+
+
+
+
+
+            <tr>
+                <td class="data_title" colspan="2">
+                    <button id="capital_btn" class="btn">+</button>
+                    자본
+                </td>
+                <td colspan="4"></td>
+            </tr>
+            <tr class="capital_group data">
+                <td></td>
+                <td class="data_title">자본금</td>
+                <td class="quarter_1 editable"><span></span></td>
+                <td class="quarter_2 editable"><span></span></td>
+                <td class="quarter_3 editable"><span></span></td>
+                <td class="quarter_4 editable"><span></span></td>
+            </tr>
+
+
+
+            <tr class="asset_total data">
+                <td colspan="2" class="data_title">자산 총계</td>
+                <td class="quarter_1"><span></span></td>
+                <td class="quarter_2"><span></span></td>
+                <td class="quarter_3"><span></span></td>
+                <td class="quarter_4"><span></span></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</html>

@@ -1,0 +1,179 @@
+.content{
+    width:90%;
+    margin:auto;
+}
+
+#example{
+    display:none;
+}
+
+.data-table{
+    margin:auto;
+    margin-bottom:100px;
+    width:100%;
+    table-layout:fixed;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.shadow{
+    box-shadow: 0 .15rem 1.75rem 0 rgba(58,59,69,.15)!important;
+}
+
+.data-table th, td{
+    padding: 6px 15px;
+}
+
+.data-table th{
+    background: #42444e;
+    color: #fff;
+    text-align: center;
+}
+
+.data-table tr{
+    width:100%;
+}
+
+.data-table tr:first-child th:first-child {
+    border-top-left-radius: 6px;
+}
+.data-table tr:first-child th:last-child {
+    border-top-right-radius: 6px;
+}
+.data-table td {
+    border-right: 1px solid #c6c9cc;
+    border-bottom: 1px solid #c6c9cc;
+}
+.data-table td:first-child {
+    border-left: 1px solid #c6c9cc;
+}
+.data-table tr:last-child td:first-child {
+    border-bottom-left-radius: 6px;
+}
+.data-table tr:last-child td:last-child {
+    border-bottom-right-radius: 6px;
+}
+
+.data_title{
+    text-align:left;
+    font-weight:bold;
+}
+
+.quarter_1, .quarter_2, .quarter_3, .quarter_4{
+    text-align:right;
+}
+
+#year_select{
+    width:100%;
+}
+
+.prKey{
+    display:none;
+}
+
+.revenue_group, .other_revenue_group, .expenses_group, .selling_administrative_group, .selling_expenses_group,
+.administrative_expenses_group, .expenses_group, .personnel_expenses_group, .material_expenses_group,
+.operating_income_group, .other_expenses_group, .tax_expenses_group{
+    display:none;
+}
+
+.button-container{
+    display:flex;
+    justify-content:flex-end;
+    margin-bottom:10px;
+}
+
+#data_add_btn, #tableToExcel, #tableToPDF{
+    width:75px;
+    height:30px;
+    font-size:18px;
+    border-radius:.35rem;
+    border:1px solid black;
+    background-color:white;
+    margin-right:5px;
+}
+
+.modal{
+    display:none;
+    position:fixed;
+    z-index:1;
+    left:0;
+    top:0;
+    width:100%;
+    height:100%;
+    overflow:auto;
+    background-color: rgba(0, 0, 0, 0.5);
+    margin-left:35px;
+}
+
+.modal-content{
+    background-color: white;
+    margin: 25% auto;
+    width: 30%;
+    height: 16%;
+    border-radius: 5px;
+    text-align:center;
+}
+
+.card{
+    position:relative;
+    display:flex;
+    flex-direction: column;
+    min-width:0;
+    word-wrap:break-word;
+    background-color:#fff;
+    background-clip:border-box;
+    border-radius:.35rem;
+}
+
+.mb-4{
+    margin-bottom: 1.5rem !important;
+}
+
+.card-header:first-child{
+    border-radius:calc(.35rem - 1px) calc(.35rem - 1px) 0 0;
+}
+
+.card-header{
+    padding: .75rem 1.25rem;
+    margin-bottom:0;
+    background-color:#42444e;
+    border-bottom:1px solid #e3e6f0;
+}
+
+.card-body{
+    flex: 1 1 auto;
+    min-height: 1px;
+    padding: 1.25rem;
+}
+
+.text-primary{
+    color: #fff !important;
+}
+
+.font-weight-bold{
+    font-weight: 700 !important;
+}
+
+.m-0{
+    margin: 0 !important;
+}
+
+h6{
+    font-size: 1rem;
+    line-height: 1.2;
+    text-align:left;
+}
+
+#new_year{
+    width:100%;
+}
+
+#form_add_btn{
+    float:right;
+}
+
+#yearSelect{
+    height:50px;
+    font-size:15px;
+}
