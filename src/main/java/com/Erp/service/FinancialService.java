@@ -6,7 +6,6 @@ import com.Erp.entity.Financial;
 import com.Erp.entity.Income;
 import com.Erp.repository.FinancialRepository;
 import com.Erp.repository.IncomeRepository;
-import com.Erp.repository.TransactionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -56,6 +55,7 @@ public class FinancialService {
 
     public void updateTotalData(Financial financial, Income income){
 
+        financial.setFixture_mt(income.getFixtures());
         financial.setTotal_assets(getTotalAssets(financial, income));
         financial.setTotal_liabilities(getliabilities(financial));
         financial.setPaid_capital(getPaidCapital(financial, income));

@@ -2,7 +2,6 @@ package com.Erp.dto;
 
 import com.Erp.constant.TransactionCategory;
 import com.Erp.entity.Transaction;
-import groovy.transform.ToString;
 import lombok.Getter;
 import lombok.Setter;
 import org.modelmapper.ModelMapper;
@@ -12,7 +11,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 
-@Setter@Getter@ToString
+@Setter@Getter
 public class TransactionDto {
 
     private Long id ; // 거래번호

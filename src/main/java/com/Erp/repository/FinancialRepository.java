@@ -1,5 +1,6 @@
 package com.Erp.repository;
 
+import com.Erp.dto.FinancialChartData;
 import com.Erp.dto.FinancialDto;
 import com.Erp.entity.Financial;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -33,4 +34,10 @@ public interface FinancialRepository extends JpaRepository<Financial, Long> {
 
     @Query(" select f from Financial f where f.year = :year and f.quarter = :quarter")
     Financial findFinancialQuarter(@Param("year") Short year, @Param("quarter") Integer quarter);
+
+    @Query(value = " select new com.Erp.dto.FinancialChartData(sum(f.total_assets), sum((f.cash + f.cash_equivalents + f.raw_mt + f.product_mt + f.fixture_mt)), sum((f.real_estate + f.equipment + f.vehicles)), sum(f.paid_capital), sum(f.total_liabilities), sum(f.total_capital), f.year)" +
+            " from Financial f" +
+            " group by f.year" +
+            " order by f.year asc")
+    List<FinancialChartData> findChartDataList();
 }

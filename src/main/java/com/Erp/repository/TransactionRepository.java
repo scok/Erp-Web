@@ -24,18 +24,23 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
             "t.transactionCategory LIKE %:nameParam% ")
     long countByName(@Param("nameParam") String nameParam);
 
+    //
 
-
-    @Query( "SELECT t FROM Transaction t WHERE CAST(t.id AS string) = :nameParam OR " +
+    @Query( "SELECT t FROM Transaction t WHERE  " +
             "t.companyName LIKE %:nameParam% OR " +
             "cast(t.amount as string) = :nameParam OR " +
             "t.trDate LIKE %:nameParam% OR " +
             " CAST(t.quarter AS string) = :nameParam OR " +
             "t.remark LIKE %:nameParam% OR " +
-            "t.transactionCategory LIKE %:nameParam% ")
+            "t.transactionCategory LIKE %:nameParam%")
     List<Transaction> findDataByName(@Param("nameParam") String nameParam, Pageable pageable);
 
 
+    @Query("SELECT t FROM Transaction t WHERE CAST(t.id AS string) = :nameParam")
+    List<Transaction> findcompanyNum(String nameParam, Pageable pageable);
+
+//    @Query("SELECT t FROM Transaction t WHERE CAST(t.id AS string) = :nameParam")
+//    List<Transaction> findcompanyNum(String nameParam, Pageable pageable);
 
 
     @Query("SELECT t FROM Transaction t ")
@@ -47,9 +52,12 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     @Query("select t.trDate, t.amount from Transaction t order by t.trDate")
     List<Object[]> findTrDataList();
 
-    @Query("select t.companyName from Transaction t order by t.companyName")
+    @Query("select t.companyName,t.trDate,t.amount from Transaction t order by t.companyName ")
     List<Object[]> findSelectName();
 
-    @Query("select t.trDate, t.amount from Transaction t where t.companyName like :companyName order by t.trDate")
+    @Query("select t.trDate, t.amount ,t.companyName from Transaction t where t.companyName like :companyName order by t.trDate")
     List<Object[]> findDateAndAmount(@Param("companyName") String companyName);
+
+    @Query("select t from Transaction t ")
+    List<Transaction> findData(int start, int length);
 }

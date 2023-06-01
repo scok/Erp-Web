@@ -64,8 +64,14 @@ public class TransactionController {
 
         if (nameParam != null && !nameParam.isEmpty()) {
 
-            total = (int) transactionRepository.countByName(nameParam);
-            data = transactionRepository.findDataByName(nameParam, pageable);
+            if(num==0){
+                total = (int) transactionRepository.countByName(nameParam);
+                data = transactionRepository.findcompanyNum(nameParam, pageable);
+            }else {
+                total = (int) transactionRepository.countByName(nameParam);
+                data = transactionRepository.findDataByName(nameParam, pageable);
+            }
+
         } else {
             total = (int) transactionRepository.count();
             data = transactionRepository.findAllData(pageable);
@@ -93,10 +99,15 @@ public class TransactionController {
 
             Date trDate = (Date)obj[0];
             Long amount = (Long)obj[1];
+            String companyNames = (String)obj[2];
+
+
 
             Transaction transaction = new Transaction();
             transaction.setTrDate(trDate);
             transaction.setAmount(amount);
+            transaction.setCompanyName(companyNames);
+
 
             transactionList.add(transaction);
         }
@@ -112,14 +123,15 @@ public class TransactionController {
         for (Object[] obj :data){
             Transaction transaction = new Transaction() ;
             String companyname = (String)obj[0];
+            Date trDate = (Date)obj[1];
+            Long amount = (Long)obj[2];
 
             transaction.setCompanyName(companyname);
+            transaction.setTrDate(trDate);
+            transaction.setAmount(amount);
 
             transactions.add(transaction);
         }
-
-
-
 
         return transactions ;
 
@@ -127,24 +139,24 @@ public class TransactionController {
 
 
 
-    @GetMapping(value = "/transaction/chart")
-    public @ResponseBody List<Transaction> getTransactionDataList(){
-        List<Object[]> data = transactionRepository.findTrDataList();
-        List<Transaction> transactions = new ArrayList<>();
-
-        for (Object[] obj : data) {
-            Date trDate = (Date)obj[0];
-            Long amount = (Long)obj[1];
-
-            Transaction transaction = new Transaction();
-            transaction.setTrDate(trDate);
-            transaction.setAmount(amount);
-
-            transactions.add(transaction);
-        }
-
-        return transactions;
-    }
+//    @GetMapping(value = "/transaction/chart")
+//    public @ResponseBody List<Transaction> getTransactionDataList(){
+//        List<Object[]> data = transactionRepository.findTrDataList();
+//        List<Transaction> transactions = new ArrayList<>();
+//
+//        for (Object[] obj : data) {
+//            Date trDate = (Date)obj[0];
+//            Long amount = (Long)obj[1];
+//
+//            Transaction transaction = new Transaction();
+//            transaction.setTrDate(trDate);
+//            transaction.setAmount(amount);
+//
+//            transactions.add(transaction);
+//        }
+//
+//        return transactions;
+//    }
 
 
     @GetMapping(value = "/transaction/form")

@@ -24,8 +24,411 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.2/css/uikit.min.css">
     <th:block layout:fragment="script">
-        <script th:inline="javascript">
+    <script th:inline="javascript">
+
     $(document).ready(function() {
+
+        var token = $('meta[name="_csrf"]').attr('content');
+        var header = $('meta[name="_csrf_header"]').attr('content');
+
+
+
+        //날짜 변환 메소드
+                function DateChange(comeOn) {
+                    var date = new Date(comeOn);
+                    var year = date.getFullYear();
+                    var month = ('0' + (date.getMonth() + 1)).slice(-2);
+
+
+                    var trDate = year + '-' + month ;
+                    return trDate ;
+                };
+
+        var Chart4XValues = [];
+        var Chart4YValues = [];
+         var tanasctionName ;
+        var Chart5XValues = [] ;
+        var Chart5YValues = [] ;
+        var Chart5NValues   ;
+
+            $('.btn-example').click(function(){
+
+<!--             var previousChart = Chart.getChart('myChart4');-->
+<!--                  if (previousChart) {-->
+
+<!--                    previousChart.destroy();-->
+<!--                    drawTransactionChart2(Chart4XValues, Chart4YValues);-->
+<!--                  }-->
+<!--                  console.log('성공 : ' +Chart4XValues);-->
+<!--                  drawTransactionChart2(Chart4XValues, Chart4YValues);-->
+<!--              previousChart = Chart.getChart('myChart5');-->
+<!--                  if (previousChart) {-->
+<!--                    previousChart.destroy();-->
+<!--                    drawTransactionChart3(Chart5XValues, Chart5YValues);-->
+<!--                  }-->
+
+            var $href = $(this).attr('href');
+            layer_popup($href);
+
+
+                // 월별 차트 작성 start
+              $.ajax({
+                url:'/transaction/select',
+                type:'GET',
+                datatype:'json',
+                success: function(data){
+                    for(let bean of data){
+
+                     var ComName = bean.companyName ;
+
+
+                           console.log(ComName);
+
+
+                    $('#select_box01').empty();
+                     var aggregatedData = {};
+
+                        var date = new Date(bean.trDate);
+                        var year = date.getFullYear();
+                        var month = ('0' + (date.getMonth() + 1)).slice(-2);
+
+                        var formattedDate = year + '-' + month ;
+                        var amount = bean.amount;
+
+                        if (aggregatedData[formattedDate]) {
+                            aggregatedData[formattedDate] += amount;
+                        }else{
+                            aggregatedData[formattedDate] = amount;
+                        }
+                    }
+                  //for end
+
+                     Chart4XValues = Object.keys(aggregatedData);
+                     Chart4YValues = Object.values(aggregatedData);
+                     Chart5NValues = ComName;
+                    drawTransactionChart2(Chart4XValues, Chart4YValues);
+
+
+
+                         var previousChart = Chart.getChart('myChart5');
+                                if (previousChart) {
+                                  previousChart.destroy();
+                                }
+
+                      var selectDate = $('#select_box02').val();
+
+                            var enddate = {};
+                            for(let bean of data){
+                                var OrgDate = DateChange(bean.trDate);
+
+                                if(OrgDate==selectDate){
+
+                                    var date = new Date(bean.trDate);
+
+                                    var month = ('0' + (date.getMonth() + 1)).slice(-2);
+                                    var day = ('0' + date.getDay()).slice(-2);
+
+                                    var trDates = month + '-' + day ;
+                                    var amonuts = bean.amount;
+
+                                    if(enddate[trDates]){
+                                       enddate[trDates] += amonuts;
+                                    }else{
+                                       enddate[trDates] = amonuts;
+                                    }
+
+                                }
+                                //if_end
+                            }
+                            //for_end
+
+                         Chart5XValues = Object.keys(enddate);
+                         Chart5YValues = Object.values(enddate);
+
+                        drawTransactionChart3(Chart5XValues, Chart5YValues);
+
+                        //change_end
+
+
+                    var uniqueCompanies = [];
+                    $.each(data,function(index,company){
+
+                         if (!uniqueCompanies.includes(company.companyName)) {
+                            uniqueCompanies.push(company.companyName);
+
+                            $('#select_box01').append($('<option>', {
+                                value: company.companyName,
+                                text: company.companyName
+                            }));
+                        }
+                    });
+                },
+                error: function(xhr, status ,error){
+                    alert(xhr.responseJSON.message);
+                }
+            });
+             // 월별 차트 작성 end
+
+
+        });
+        //버튼end
+
+
+              // 셀렉 조회 start
+              $('#select_box01').on('change', function(){
+
+
+                 Chart5NValues = $(this).val();
+                    tanasctionName = $(this).val();
+                $.ajax({
+                    url:'/transaction/select',
+                    type:'POST',
+                     beforeSend: function(xhr) {
+                        xhr.setRequestHeader(header, token);
+                    },
+                    datatype:'JSON',
+                    data:{ companyName : Chart5NValues },
+
+                    success: function(response){
+
+                         // 차트 초기화
+                        var previousChart = Chart.getChart('myChart4');
+                        if (previousChart) {
+                          previousChart.destroy();
+                        }
+                        var resultData = {} ;
+                        var datatrDate = {};
+
+                        for (let bean of response) {
+
+                            var date = new Date(bean.trDate);
+                            var year =  date.getFullYear()+'/12';
+
+                            var amounts = bean.amount ;
+
+                            if (resultData[year]) {
+                                resultData[year] += amounts;
+                            }else{
+                                resultData[year] = amounts;
+                            }
+                        }
+                        //for_end
+
+                        var aggregatedXValues = Object.keys(resultData);
+                        var aggregatedYValues = Object.values(resultData);
+
+                        drawTransactionChart2(aggregatedXValues, aggregatedYValues);
+                          $('#select_box02').empty();
+
+                        //2번 셀렉창에 넘길 데이터
+                        var uniqueCompanies = [] ;
+                        for(let bean of response){
+
+                            var date = new Date(bean.trDate);
+                            var year =  date.getFullYear();
+
+
+                             if (!uniqueCompanies.includes(year)) {
+                                uniqueCompanies.push(year);
+
+                                $('#select_box02').append($('<option>', {
+                                    value: year,
+                                    text: year
+                            }));
+
+                            }
+                        }
+                         //for_end
+
+
+
+                        //select_box02, chart5 start
+
+                        $('#select_box02').on('change', function(){
+                              var previousChart = Chart.getChart('myChart5');
+                                if (previousChart) {
+                                  previousChart.destroy();
+                                }
+                            var selectDate = $('#select_box02').val();
+                                Chart5NValues = $('#select_box02').val();
+                            var enddate = {};
+                            var amonuts = [] ;
+                            var OrgDate = [] ;
+                            var totalData = {} ;
+                            var totalData02 = 0;
+
+                           // key와 val add 메소드
+                          function addKey(key,val){
+                                 if(enddate[key]){
+                                   enddate[key] += val;
+                                }else{
+                                   enddate[key] = val;
+                                }
+                                return enddate ;
+                            };
+
+                            for(let bean of response){
+                                OrgDate = DateChange(bean.trDate);
+                                  amonuts = bean.amount;
+                                  var compareDate =  OrgDate.split('-') ;
+                                  var dateYear = compareDate[0] ;
+
+                                    if(dateYear===selectDate){
+                                        var dateMonth = parseInt(compareDate[1]);
+
+                                        if(dateMonth>= 1 && dateMonth<=3){
+                                            var keyVal = dateYear+ '-03' ;
+                                              addKey(keyVal,amonuts);
+
+                                        }else if(dateMonth>=4 && dateMonth<=6){
+                                              var keyVal = dateYear+ '-06' ;
+                                               addKey(keyVal,amonuts);
+
+                                        }else if(dateMonth>= 7 && dateMonth<=9){
+                                            var keyVal = dateYear+ '-09' ;
+                                               addKey(keyVal,amonuts);
+
+                                        }else{
+                                            var keyVal = dateYear+ '-12' ;
+                                                addKey(keyVal,amonuts);
+                                        }
+                                    }
+                                    for(var key in enddate){
+                                        totalData02 += enddate[key];
+                                    }
+
+                            }
+                            //for_end
+
+                         var aggregatedXValues = Object.keys(enddate);
+                         var aggregatedYValues = Object.values(enddate);
+
+                        drawTransactionChart3(aggregatedXValues, aggregatedYValues);
+                        });
+                        //change_end
+
+
+
+                    },
+                    //success_end
+                    error: function(xhr, status ,error){
+                    alert(xhr.responseJSON.message);
+                    }
+                });
+
+
+            });
+            //셀렉 조희 end
+
+
+
+
+
+
+
+
+            //차트start
+             function drawTransactionChart2(xValues, yValues){
+                 var previousChart = Chart.getChart('myChart4');
+                  if (previousChart) {
+                    previousChart.destroy();
+                  }
+
+            new Chart('myChart4', {
+                type: 'bar',
+                data: {
+                    labels: xValues,
+                    datasets: [{
+                        label:'거래금액',
+                        data: yValues,
+                        borderColor: 'rgba(104, 19, 16,0.8)',
+                        backgroundColor: 'rgba(104, 19, 16,0.8)',
+
+                   }]
+                },
+                options: {
+                     scales: {
+                          x: {
+                            ticks: {
+                              font: {
+                                size: 10 // x축 레이블 폰트 크기 설정
+                              }
+                            }
+                          },
+                          y: {
+                            ticks: {
+                              font: {
+                                size: 10 // y축 레이블 폰트 크기 설정
+                              }
+                            }
+                          }
+                        },
+                    maintainAspectRatio: false,
+
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: Chart5NValues+' 연도별 '
+                        }
+                    }
+                }
+            });
+
+        }
+        //차트4 end
+              function drawTransactionChart3(xValues, yValues){
+
+            new Chart('myChart5', {
+                type: 'bar',
+                data: {
+                    labels: xValues,
+                    datasets: [{
+                        label: '거래금액',
+                        data: yValues,
+                        borderColor: 'rgba(73, 135, 16,0.8)',
+                        backgroundColor: 'rgba(73, 135, 16,0.8)',
+
+                   }]
+                },
+                options: {
+                    scales: {
+                      x: {
+                        ticks: {
+                          font: {
+                            size: 10 // x축 레이블 폰트 크기 설정
+                          }
+                        }
+                      },
+                      y: {
+                        ticks: {
+                          font: {
+                            size: 10 // y축 레이블 폰트 크기 설정
+                          }
+                        }
+                      }
+                    },
+                     maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: tanasctionName  + ' 분기별 '
+                        }
+                    }
+                }
+            });
+
+        }
+        //차트5end
+
+
+
+         //데이터 테이블 start
          $.fn.dataTable.ext.search.push(
             function(settings, data, dataIndex){
                 var min = Date.parse($('#fromDate').val());
@@ -43,8 +446,7 @@
          );
 
           if (!$.fn.DataTable.isDataTable('#myTable')) {
-            var token = $('meta[name="_csrf"]').attr('content');
-            var header = $('meta[name="_csrf_header"]').attr('content');
+
 
             var table =  $('#myTable').DataTable({
                 "serverSide": true,
@@ -78,7 +480,7 @@
 
                         var Year = dateItem.getFullYear();
                         var month = ("0" + (dateItem.getMonth() + 1)).slice(-2);
-                        console.log("0" + (dateItem.getMonth(11)+1));
+
                         var day = ("0" + dateItem.getDay()).slice(-2);
 
                         var formatDate = Year + "-"+ month + "-"+day;
@@ -124,18 +526,20 @@
 
 
               <!--엑셀 파일 전송-->
-               dom: 'Blfrtpa',
-            buttons: [{
-                    extend: 'csvHtml5',
-                    text: 'Export Excel',
-                    footer: true,
-                    className: 'blueBtn',
-                    exportOptions: {
-                        charset: 'euc-kr'
-                    },
-                    bom: true
-                }],
-        });
+               dom: 'lrtpBfa',
+                buttons: [{
+                        extend: 'csvHtml5',
+                        text: 'Excel',
+                        footer: true,
+                        className: 'blueBtn',
+                        exportOptions: {
+                            charset: 'euc-kr'
+                        },
+                        bom: true
+
+                    }],
+            });
+
 
             <!--검색 기능-->
 
@@ -150,48 +554,47 @@
         });
 
 
-           $('#myTable thead th').click(function () {
-        var columnIndex = $(this).index();
-        var orderDir = $(this).hasClass('asc') ? 'desc' : 'asc';
+               $('#myTable thead th').click(function () {
+            var columnIndex = $(this).index();
+            var orderDir = $(this).hasClass('asc') ? 'desc' : 'asc';
 
-        // DataTables의 정렬 업데이트
-        table.order(columnIndex, orderDir).draw();
+            // DataTables의 정렬 업데이트
+            table.order(columnIndex, orderDir).draw();
 
-        // 현재 클릭한 컬럼에 클래스를 추가하여 정렬 방향을 표시
-        $('#myTable thead th').removeClass('asc').removeClass('desc');
-        $(this).addClass(orderDir);
+            // 현재 클릭한 컬럼에 클래스를 추가하여 정렬 방향을 표시
+            $('#myTable thead th').removeClass('asc').removeClass('desc');
+            $(this).addClass(orderDir);
 
 
-    });
+        });
 
      }
 
 
-        $('#myTable_filter').prepend('<select id="select"></select>&nbsp;');
-        $('#myTable > thead > tr').children().each(function (indexInArray, valueOfElement) {
-            $('#select').append('<option>'+valueOfElement.innerHTML+'</option>');
-        });
+<!--        $('#myTable_filter').prepend('<select id="select"></select>&nbsp;');-->
+<!--        $('#myTable > thead > tr').children().each(function (indexInArray, valueOfElement) {-->
+<!--            $('#select').append('<option>'+valueOfElement.innerHTML+'</option>');-->
+<!--        });-->
 
-        $('.dataTables_filter input').unbind().bind('keyup', function () {
-            var colIndex = document.querySelector('#select').selectedIndex;
-            var table = $('#myTable').DataTable();
-            table.column(colIndex).search(this.value).draw();
-        });
+<!--        $('.dataTables_filter input').unbind().bind('keyup', function () {-->
+<!--            var colIndex = document.querySelector('#select').selectedIndex;-->
+<!--            var table = $('#myTable').DataTable();-->
+<!--            table.column(colIndex).search(this.value).draw();-->
+<!--        });-->
 
         $("#myTable_filter").attr("hidden", "hidden");
 
 
 
-        $('#myTable_filter').prepend('<input type="text" id="toDate" style="width:90px" placeholder="yyyy-MM-dd"> ');
-        $('#myTable_filter').prepend('<input type="text" id="fromDate" style="width:90px" placeholder="yyyy-MM-dd">&nbsp;~');
-        $('#toDate, #fromDate').unbind().bind('keyup',function(){
-            table.draw();
-        });
+<!--        $('#myTable_filter').prepend('<input type="text" id="toDate" style="width:90px" placeholder="yyyy-MM-dd"> ');-->
+<!--        $('#myTable_filter').prepend('<input type="text" id="fromDate" style="width:90px" placeholder="yyyy-MM-dd">&nbsp;~');-->
+<!--        $('#toDate, #fromDate').unbind().bind('keyup',function(){-->
+<!--            table.draw();-->
+<!--        });-->
 
-        $('.btn-example').click(function(){
-            var $href = $(this).attr('href');
-            layer_popup($href);
-        });
+
+
+
 
         function layer_popup(el){
             var $el = $(el);
@@ -225,246 +628,134 @@
         }
 
 
-
-
-
     });// ready 닫기
 
         </script>
     </th:block>
-<th:block layout:fragment="css">
+
+    <th:block layout:fragment="css">
     <style>
-    input[type='date']::before {
-      content: attr(data-placeholder);
-      width: 100%;
-    }
+        .content{
+            margin:auto;
+            margin-right:10px;
+        }
 
-    .row {
-        display: block;
-        flex-wrap: wrap;
-        margin-right: 1.25rem;
-        margin-left: 1.25rem;
-        margin-top: 1.25rem;
-        margin-bottom: 1.25rem;
-    }
+        .grid-container{
+            display:grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-gap:10px;
+            margin-top:20px;
+        }
 
-    .container{
-        padding-left: -3.5rem;
-        padding-right: -3.5rem;
+
+
+        .grid-item{
+            background-color: lightgray;
+            padding:20px;
+        }
+
+        .card{
+            position:relative;
+            display:flex;
+            flex-direction: column;
+            min-width:0;
+            word-wrap:break-word;
+            background-color:#fff;
+            background-clip:border-box;
+            border:1px solid #e3e6f0;
+            border-radius:.35rem;
+        }
+
+        .shadow{
+            box-shadow: 0 .15rem 1.75rem 0 rgba(58,59,69,.15)!important;
+        }
+
+        .mb-4{
+            margin-bottom: 1.5rem !important;
+        }
+
+        .card-header:first-child{
+            border-radius:calc(.35rem - 1px) calc(.35rem - 1px) 0 0;
+        }
+
+        .card-header{
+            padding: .75rem 1.25rem;
+            margin-bottom:0;
+            background-color:#f8f9fc;
+            border-bottom:1px solid #e3e6f0;
+            overflow:hidden;
+        }
+
+        .card-body{
+            flex: 1 1 auto;
+            min-height: 1px;
+            padding: 1.25rem;
+            overflow:hidden;
+        }
+
+        .chart-area{
+            display:flex;
+            position:relative;
+            margin: auto;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .text-primary{
+            color: #4e73df !important;
+        }
+
+        .font-weight-bold{
+            font-weight: 700 !important;
+        }
+
+        .m-0{
+            margin: 0 !important;
+        }
+
+        h6{
+            display:inline;
+            font-size: 1rem;
+            line-height: 1.2;
+            float:left;
+        }
+
+        .grid-container2{
+            display:grid;
+            grid-template-columns: repeat(1, 1fr);
+            grid-gap:10px;
+        }
+
+        .card2{
+            position:relative;
+            display:flex;
+            flex-direction: column;
+            min-width:0;
+            word-wrap:break-word;
+            background-color:#fff;
+            background-clip:border-box;
+            border:1px solid #e3e6f0;
+            border-radius:.35rem;
+            padding: 20px;
+        }
+        .btn-example{
 
         }
-    .bg-gradient-primary {
-    background-color: #4e73df;
-    background-image: linear-gradient(180deg,#4e73df 10%,#224abe 100%);
-    background-size: cover;
-    margin: -1px;
-    }
-    .o-hidden {
-    overflow: hidden!important;
-    }
-    .mb-5, .my-5 {
-        margin-bottom: 19rem!important;
-    }
-    .mt-5, .my-5 {
-        margin-top: 1rem!important;
-    }
-    .shadow-lg {
-        box-shadow: 0 1rem 3rem rgba(0,0,0,.175)!important;
-    }
-    .border-0 {
-        border: 0!important;
-    }
-    .card {
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        min-width: 0;
-        word-wrap: break-word;
-        background-color: #fff;
-        background-clip: border-box;
-        border: 1px solid #e3e6f0;
-        border-radius: 0.35rem;
-    }
 
-    .blueBtn {
-      background-color: #4CAF50; /* Green */
-      border: none;
-      color: white;
-      padding: 7px;
-      text-align: center;
-      text-decoration: none;
-      display: inline-block;
-      font-size: 17px;
-      margin: 4px -1px;
-      cursor: pointer;
-      border-radius: 4px;
-    }
-    th {
-        white-space: nowrap; /* 텍스트 줄바꿈 방지 */
-        overflow: hidden; /* 넘치는 부분 숨김 */
-        text-overflow: ellipsis; /* 넘친 부분에 ... 표시 */
-    }
-    #myTable{
-        width=100% ;
-    }
-    #select {
-     width:90px;
-     padding:3px;
-     border:1px solid #999;
-     font-family:'Nanumgothic';
-     border-radius:3px;
+        .searchBtn{
 
-    }
-     select::-ms-expand {
-       display: none;
-    }
-
-    /* page button */
-    .dataTables_wrapper .dataTables_paginate .paginate_button.current {
-        background: #4e73df;
-        color: white !important;
-    }
-
-    .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
-        background: linear-gradient(to bottom, #585858 0%, #111 100%);
-        color: white !important;
-    }
-
-    table.dataTable tbody  {
-        transition-duration: .28s;
-        transition-timing-function: cubic-bezier(.4, 0, .2, 1);
-        transition-property: background-color;
-    }
-
-    table.dataTable.display tbody tr.odd>.sorting_1,
-    table.dataTable.order-column.stripe tbody tr.odd>.sorting_1,
-    table.dataTable.display tbody tr.even>.sorting_1,
-    table.dataTable.order-column.stripe tbody tr.even>.sorting_1,
-    table.dataTable.hover tbody tr:hover,
-    table.dataTable.display tbody tr:hover {
-        background: #E1F5FE;
-    }
-
-    /*팝업창 css*/
-
-        * {
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      margin: 100px;
-    }
-
-    .pop-layer .pop-container {
-      padding: 20px 25px;
-    }
-
-    .pop-layer p.ctxt {
-      color: #666;
-      line-height: 25px;
-    }
-
-    .pop-layer .btn-r {
-      width: 100%;
-      margin: 10px 0 20px;
-      padding-top: 10px;
-      border-top: 1px solid #DDD;
-      text-align: right;
-    }
-
-    .pop-layer {
-      display: none;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 800px;
-      height: auto;
-      background-color: #fff;
-      border: 5px solid #3571B5;
-      z-index: 10;
-    }
-
-    .dim-layer {
-      display: none;
-      position: fixed;
-      _position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 100;
-    }
-
-    .dim-layer .dimBg {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: #000;
-      opacity: .5;
-      filter: alpha(opacity=50);
-    }
-
-    .dim-layer .pop-layer {
-      display: block;
-    }
-
-    a.btn-layerClose {
-      display: inline-block;
-      height: 25px;
-      padding: 0 14px 0;
-      border: 1px solid #304a8a;
-      background-color: #3f5a9d;
-      font-size: 13px;
-      color: #fff;
-      line-height: 25px;
-    }
-
-    a.btn-layerClose:hover {
-      border: 1px solid #091940;
-      background-color: #1f326a;
-      color: #fff;
-    }
+        }
     </style>
-</th:block>
+    </th:block>
 
 </head>
 
-<body class="bg-gradient-primary">
-
-<div class="container" layout:fragment="content" style="margin: 0px -1px -6px -8px;padding: 39px;">
-    <div class="card o-hidden border-0 shadow-lg my-5">
-        <div class="row">
-            <table id="myTable" class="display" >
-                <!-- uk-table uk-table-hover uk-table-striped  -->
-
-                <!-- 팝업 창-->
-                <a href="#layer2" class="btn-example">버튼</a>
-                <div class="dim-layer">
-                    <div class="dimBg"></div>
-                    <div id="layer2" class="pop-layer">
-                        <div class="pop-container">
-                            <div class="pop-conts">
-                                <!--content //-->
-                                <p class="ctxt mb20">거래표<br>
-                                </p>
-                                <div class="input-group">
-                                    <input value="" type="text">
-                                    <input value="" type="text">
-                                </div>
-                                <div class="btn-r">
-                                    <a href="#" class="btn-layerClose">Close</a>
-                                </div>
-                                <!--// content-->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!--검색 기능 -->
-                <div class="form-inline my-2 my-lg-0" style="text-align:center;">
+<div class="content" layout:fragment="content">
+    <div class="grid-container2">
+        <div class="card2 shadow mb-4">
+            <table id="myTable" class="uk-table uk-table-hover uk-table-striped">
+                <div class="selectboxs">
+                    <!--검색 기능 -->
                     <select id="searchType" class="form-control mr-sm-2">
                         <option value="0">거래번호</option>
                         <option value="1">거래처명</option>
@@ -477,29 +768,61 @@
                     <input class="form-control mr-sm-2" type="search" id="searchValue" placeholder="Search" aria-label="Search">
                     <button class="btn btn-outline-success my-2 my-sm-0" id="searchBtn" type="button">Search</button>
                 </div>
+
+                <!-- uk-table uk-table-hover uk-table-striped  -->
+
                 <!--데이터 테이블 -->
                 <thead>
+
+
                 <tr>
-                        <th>거래번호</th>
-                        <th>거래처명</th>
-                        <th>거래금액</th>
-                        <th>거래일자</th>
-                        <th>분기</th>
-                        <th>주석</th>
-                        <th>거래분류</th>
-                    </tr>
+                    <th>거래번호</th>
+                    <th>거래처명</th>
+                    <th>거래금액</th>
+                    <th>거래일자</th>
+                    <th>분기</th>
+                    <th>주석</th>
+                    <th>거래분류</th>
+                </tr>
                 </thead>
+                <button href="#layer2" class="btn-example">Chart</button>
                 <tfoot>
-                    <tr>
-                        <th colspan="2" style="text-align:right;white-space:nowrap;">TOTAL : </th>
-                        <th colspan="5" style="text-align:left;white-space:nowrap;"></th>
-                    </tr>
+
+                <tr>
+                    <th colspan="2" style="text-align:right;white-space:nowrap;">TOTAL : </th>
+                    <th colspan="5" style="text-align:left;white-space:nowrap;"></th>
+                </tr>
+
                 </tfoot>
+
             </table>
-            <canvas id="config"></canvas>
+        </div>
+    </div>
+
+
+    <div class="grid-container">
+        <div class="card shadow mb-4" id="b">
+            <div class="card-header">
+                <h6 class="m-0 font-weight-bold text-primary">거래처별 거래 금액</h6>
+            </div>
+            <div class="card-body">
+                <div class="chart-area">
+
+                </div>
+            </div>
+        </div>
+        <div class="card shadow mb-4" id="c">
+            <div class="card-header">
+                <h6 class="m-0 font-weight-bold text-primary">거래처별 거래 금액</h6>
+            </div>
+            <div class="card-body">
+                <div class="chart-area">
+
+                </div>
+            </div>
         </div>
     </div>
 </div>
-</body>
+
 
 </html>

@@ -2,6 +2,7 @@ package com.Erp.entity;
 
 import com.Erp.constant.TransactionCategory;
 import com.Erp.dto.TransactionDto;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import org.modelmapper.ModelMapper;
@@ -36,6 +37,7 @@ public class Transaction {
         return modelMapper.map(transactionDto,Transaction.class);
     }
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "income_id")
     private Income income ;
