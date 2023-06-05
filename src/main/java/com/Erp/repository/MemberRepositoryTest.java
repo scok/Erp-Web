@@ -1,6 +1,7 @@
 package com.Erp.repository;
 
 import com.Erp.constant.MemberRole;
+import com.Erp.constant.MemberStatus;
 import com.Erp.entity.Member;
 import com.Erp.entity.QMember;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -23,6 +24,8 @@ public class MemberRepositoryTest{
 
     @Autowired
     MemberRepository memberRepository;
+    @Autowired
+    MemberImageRepository memberImageRepository;
     @Autowired
     PasswordEncoder passwordEncoder;
 
@@ -58,26 +61,27 @@ public class MemberRepositoryTest{
 
         newday=strNowDate + newcnt.format(count+1);
 
-
         bean.setId(newday);
         String password=passwordEncoder.encode(newday);
         bean.setPassword(password);
         bean.setName("관리자");
-        bean.setBirth("1999/12/12");
+        bean.setBirth("19991212");
         bean.setEmail("admin@naver.com");
-        bean.setPhoneNumber("010-1234-5678");
+        bean.setPhone("01012345678");
+        bean.setAddress("마포구 서교동");
         bean.setDate(LocalDate.now());
         bean.setDepartment("EA팀");
         bean.setPosition("사원");
-        bean.setPaystep("2호봉");
-        bean.setSalary(5000L);
+        bean.setHobong("2호봉");
+        bean.setBank("217802-04-462020");
+        bean.setStatus(MemberStatus.WORKING);
         bean.setRole(MemberRole.ADMIN);
 
         Member findId = memberRepository.findMemberById(bean.getId());
         Member findEmail = memberRepository.findMemberByEmail(bean.getEmail());
-        Member findPhoneNumber = memberRepository.findMemberByPhoneNumber(bean.getPhoneNumber());
+        Member findPhone = memberRepository.findMemberByPhone(bean.getPhone());
 
-        if(findId == null && findEmail == null && findPhoneNumber == null ) {
+        if(findId == null && findEmail == null && findPhone == null ) {
             Member savedItem = memberRepository.save(bean);
             System.out.println(count+1);
             System.out.println(savedItem.toString());
