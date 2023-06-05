@@ -1,8 +1,16 @@
 package com.Erp.service;
 
+import com.Erp.dto.MemberDetailDto;
+import com.Erp.dto.MemberPayInsertDto;
+import com.Erp.dto.MemberSearchDto;
+import com.Erp.dto.MemberUpdateDto;
 import com.Erp.entity.Member;
+import com.Erp.entity.MemberImage;
+import com.Erp.repository.MemberImageRepository;
 import com.Erp.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -12,7 +20,8 @@ import org.springframework.stereotype.Service;
 @Service//for 비즈니스 로직 담당자
 @RequiredArgsConstructor//final 이나 NotNull이 붙어 있는 변수에 생성자를 자동으로 만들어 줍니다.
 public class MemberService implements UserDetailsService {
-
+    private final MemberRepository memberRepository;
+    private final MemberImageRepository memberImageRepository;
 
     //implements UserDetailsService
     //.usernameParameter("Id") 시큐리티 설정 class에 usernameParameter확인 필요.
@@ -31,8 +40,6 @@ public class MemberService implements UserDetailsService {
                 .build();
     }
 
-    
-    private final MemberRepository memberRepository;
 
     public Member saveMember(Member member){
 
@@ -44,10 +51,82 @@ public class MemberService implements UserDetailsService {
 
         Member findId = memberRepository.findMemberById(member.getId());
         Member findEmail = memberRepository.findMemberByEmail(member.getEmail());
-        Member findPhoneNumber = memberRepository.findMemberByPhoneNumber(member.getPhoneNumber());
+        Member findPhone = memberRepository.findMemberByPhone(member.getPhone());
 
-        if(findId != null ||findEmail != null || findPhoneNumber != null ) {
-            throw new IllegalStateException("이미 가입된 회원입니다.");
+        if(findId != null ||findEmail != null || findPhone != null ) {
+            throw new RuntimeException("이미 가입된 회원입니다.");
         }
+    }
+
+    public Page<Member> getMemberListPage(MemberSearchDto dto, Pageable pageable){
+        return memberRepository.getMemberListPage(dto, pageable);
+    }
+
+    public Member getMemberById(Long id) {
+        return memberRepository.findById(String.valueOf(id)).orElseThrow(() -> new IllegalArgumentException("유효하지 않은 ID 입니다."));
+    }
+
+    public MemberUpdateDto getMemberWithImage(Long id) {
+        Member member = memberRepository.findById(String.valueOf(id)).orElseThrow(() -> new IllegalArgumentException("유효하지 않은 ID 입니다."));
+
+        MemberImage memberImage = memberImageRepository.findByMember(member);
+
+        MemberUpdateDto dto = new MemberUpdateDto();
+        dto.setId(Long.valueOf(member.getId()));
+        dto.setName(member.getName());
+        dto.setPosition(member.getPosition());
+        dto.setRole(member.getRole());
+        dto.setStatus(member.getStatus());
+        dto.setPhone(member.getPhone());
+        dto.setPassword(member.getPassword());
+        dto.setHobong(member.getHobong());
+        dto.setAddress(member.getAddress());
+        dto.setBank(member.getBank());
+        dto.setDepartment(member.getDepartment());
+        dto.setDate(member.getDate());
+        dto.setBirth(member.getBirth());
+        dto.setEmail(member.getEmail());
+        dto.setImageUrl(memberImage.getImageUrl());
+        return dto;
+    }
+
+    public MemberDetailDto getMemberWithImage2(Long id) {
+        Member member = memberRepository.findById(String.valueOf(id)).orElseThrow(() -> new IllegalArgumentException("유효하지 않은 ID 입니다."));
+
+        MemberImage memberImage = memberImageRepository.findByMember(member);
+
+        MemberDetailDto dto = new MemberDetailDto();
+        dto.setId(Long.valueOf(member.getId()));
+        dto.setName(member.getName());
+        dto.setPosition(member.getPosition());
+        dto.setRole(member.getRole());
+        dto.setStatus(member.getStatus());
+        dto.setPhone(member.getPhone());
+        dto.setPassword(member.getPassword());
+        dto.setHobong(member.getHobong());
+        dto.setAddress(member.getAddress());
+        dto.setBank(member.getBank());
+        dto.setDepartment(member.getDepartment());
+        dto.setDate(member.getDate());
+        dto.setBirth(member.getBirth());
+        dto.setEmail(member.getEmail());
+        dto.setImageUrl(memberImage.getImageUrl());
+        return dto;
+    }
+
+    public MemberPayInsertDto getMemberPay(Long id) {
+        Member member = memberRepository.findById(String.valueOf(id)).orElseThrow(() -> new IllegalArgumentException("유효하지 않은 ID 입니다."));
+
+        MemberPayInsertDto dto = new MemberPayInsertDto();
+
+        dto.setId(member.getId());
+        dto.setName(member.getName());
+        dto.setPosition(member.getPosition());
+        dto.setDepartment(member.getDepartment());
+        return dto;
+    }
+
+    public void updateMember(Member member) {
+        memberRepository.save(member);
     }
 }
