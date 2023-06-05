@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{common/sidebar}"
+>
+<head>
+    <meta charset="utf-8">
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.10/dist/sweetalert2.min.css">
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.10/dist/sweetalert2.min.js"></script>
+
+    <script th:inline="javascript">
+        // 지급항목 테이블에 입력된 숫자를 합산하는 함수
+        var totalPrice3 = 0;
+        function calculateTotal() {
+            var inputs = document.querySelectorAll('#dataTable1 input[type="text"]');
+            var totalPrice = 0;
+
+            for (var i = 0; i < inputs.length; i++) {
+            var value = parseFloat(inputs[i].value.replace(/,/g, '')); // 쉼표 제거 후 숫자로 변환
+            if (!isNaN(value)) {
+                totalPrice += value;
+            }
+            totalPrice3 = totalPrice;
+        }
+
+        document.getElementById('totalPrice').textContent = formatNumber(totalPrice) + '원';
+        updateDeductionTotal();
+        }
+
+        function formatNumber(number) {
+            return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        }
+
+        // 공제항목 테이블에 입력된 숫자를 합산하는 함수
+        var totalPrice4 = 0;
+        function calculateTotal2() {
+            var inputs = document.querySelectorAll('#dataTable2 input[type="text"]');
+            var totalPrice2 = 0;
+
+            for (var i = 0; i < inputs.length; i++) {
+            var value = parseFloat(inputs[i].value.replace(/,/g, '')); // 쉼표 제거 후 숫자로 변환
+            if (!isNaN(value)) {
+                totalPrice2 += value;
+            }
+            totalPrice4 = totalPrice2;
+        }
+
+        document.getElementById('totalPrice2').textContent = formatNumber2(totalPrice2) + '원';
+        updateDeductionTotal();
+        }
+
+        function formatNumber2(number) {
+            return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        }
+
+        // 차감지급액 업데이트 함수
+        function updateDeductionTotal() {
+        var deductionTotal = totalPrice3 - totalPrice4;
+        document.getElementById('deductionTotal').textContent = formatNumber3(deductionTotal) + '원';
+        }
+
+        function formatNumber3(number) {
+            return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        }
+    </script>
+
+    <script>
+      function sweetAlert(event) {
+            event.preventDefault(); // 폼 제출 기본 동작 중지
+
+            return new Promise((resolve) => {
+                Swal.fire({
+                    title: '등록 하시겠습니까?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#4e73df',
+                    cancelButtonColor: '#6e7881',
+                    confirmButtonText: 'OK',
+                    cancelButtonText: 'Cancel'
+
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // MyDTO 객체 생성
+                        const totalPrice3 = parseFloat(document.getElementById('totalPrice').textContent.replace(/[^0-9.-]+/g, '')); // totalPrice3 값 가져오기
+                        const totalPrice4 = parseFloat(document.getElementById('totalPrice2').textContent.replace(/[^0-9.-]+/g, '')); // totalPrice4 값 가져오기
+                        const deductionTotal = totalPrice3 - totalPrice4;
+
+
+
+                        const myDTO = {
+                            salary: document.getElementById('salary').value,
+                            bonus: document.getElementById('bonus').value,
+                            nightPay: document.getElementById('nightPay').value,
+                            foodPay: document.getElementById('foodPay').value,
+                            carPay: document.getElementById('carPay').value,
+                            goInsurance: document.getElementById('goInsurance').value,
+                            gunInsurance: document.getElementById('gunInsurance').value,
+                            sanInsurance: document.getElementById('sanInsurance').value,
+                            kukInsurance: document.getElementById('kukInsurance').value,
+                            incomeTax: document.getElementById('incomeTax').value,
+                            localTax: document.getElementById('localTax').value,
+                            plusMoney: totalPrice3,
+                            minusMoney: totalPrice4,
+                            TotalMoney: deductionTotal
+
+                        };
+
+                        // 유효성 검사
+                        const errors = validateMyDTO(myDTO);
+                        if (errors.length > 0) {
+                            // 오류 메시지 출력
+                            Swal.fire({
+                                title: 'Error',
+                                icon: 'error',
+                                html: errors[0],
+                                confirmButtonColor: '#4e73df'
+                            });
+                        } else {
+                            Swal.fire({
+                                title: 'Completed!',
+                                icon: 'success',
+                                confirmButtonColor: '#4e73df'
+                            }).then(() => {
+                                // 폼을 수동으로 제출
+                                event.target.form.submit();
+                            });
+                        }
+                    }
+                });
+            });
+        }
+
+
+        // MyDTO 객체의 유효성 검사 함수
+        function validateMyDTO(myDTO) {
+            const errors = [];
+
+            // 각 필드에 대한 유효성 검사
+            if (!myDTO.salary) {
+                errors.push('기본급을 입력 해 주세요.');
+            }
+
+            if (!myDTO.bonus) {
+                errors.push('상여금 선택 해 주세요.');
+            }
+
+            if (!myDTO.nightPay) {
+                errors.push('야근수당 선택 해 주세요.');
+            }
+
+            if (!myDTO.foodPay) {
+                errors.push('식비 선택 해 주세요.');
+            }
+
+            if (!myDTO.carPay) {
+                errors.push('차량지원금 필수 입력 값입니다.');
+            }
+
+            if (!myDTO.goInsurance) {
+                errors.push('고용보험 선택 해 주세요.');
+            }
+
+            if (!myDTO.gunInsurance) {
+                errors.push('건강보험 필수 입력 값입니다.');
+            }
+
+            if (!myDTO.sanInsurance) {
+                errors.push('산재보험 필수 입력 값입니다.');
+            }
+
+            if (!myDTO.kukInsurance) {
+                errors.push('국민연금 필수 입력 값입니다.');
+            }
+
+            if (!myDTO.incomeTax) {
+                errors.push('소득세 필수 입력 값입니다.');
+            }
+
+            if (!myDTO.localTax) {
+                errors.push('지방소득세 필수 입력 값입니다.');
+            }
+
+            if (!myDTO.plusMoney) {
+                errors.push('지급총액 필수 입력 값입니다.');
+            }
+
+            if (!myDTO.minusMoney) {
+                errors.push('공제총액 필수 입력 값입니다.');
+            }
+
+            if (!myDTO.TotalMoney) {
+                errors.push('차감지급액 필수 입력 값입니다.');
+            }
+
+        return errors;
+        }
+    </script>
+
+   <style>
+        td {
+            text-align: center;
+        }
+        .my-table {
+            width: 50px;
+            height: 50;
+            padding: 10px;
+            margin: 20px;
+        }
+    </style>
+</head>
+
+<div class="content" layout:fragment="content">
+  <body class="bg-gradient-primary">
+  <div class="container">
+    <div class="card o-hidden border-0 shadow-lg my-2">
+      <div class="card-header py-3">
+        <h4 class="m-0 font-weight-bold text-primary" style="text-align: center;">급여명세서</h4>
+      </div>
+      <div class="row">
+        <div class="col-lg-6 d-none d-lg-block">
+          <div class="p-8">
+            <form action="" role="form" method="post" th:object="${memberPayInsertDto}">
+              <table class="table-bordered dataTable" cellspacing="0" role="grid"  style="width: 300px;">
+                <tbody>
+                <tr>
+                  <td class="text-primary font-weight-bold" style="vertical-align: middle; width:70px;">부서</td>
+                  <td style="text-align:left;"><label th:text="*{department}"></label></td>
+                </tr>
+                <tr>
+                  <td class="text-primary font-weight-bold" style="vertical-align: middle; width:70px;">사번</td>
+                  <td style="text-align:left;"><label th:text="*{id}"></label></td>
+                </tr>
+                <tr>
+                  <td class="text-primary font-weight-bold" style="vertical-align: middle; width:70px;">이름</td>
+                  <td style="text-align:left;"><label th:text="*{name}"></label></td>
+                </tr>
+                <tr>
+                  <td class="text-primary font-weight-bold" style="vertical-align: middle; width:70px;">직위</td>
+                  <td style="text-align:left;"><label th:text="*{position}"></label></td>
+                </tr>
+                </tbody>
+              </table>
+            </form>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="p-5" style="text-align:right;">
+            <div>
+              2023.05.17
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-body p-0">
+        <!-- Nested Row within Card Body -->
+        <form action="" role="form" method="post" th:object="${memberPayInsertDto}" enctype="multipart/form-data">
+          <div class="row">
+            <div class="col-lg-6 d-none d-lg-block">
+
+              <div class="p-5">
+                <table class="table table-bordered dataTable" id="dataTable1" width="100%" cellspacing="0" role="grid" aria-describedby="dataTable_info" style="width: 100%;">
+                  <thead>
+                  <tr>
+                    <td class="font-weight-bold" colspan="2" style="text-align: center;">
+                      지급 항목
+                    </td>
+                  </tr>
+                  </thead>
+
+                  <tbody>
+                  <tr>
+                    <td class="text-primary font-weight-bold" style="vertical-align: middle;">기본급</td>
+                    <td><input oninput="calculateTotal()" onchange="this.value=formatNumber(this.value)" th:field="*{salary}" style="text-align:right;" type="text" class="form-control" placeholder="기본급을(를) 입력해주세요."></td>
+                  </tr>
+                  <tr>
+                    <td class="text-primary font-weight-bold" style="vertical-align: middle;">상여금</td>
+                    <td><input oninput="calculateTotal()" onchange="this.value=formatNumber(this.value)" th:field="*{bonus}" style="text-align:right;" type="text" class="form-control" placeholder="상여금을(를) 입력해주세요."></td>
+                  </tr>
+                  <tr>
+                    <td class="text-primary font-weight-bold" style="vertical-align: middle;">야근수당</td>
+                    <td><input oninput="calculateTotal()" onchange="this.value=formatNumber(this.value)" th:field="*{nightPay}" style="text-align:right;" type="text" class="form-control" placeholder="야근수당을(를) 입력해주세요."></td>
+                  </tr>
+                  <tr>
+                    <td class="text-primary font-weight-bold" style="vertical-align: middle;">식비</td>
+                    <td><input oninput="calculateTotal()" onchange="this.value=formatNumber(this.value)" th:field="*{foodPay}" style="text-align:right;" type="text" class="form-control" placeholder="식비을(를) 입력해주세요."></td>
+                  </tr>
+                  <tr>
+                    <td class="text-primary font-weight-bold" style="vertical-align: middle;">차량지원금</td>
+                    <td><input oninput="calculateTotal()" onchange="this.value=formatNumber(this.value)" th:field="*{carPay}" style="text-align:right;" type="text" class="form-control" placeholder="차량지원금을(를) 입력해주세요."></td>
+                  </tr>
+                  <tr>
+                    <td class="font-weight-bold">지급총액</td>
+                    <td class="font-weight-bold" name="totalPrice" id="totalPrice" style="text-align: right;">0원</td>
+                  </tr>
+                  </tbody>
+                </table>
+              </div>
+
+            </div>
+
+            <div class="col-lg-6">
+              <div class="p-5">
+                <table class="table table-bordered dataTable" id="dataTable2" width="100%" cellspacing="0" role="grid" aria-describedby="dataTable_info" style="width: 100%;">
+                  <thead>
+                  <tr>
+                    <td class="font-weight-bold" colspan="2" style="text-align: center;">
+                      공제 항목
+                    </td>
+                  </tr>
+                  </thead>
+
+                  <tbody>
+                  <tr>
+                    <td class="text-primary font-weight-bold" style="vertical-align: middle;">고용보험</td>
+                    <td><input oninput="calculateTotal2()" onchange="this.value=formatNumber2(this.value)" th:field="*{goInsurance}" style="text-align: right;" type="text" class="form-control" placeholder="고용보험을(를) 입력해주세요."></td>
+                  </tr>
+                  <tr>
+                    <td class="text-primary font-weight-bold" style="vertical-align: middle;">건강보험</td>
+                    <td><input oninput="calculateTotal2()" onchange="this.value=formatNumber2(this.value)" th:field="*{gunInsurance}" style="text-align: right;" type="text" class="form-control" placeholder="건강보험을(를) 입력해주세요."></td>
+                  </tr>
+                  <tr>
+                    <td class="text-primary font-weight-bold" style="vertical-align: middle;">산재보험</td>
+                    <td><input oninput="calculateTotal2()" onchange="this.value=formatNumber2(this.value)" th:field="*{sanInsurance}" style="text-align: right;" type="text" class="form-control" placeholder="기건강보험을(를) 입력해주세요."></td>
+                  </tr>
+                  <tr>
+                    <td class="text-primary font-weight-bold" style="vertical-align: middle;">국민연금</td>
+                    <td><input oninput="calculateTotal2()" onchange="this.value=formatNumber2(this.value)" th:field="*{kukInsurance}" style="text-align: right;" type="text" class="form-control" placeholder="국민연금을(를) 입력해주세요."></td>
+                  </tr>
+                  <tr>
+                    <td class="text-primary font-weight-bold" style="vertical-align: middle;">소득세</td>
+                    <td><input oninput="calculateTotal2()" onchange="this.value=formatNumber2(this.value)" th:field="*{incomeTax}" style="text-align: right;" type="text" class="form-control" placeholder="소득세세을(를) 입력해주세요."></td>
+                  </tr>
+                  <tr>
+                    <td class="text-primary font-weight-bold" style="vertical-align: middle;">지방소득세</td>
+                    <td><input oninput="calculateTotal2()" onchange="this.value=formatNumber2(this.value)" th:field="*{localTax}" style="text-align: right;" type="text" class="form-control" placeholder="지방소득세을(를) 입력해주세요."></td>
+                  </tr>
+                  <tr>
+                    <td class="font-weight-bold">공제총액</td>
+                    <td class="font-weight-bold" name="totalPrice2" id="totalPrice2" th:field="*{minusMoney}" style="text-align: right;">0원</td>
+                  </tr>
+                  <tr>
+                    <td class="font-weight-bold">차감지급액</td>
+                    <td class="font-weight-bold" id="deductionTotal" th:field="*{TotalMoney}" style="text-align: right;">0원</td>
+                  </tr>
+                  </tbody>
+                </table>
+                <button type="submit" class="btn btn-primary btn-user btn-block" onclick="return sweetAlert(event);">
+                  저장
+                </button>
+                <!--            보안 관련 인증 토큰을 히든 파라미터로 보내줍니다-->
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  </body>
+</div>
+</html>
