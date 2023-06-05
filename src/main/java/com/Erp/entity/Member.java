@@ -14,6 +14,8 @@ import javax.persistence.*;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity //JPA로 관리한다는 설정.
 @Table(name = "members")
@@ -68,6 +70,9 @@ public class Member extends BaseEntity {
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "member")
     private MemberImage memberImage;
 
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Income> incomes = new ArrayList<>();
+
     public static Member createid(MemberInsertDto memberInsertDto, PasswordEncoder passwordEncoder, JPAQueryFactory queryFactory){
         //입사년월
         int year = 0;
@@ -76,7 +81,7 @@ public class Member extends BaseEntity {
 
         Member member = new Member();
 
-        QMember qbean = QMember.member;
+        com.Erp.entity.QMember qbean = com.Erp.entity.QMember.member;
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         String strNowDate = memberInsertDto.getDate().format(formatter);
