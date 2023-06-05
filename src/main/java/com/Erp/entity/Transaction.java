@@ -8,7 +8,9 @@ import lombok.Setter;
 import org.modelmapper.ModelMapper;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 
 @Setter @Getter @Entity
     @Table(name = "Transactions")
@@ -32,20 +34,10 @@ import java.util.Date;
     private TransactionCategory transactionCategory; // 거래분류
 
 
-//    @Builder.Default
-//    private int draw = 1;//이 개체가 응답하는 그리기 카운터-데이터 요청의 일부로 전송 된 그리기 매개 변수
-//    @Builder.Default
-//    private int start = 0; //페이징 첫 번째 레코드 표시기. 이것은 현재 데이터 세트의 시작점
-//    @Builder.Default
-//    private int length = 10; //테이블이 현재 그리기에서 표시 할 수있는 레코드 수
-//    @Builder.Default
-//    private int page = 0; //페이징수 - 실제 jpa 검색시에는 페이징 번호를 통해 검색
-//
-//    public int getPage(){
-//        page = (start/length);
-//        return page;
-//    }
 
+    @OneToOne
+    @JoinColumn(name = "transaction")
+    private WarehousingInAndOut warehousingInAndOut;
 
 
     private static ModelMapper modelMapper =  new ModelMapper();

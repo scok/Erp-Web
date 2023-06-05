@@ -2,13 +2,20 @@ package com.Erp.service;
 
 import com.Erp.dto.TransactionDto;
 import com.Erp.entity.Transaction;
+import com.Erp.entity.WarehousingInAndOut;
 import com.Erp.repository.MemberRepository;
 import com.Erp.repository.TransactionRepository;
 import lombok.RequiredArgsConstructor;
+import org.junit.jupiter.api.Test;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -19,6 +26,24 @@ public class TransactionService {
     private final MemberRepository memberRepository ;
 
 
+    public void inAndOut(WarehousingInAndOut warehousingInAndOut) {
+
+        Transaction transaction = new Transaction();
+
+        LocalDateTime inAndOutDateTime = warehousingInAndOut.getInAndOutDate();
+        Instant instant = inAndOutDateTime.atZone(ZoneId.systemDefault()).toInstant();
+        Date trDate = Date.from(instant);
+
+        transaction.setTrDate(trDate);
+        transaction.setCompanyName(warehousingInAndOut.getOrderSheetDetail().getOrderSheet().getAccount().getAcName());
+        transaction.setAmount(warehousingInAndOut.getOrderSheetDetail().getOsSupplyValue()+warehousingInAndOut.getOrderSheetDetail().getOsTaxAmount());
+        transaction.setRemark("fff");
+        transaction.setQuarter(4);
+
+
+        transactionRepository.save(transaction);
+
+    }
 
     public Long saveTransaction(TransactionDto dto){
 
@@ -87,6 +112,7 @@ public class TransactionService {
 
         return transactionDtos ;
     }
+
 
 
 }

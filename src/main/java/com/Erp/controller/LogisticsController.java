@@ -26,6 +26,7 @@ public class LogisticsController {
     private final LogisticsService logisticsService;
     private final SectionService sectionService;
     private final InventorService inventorService;
+    private final TransactionService transactionService ;
 
     //입하 관리 페이지 접속시 구매처 정보 바인딩
     @GetMapping(value = "/buyOrderSheet/list")
@@ -88,6 +89,10 @@ public class LogisticsController {
                 if(section.getSecMaxCount() > secTotalCount){ //창고의 맥스 수량보다 많이 입고 시킬시 감지
                     WarehousingInAndOut warehousingInAndOut = WarehousingInAndOut.of(orderSheet,orderSheetDetail,section,data.get("SACategory"));
                     warehousingInAndOut = logisticsService.WarehousingSave(warehousingInAndOut);
+
+
+                    //거래처 서비스로직 구현
+                    transactionService.inAndOut(warehousingInAndOut);
 
                     Inventory inventory = inventorService.inventorService(section.getSecCode(),warehousingInAndOut.getStackAreaCategory(),orderSheetDetail.getProduct().getPrCode());
 

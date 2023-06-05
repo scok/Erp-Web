@@ -32,6 +32,7 @@ public class TransactionController {
     @PostMapping(value = "/transaction/data")
     @ResponseBody
     public ResponseEntity<TransactionData> getTransactionData(TransactionData response , @RequestBody MultiValueMap<String, String> formData, @Param("start") int start,@Param("length")  int length) {
+
         int draw = Integer.parseInt(formData.get("draw").get(0));
         int num = Integer.parseInt(formData.get("searchType").get(0));
         String nameParam = formData.get("columns["+num+"][search][value]").get(0);
