@@ -1,6 +1,5 @@
 package com.Erp.entity;
 
-import com.Erp.entity.BaseTimeEntity;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedBy;
@@ -20,7 +19,7 @@ public abstract class BaseEntity extends BaseTimeEntity {
 
     @LastModifiedBy //엔터티 수정시 수정자의 id를 기록할게요.
     private String modifieBy; //수정자
-    
+
 
 
 }
