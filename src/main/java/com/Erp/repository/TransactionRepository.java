@@ -24,7 +24,9 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
             "t.transactionCategory LIKE %:nameParam% ")
     long countByName(@Param("nameParam") String nameParam);
 
-    //
+
+
+
 
     @Query( "SELECT t FROM Transaction t WHERE  " +
             "t.companyName LIKE %:nameParam% OR " +
@@ -32,11 +34,11 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
             "t.trDate LIKE %:nameParam% OR " +
             " CAST(t.quarter AS string) = :nameParam OR " +
             "t.remark LIKE %:nameParam% OR " +
-            "t.transactionCategory LIKE %:nameParam%")
+            "t.transactionCategory LIKE %:nameParam%    ")
     List<Transaction> findDataByName(@Param("nameParam") String nameParam, Pageable pageable);
 
 
-    @Query("SELECT t FROM Transaction t WHERE CAST(t.id AS string) = :nameParam")
+    @Query("SELECT t FROM Transaction t WHERE CAST(t.id AS string) = :nameParam ")
     List<Transaction> findcompanyNum(String nameParam, Pageable pageable);
 
 //    @Query("SELECT t FROM Transaction t WHERE CAST(t.id AS string) = :nameParam")
@@ -58,6 +60,5 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     @Query("select t.trDate, t.amount ,t.companyName from Transaction t where t.companyName like :companyName order by t.trDate")
     List<Object[]> findDateAndAmount(@Param("companyName") String companyName);
 
-    @Query("select t from Transaction t ")
-    List<Transaction> findData(int start, int length);
+
 }

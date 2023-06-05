@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -31,10 +32,12 @@ public class TransactionController {
 
     @PostMapping(value = "/transaction/data")
     @ResponseBody
-    public ResponseEntity<TransactionData> getTransactionData(@RequestParam MultiValueMap<String, String> formData) {
+    public ResponseEntity<TransactionData> getTransactionData(TransactionData response , @RequestBody MultiValueMap<String, String> formData, @Param("start") int start,@Param("length")  int length) {
         int draw = Integer.parseInt(formData.get("draw").get(0));
-        int start = Integer.parseInt(formData.get("start").get(0));
-        int length = Integer.parseInt(formData.get("length").get(0));
+//        int start = Integer.parseInt(formData.get("start").get(0));
+//
+//
+//        int length = Integer.parseInt(formData.get("length").get(0));
         int num = Integer.parseInt(formData.get("searchType").get(0));
         String nameParam = formData.get("columns["+num+"][search][value]").get(0);
 
@@ -43,47 +46,51 @@ public class TransactionController {
 
         String orderColumnIndex = orderColumnIndexList != null && !orderColumnIndexList.isEmpty() ? orderColumnIndexList : null;
         String orderDir = orderDirList != null  ? orderDirList : null;
-
-        int page = start / length;
-        int size = length;
+        System.out.println("start : " + start);
+        int page = start / length ;
+        System.out.println("page : " + page);
 
         Pageable pageable;
 
         if (orderColumnIndex != null && orderDir != null) {
             int columnIndex = Integer.parseInt(orderColumnIndex);
             Sort.Direction direction = orderDir.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
-            String columnName = transactionService.getColumnNameByIndex(columnIndex); // 컬럼 인덱스를 컬럼 이름으로 변환하여 사용
+            String columnName = transactionService.getColumnNameByIndex(columnIndex);
+            // 컬럼 인덱스를 컬럼 이름으로 변환하여 사용
 
-            pageable = PageRequest.of(page, size, direction, columnName);
+            pageable = PageRequest.of(page, length, direction, columnName);
         } else {
-            pageable = PageRequest.of(page, size);
+            pageable = PageRequest.of(page, length);
         }
-
         int total;
         List<Transaction> data;
 
         if (nameParam != null && !nameParam.isEmpty()) {
 
             if(num==0){
-                total = (int) transactionRepository.countByName(nameParam);
-                data = transactionRepository.findcompanyNum(nameParam, pageable);
+                total = (int) transactionRepository.count();
+                data = transactionRepository.findcompanyNum(nameParam,pageable);
             }else {
-                total = (int) transactionRepository.countByName(nameParam);
+                total = (int)transactionRepository.countByName(nameParam);
                 data = transactionRepository.findDataByName(nameParam, pageable);
             }
 
         } else {
-            total = (int) transactionRepository.count();
+            total = (int)transactionRepository.count();
             data = transactionRepository.findAllData(pageable);
         }
+//   total = (int) Math.ceil((double) transactionRepository.count() / length);
+        System.out.println("getOffset : " +pageable.getOffset());
+        System.out.println("getPageSize : " +pageable.getPageSize());
+        System.out.println("total : " +total);
+        System.out.println("draw : " +draw);
 
 
-
-        TransactionData response = new TransactionData();
         response.setDraw(draw);
         response.setData(data);
         response.setRecordTotal(total);
         response.setRecordFiltered(total);
+
 
         return ResponseEntity.ok(response);
     }
@@ -100,15 +107,10 @@ public class TransactionController {
             Date trDate = (Date)obj[0];
             Long amount = (Long)obj[1];
             String companyNames = (String)obj[2];
-
-
-
             Transaction transaction = new Transaction();
             transaction.setTrDate(trDate);
             transaction.setAmount(amount);
             transaction.setCompanyName(companyNames);
-
-
             transactionList.add(transaction);
         }
         return ResponseEntity.ok(transactionList);
@@ -139,26 +141,6 @@ public class TransactionController {
 
 
 
-//    @GetMapping(value = "/transaction/chart")
-//    public @ResponseBody List<Transaction> getTransactionDataList(){
-//        List<Object[]> data = transactionRepository.findTrDataList();
-//        List<Transaction> transactions = new ArrayList<>();
-//
-//        for (Object[] obj : data) {
-//            Date trDate = (Date)obj[0];
-//            Long amount = (Long)obj[1];
-//
-//            Transaction transaction = new Transaction();
-//            transaction.setTrDate(trDate);
-//            transaction.setAmount(amount);
-//
-//            transactions.add(transaction);
-//        }
-//
-//        return transactions;
-//    }
-
-
     @GetMapping(value = "/transaction/form")
     public String datatableTran(){
 
@@ -178,7 +160,7 @@ public class TransactionController {
             transactionService.saveTransaction(dto);
         }catch (Exception e){
             e.printStackTrace();
-            model.addAttribute("errorMessage","이야야야야");
+            model.addAttribute("errorMessage","올바른 접근이 아닙니다.");
             return "/financial/transactionEx";
         }
         return "redirect:/";

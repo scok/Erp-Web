@@ -1,16 +1,14 @@
 package com.Erp.service;
 
 import com.Erp.dto.TransactionDto;
-import com.Erp.entity.Income;
 import com.Erp.entity.Transaction;
-import com.Erp.repository.IncomeRepository;
+import com.Erp.repository.MemberRepository;
 import com.Erp.repository.TransactionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 @Service
@@ -18,41 +16,16 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TransactionService {
     private final TransactionRepository transactionRepository ;
-    private final IncomeRepository incomeRepository;
-    private final IncomeService incomeService;
+    private final MemberRepository memberRepository ;
+
 
 
     public Long saveTransaction(TransactionDto dto){
 
         Transaction transaction = dto.getTransaction();
+        transactionRepository.save(transaction);
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(dto.getTrDate());
-        int year = calendar.get(Calendar.YEAR);
-
-        Income income = incomeRepository.findIncomeYearAndQuarter((short)year ,dto.getQuarter());
-
-        if(income != null){
-            transaction.setIncome(income);
-            transactionRepository.save(transaction);
-
-            List<Transaction> transactions = income.getTransactions();
-
-            if(transactions.size() == 0){
-                transactions = new ArrayList<>();
-            }
-            transactions.add(transaction);
-
-            income.setTransactions(transactions);
-
-            incomeService.updateTotalData(income, income.getTransactions());
-
-            incomeRepository.save(income);
-        }else {
-            transactionRepository.save(transaction);
-        }
-
-        return transaction.getId();
+        return transaction.getId().longValue();
     }
 
     public String getColumnNameByIndex(int columnIndex) {
