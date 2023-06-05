@@ -15,4 +15,5 @@ public class MemberImageDto {
 
     private String imageUrl; //이미지 저장 주소
 
+    private String member_id;
 }
