@@ -20,7 +20,6 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class IncomeService {
-
     private final IncomeRepository incomeRepository;
     private final TransactionRepository transactionRepository;
     private final MemberRepository memberRepository;

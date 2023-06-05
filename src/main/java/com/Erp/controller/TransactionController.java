@@ -29,15 +29,10 @@ public class TransactionController {
     private final TransactionRepository transactionRepository ;
 
 
-
     @PostMapping(value = "/transaction/data")
     @ResponseBody
     public ResponseEntity<TransactionData> getTransactionData(TransactionData response , @RequestBody MultiValueMap<String, String> formData, @Param("start") int start,@Param("length")  int length) {
         int draw = Integer.parseInt(formData.get("draw").get(0));
-//        int start = Integer.parseInt(formData.get("start").get(0));
-//
-//
-//        int length = Integer.parseInt(formData.get("length").get(0));
         int num = Integer.parseInt(formData.get("searchType").get(0));
         String nameParam = formData.get("columns["+num+"][search][value]").get(0);
 
@@ -46,9 +41,9 @@ public class TransactionController {
 
         String orderColumnIndex = orderColumnIndexList != null && !orderColumnIndexList.isEmpty() ? orderColumnIndexList : null;
         String orderDir = orderDirList != null  ? orderDirList : null;
-        System.out.println("start : " + start);
+
         int page = start / length ;
-        System.out.println("page : " + page);
+
 
         Pageable pageable;
 
@@ -79,11 +74,6 @@ public class TransactionController {
             total = (int)transactionRepository.count();
             data = transactionRepository.findAllData(pageable);
         }
-//   total = (int) Math.ceil((double) transactionRepository.count() / length);
-        System.out.println("getOffset : " +pageable.getOffset());
-        System.out.println("getPageSize : " +pageable.getPageSize());
-        System.out.println("total : " +total);
-        System.out.println("draw : " +draw);
 
 
         response.setDraw(draw);

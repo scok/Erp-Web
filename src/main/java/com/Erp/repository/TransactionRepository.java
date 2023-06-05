@@ -13,7 +13,6 @@ import java.util.List;
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
 
 
-
     @Query( "SELECT count(t) FROM Transaction t WHERE " +
             "CAST(t.id AS string) = :nameParam OR " +
             "t.companyName LIKE %:nameParam% OR " +
@@ -23,9 +22,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
             "t.remark LIKE %:nameParam% OR " +
             "t.transactionCategory LIKE %:nameParam% ")
     long countByName(@Param("nameParam") String nameParam);
-
-
-
 
 
     @Query( "SELECT t FROM Transaction t WHERE  " +
@@ -40,9 +36,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 
     @Query("SELECT t FROM Transaction t WHERE CAST(t.id AS string) = :nameParam ")
     List<Transaction> findcompanyNum(String nameParam, Pageable pageable);
-
-//    @Query("SELECT t FROM Transaction t WHERE CAST(t.id AS string) = :nameParam")
-//    List<Transaction> findcompanyNum(String nameParam, Pageable pageable);
 
 
     @Query("SELECT t FROM Transaction t ")
