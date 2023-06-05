@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{common/sidebar}"
+>
+
+<head>
+    <meta charset="utf-8"/>
+    <title>창고 목록</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta th:if="${_csrf}" name="_csrf" th:content="${_csrf.token}"/>
+    <meta th:if="${_csrf}" name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <meta th:if="${_csrf}" name="_csrf_parameter" th:content="${_csrf.parameterName}"/>
+</head>
+
+<th:block layout:fragment="script">
+    <script th:src="@{/js/sectionForm.js}"></script>
+    <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/select/1.3.3/js/dataTables.select.min.js"></script>
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+</th:block>
+
+<th:block layout:fragment="css">
+    <link th:href="@{/css/distributionCenter.css}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" herf="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.8.8/semantic.min.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.semanticui.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/select/1.3.3/css/select.dataTables.min.css" />
+</th:block>
+
+
+<div class="content" layout:fragment="content" id="content">
+    <div id="dataTables">
+        <h2 id="title">창고 목록</h2>
+        <button type="button" id="updateBtn" onclick="update()">수정</button>
+        <button type="button" id="btn-modal">등록</button>
+        <button type="button" id="deleteBtn" onclick="deletePageN()">삭제</button>
+
+        <table id="myTable" style="width:100%;" class="display">
+            <thead>
+                <tr>
+                    <th><input type="checkbox" name="checkall" id="checkall"></th>
+                    <th>분류</th>
+                    <th>창고명</th>
+                    <th>현재 적재량</th>
+                    <th>최대 적재량</th>
+                    <th>용적률</th>
+                    <th>주소</th>
+                </tr>
+            </thead>
+        </table>
+
+        <div id="modal" class="modal-overlay">
+            <div class="modal-window">
+                <div class="title">
+                    <h2>창고 관리</h2>
+                </div>
+
+                <div class="close-area">X</div>
+
+                <form action="/section/addSection" method="post" role="form" id="myForm" name="myForm">
+                    <div id="container">
+
+                        <div id="box-left">
+                            <p>분류<br/>
+                                <select class="form-select" id="secCategorySel" name="secCategory">
+                                    <option value="">==분류 선택==</option>
+                                    <option th:each="secCategoryVal : ${T(com.Erp.constant.SectionCategory).values()}"
+                                            th:value="${secCategoryVal.name()}"
+                                            th:text="${secCategoryVal.name()}">
+                                    </option>
+                                </select>
+                            </p>
+
+                            <p>창고명<br/>
+                                <input id="secName" name="secName"type="text">
+                            </p>
+                            <p>최대 적재 수량<br/>
+                                <input id="secMaxCount" name="secMaxCount" type="text">
+                            </p>
+                            <p>창고 주소<br/>
+                                <input id="secAddress" name="secAddress" type="text">
+                            </p>
+                            <input id="secCode" name="secCode" type="hidden">
+                            <button id="saveBtn" onclick="addSection()" type="button">저장하기</button>
+                        </div>
+
+
+                        <div id="box-right">
+
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+</div>
+</div>
+</html>

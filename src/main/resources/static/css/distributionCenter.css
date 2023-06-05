@@ -1,0 +1,292 @@
+/*배경색 설정*/
+body{
+    background-color:#4e73df;
+}
+/*전체 틀 설정.*/
+#content{
+    margin:auto;
+    width:90%;
+    height:100%;
+    background-color:white;
+    border-radius: 0.35rem;
+}
+
+/*전체틀 안에 영역 설정.*/
+#dataTables{
+    margin:auto;
+    width:90%;
+    background-color:white;
+}
+/*제목 텍스트 설정*/
+#title{
+    text-align:center;
+}
+
+/*input 태그 스타일링*/
+input {
+    width: 100%;
+    padding: 10px 20px;
+    margin: 5px 0;
+    box-sizing: border-box;
+    border: solid 1px black;
+    -webkit-transition: 0.5s;
+    transition: 0.5s;
+    outline: none;
+    border-radius: 5px;
+}
+input[type="text"]:focus { background-color: #E0FFFF; }
+
+/*모달 css 설정*/
+#modal.modal-overlay {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    margin: auto;
+    margin-top:20px;
+    margin-bottom:20px;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.25);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    backdrop-filter: blur(1.5px);
+    -webkit-backdrop-filter: blur(1.5px);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+}
+#modal .modal-window {
+    border-radius: 10px;
+    width: 100%;
+    height: 100%;
+    top: -100px;
+    padding: 10px;
+}
+#modal .title {
+    padding-left: 10px;
+    display: inline;
+}
+#modal .title h2 {
+    display: inline;
+}
+#modal .close-area {
+    display: inline;
+    float: right;
+    padding-right: 10px;
+    cursor: pointer;
+}
+#modal .content {
+    margin-top: 20px;
+    padding: 0px 10px;
+}
+
+#container {
+    display: flex;
+    margin-top:5px;
+}
+#box-left {
+    padding-left: 10px;
+    flex: 1;
+}
+#box-center {
+    padding-left: 10px;
+    flex: 1;
+}
+#box-right {
+    padding-left: 10px;
+    flex: 1;
+}
+
+/*데이터 테이블스 css 설정*/
+table {
+  border: 1px #a39485 solid;
+  font-size: .9em;
+  box-shadow: 0 2px 5px rgba(0,0,0,.25);
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 5px;
+}
+
+th {
+  text-align: left;
+}
+
+thead {
+  font-weight: bold;
+  color: #fff;
+  background: #73685d;
+}
+
+ td, th {
+  padding: 1em .5em;
+  vertical-align: middle;
+}
+
+ td {
+  border-bottom: 1px solid rgba(0,0,0,.1);
+  background: #fff;
+}
+
+a {
+  color: #73685d;
+}
+
+ @media all and (max-width: 768px) {
+  table, thead, tbody, th, td, tr {
+    display: block;
+  }
+
+  th, td {
+    text-align: left;
+    border-bottom: 1px solid #a39485;
+  }
+}
+}
+
+/*라디오 체크 버튼 스타일*/
+.radioDiv {
+    padding: 15px 10px;
+}
+.divisionStatus input[type=radio]{
+    display: none;
+}
+.divisionStatus input[type=radio]+label{
+    display: inline-block;
+    cursor: pointer;
+    height: 24px;
+    width: 90px;
+    border: 1px solid #333;
+    line-height: 24px;
+    text-align: center;
+    font-weight:bold;
+    font-size:13px;
+}
+.divisionStatus input[type=radio]+label{
+    background-color: #fff;
+    color: #333;
+}
+.divisionStatus input[type=radio]:checked+label{
+    background-color: #333;
+    color: #fff;
+}
+
+/*버튼 스타일링*/
+#updateBtn {
+    box-shadow:inset 0px 39px 0px -50px #e67a73;
+    background-color:#4682B4;
+    border-radius:5px;
+    border:1px solid #4682B4;
+    display:inline-block;
+    cursor:pointer;
+    color:#FFFFFF;;
+    font-family:Arial;
+    font-size:15px;
+    padding:5px 15px;
+    text-decoration:none;
+    text-shadow:0px 1px 0px #b23e35;
+    margin-bottom:10px;
+}
+#saveBtn {
+    box-shadow:inset 0px 39px 0px -50px #e67a73;
+    background-color:#3CB371;
+    border-radius:5px;
+    border:1px solid #3CB371;
+    display:inline-block;
+    cursor:pointer;
+    color:#FFFFFF;;
+    font-family:Arial;
+    font-size:15px;
+    padding:5px 15px;
+    text-decoration:none;
+    text-shadow:0px 1px 0px #b23e35;
+    margin-bottom:10px;
+}
+#deleteBtn {
+    box-shadow:inset 0px 39px 0px -50px #e67a73;
+    background-color:#FF0000;
+    border-radius:5px;
+    border:1px solid #FF0000;
+    display:inline-block;
+    cursor:pointer;
+    color:#FFFFFF;;
+    font-family:Arial;
+    font-size:15px;
+    padding:5px 15px;
+    text-decoration:none;
+    text-shadow:0px 1px 0px #b23e35;
+    margin-bottom:10px;
+}
+#btn-modal{
+    box-shadow:inset 0px 39px 0px -50px #e67a73;
+    background-color:#8B008B;
+    border-radius:5px;
+    border:1px solid #8B008B;
+    display:inline-block;
+    cursor:pointer;
+    color:#FFFFFF;;
+    font-family:Arial;
+    font-size:15px;
+    padding:5px 15px;
+    text-decoration:none;
+    text-shadow:0px 1px 0px #b23e35;
+    margin-bottom:10px;
+}
+
+/* 탭 전체 스타일 */
+.tabs {
+  margin-top: 50px;
+  padding-bottom: 0px;
+  background-color: #ffffff;
+/*  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);*/
+  width: 100%;
+/*  margin: 0 auto;*/
+}
+
+/* 탭 스타일 */
+.tab_item {
+  width: calc(100%/2);
+  height: 50px;
+  border-bottom: 3px solid #333333;
+  background-color: #f8f8f8;
+  line-height: 50px;
+  font-size: 16px;
+  text-align: center;
+  color: #333333;
+  display: block;
+  float: left;
+  text-align: center;
+  font-weight: bold;
+  transition: all 0.2s ease;
+}
+.tab_item:hover {
+  opacity: 0.75;
+}
+
+/* 라디오 버튼 UI삭제*/
+input[name="tab_item"] {
+  display: none;
+}
+
+/* 탭 컨텐츠 스타일 */
+.tab_content {
+  display: none;
+  padding: 10px 0px 0;
+  clear: both;
+  overflow: hidden;
+}
+
+
+/* 선택 된 탭 콘텐츠를 표시 */
+#all:checked ~ #all_content,
+#programming:checked ~ #programming_content,
+#design:checked ~ #design_content {
+  display: block;
+}
+
+/* 선택된 탭 스타일 */
+.tabs input:checked + .tab_item {
+  background-color: #333333;
+  color: #fff;
+}
+
+
