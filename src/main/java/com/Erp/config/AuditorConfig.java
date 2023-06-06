@@ -14,6 +14,4 @@ public class AuditorConfig {
         return new AuditorAwareImpl();
     }
 
-
-
 }
