@@ -113,18 +113,21 @@ public class LogisticsController {
                 }
             }else if(data.get("divisionStatus").equals("출고")){
                 secTotalCount = section.getSecTotalCount() -orderSheetDetail.getOsQuantity();
-                if(orderSheetDetail.getOsQuantity() < secTotalCount){ //창고의 맥스 수량보다 많이 입고 시킬시 감지
+//                if(orderSheetDetail.getOsQuantity() < secTotalCount){ //창고의 맥스 수량보다 많이 입고 시킬시 감지
                     WarehousingInAndOut warehousingInAndOut = WarehousingInAndOut.of(orderSheet,orderSheetDetail,section,data.get("SACategory"));
                     warehousingInAndOut = logisticsService.WarehousingSave(warehousingInAndOut);
+
+                    //거래처 서비스로직 구현
+                    transactionService.inAndOut(warehousingInAndOut);
 
                     Inventory inventory = inventorService.inventorService(section.getSecCode(),warehousingInAndOut.getStackAreaCategory(),orderSheetDetail.getProduct().getPrCode());
 
                     int inQuantity = inventory.getInQuantity() - orderSheetDetail.getOsQuantity();
                     inventorService.updateInQuantity(inventory,inQuantity);
-                }else{
-                    message ="창고에 재고가 없습니다.";
-                    throw new RuntimeException(message);
-                }
+//                }else{
+//                    message ="창고에 재고가 없습니다.";
+//                    throw new RuntimeException(message);
+//                }
             }
 
         }

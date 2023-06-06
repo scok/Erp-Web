@@ -1,5 +1,7 @@
 package com.Erp.service;
 
+import com.Erp.constant.DivisionStatus;
+import com.Erp.constant.TransactionCategory;
 import com.Erp.dto.TransactionDto;
 import com.Erp.entity.Transaction;
 import com.Erp.entity.WarehousingInAndOut;
@@ -27,9 +29,8 @@ public class TransactionService {
 
 
     public void inAndOut(WarehousingInAndOut warehousingInAndOut) {
-
         Transaction transaction = new Transaction();
-
+        //LocalDateTime -> Date 형변환
         LocalDateTime inAndOutDateTime = warehousingInAndOut.getInAndOutDate();
         Instant instant = inAndOutDateTime.atZone(ZoneId.systemDefault()).toInstant();
         Date trDate = Date.from(instant);
@@ -37,13 +38,34 @@ public class TransactionService {
         transaction.setTrDate(trDate);
         transaction.setCompanyName(warehousingInAndOut.getOrderSheetDetail().getOrderSheet().getAccount().getAcName());
         transaction.setAmount(warehousingInAndOut.getOrderSheetDetail().getOsSupplyValue()+warehousingInAndOut.getOrderSheetDetail().getOsTaxAmount());
-        transaction.setRemark("fff");
-        transaction.setQuarter(4);
+        transaction.setRemark(" ");
 
+        if (warehousingInAndOut.getDivisionStatus()==DivisionStatus.입고){
+            transaction.setTransactionCategory(TransactionCategory.INS);
+        }else{
+            transaction.setTransactionCategory(TransactionCategory.OUTS);
+        }
+
+        int month =inAndOutDateTime.getMonthValue();
+        int quarter ;
+
+        if (1 <= month && 3 >= month){
+            quarter = 1 ;
+        }else if (4 <= month && 6 >= month){
+            quarter = 2 ;
+        }else if (7 <= month && 9 >= month){
+            quarter = 3 ;
+        }else {
+            quarter = 4 ;
+        }
+
+        transaction.setQuarter(quarter);
 
         transactionRepository.save(transaction);
 
     }
+
+
 
     public Long saveTransaction(TransactionDto dto){
 

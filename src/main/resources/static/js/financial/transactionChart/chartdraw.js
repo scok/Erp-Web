@@ -159,13 +159,12 @@ var token = $('meta[name="_csrf"]').attr('content');
                     });
                 }
                 //팝업 end
+
+                //버튼 클릭 start
             $('.btn-example').click(function(){
 
-
             var $href = $(this).attr('href');
-            console.log('$href : '+$href);
             layer_popup($href);
-
 
                 // 월별 차트 작성 start
               $.ajax({
@@ -175,13 +174,49 @@ var token = $('meta[name="_csrf"]').attr('content');
                 success: function(data){
                 var aggregatedData = {};
                     for(let bean of data){
+
+                      var transactionCategory = bean.transactionCategory ;
+
+                      console.log(transactionCategory);
+                      if (transactionCategory === "INS") {
+                          transactionCategory = "입고";
+                      } else if (transactionCategory === "OUTS") {
+                          transactionCategory = "출고";
+                      }
+
+                       $('#select_box03').append($('<option>', {
+                           value: transactionCategory,
+                           text: transactionCategory
+                         }));
+
                     var selectcomName = $('#select_box01').val();
 
                      var ComName = bean.companyName ;
 
-
+                    $('#select_box03').empty();
                     $('#select_box01').empty();
                     $('#select_box02').empty();
+
+                    var selectBox03 = $('#select_box03');
+                    var selectBox01 = $('#select_box01');
+                    var selectBox02 = $('#select_box02');
+
+                     selectBox03.append($('<option>', {
+                          value: '',
+                          text: '거래분류'
+                    }));
+
+                    selectBox01.append($('<option>', {
+                      value: '',
+                      text: '거래처명'
+                    }));
+                    selectBox02.append($('<option>', {
+                          value: '',
+                          text: '연도'
+                    }));
+
+
+
                     //if start
                     if(ComName==selectcomName){
 
@@ -252,18 +287,7 @@ var token = $('meta[name="_csrf"]').attr('content');
 
 
                     var uniqueCompanies = [];
-                    var selectBox01 = $('#select_box01');
-                    var selectBox02 = $('#select_box02');
 
-
-                    selectBox01.append($('<option>', {
-                      value: '',
-                      text: '거래처명'
-                    }));
-                    selectBox02.append($('<option>', {
-                          value: '',
-                          text: '연도'
-                    }));
 
                     $.each(data,function(index,company){
 

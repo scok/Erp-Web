@@ -3,23 +3,9 @@
              var header = $('meta[name="_csrf_header"]').attr('content');
 
 
-         //데이터 테이블 start
-         $.fn.dataTable.ext.search.push(
-            function(settings, data, dataIndex){
-                var min = Date.parse($('#fromDate').val());
-                var max = Date.parse($('#toDate').val());
-                var targetDate = Date.parse(data[3]);
 
-                if( (isNaN(min) && isNaN(max) ) ||
-                    (isNaN(min) && targetDate <= max )||
-                    ( min <= targetDate && isNaN(max) ) ||
-                    ( targetDate >= min && targetDate <= max) ){
-                        return true;
-                }
-                return false;
-            }
-         );
 
+            //데이터 테이블 start
           if (!$.fn.DataTable.isDataTable('#myTable')) {
 
 
@@ -35,19 +21,37 @@
                     },
                     "data": function (d) {
 
-
                         d.searchType = $("#searchType").val();
                         d.searchValue = $("#searchValue").val();
-
                         d.columnIndex = d.order[0].column;
                         d.orderDir = d.order[0].dir;
-
-
-
                     },
                   "dataSrc": function (response) {
                       var dataDate = response.data;
-                        console.log('response.total' + response.recordTotal);
+
+                      for (var i = 0; i < dataDate.length; i++) {
+                          // TransactionCategory 값을 문자열로 변환하여 할당
+                          if (dataDate[i].transactionCategory === "INS") {
+                              dataDate[i].transactionCategory = "입고";
+                          } else if (dataDate[i].transactionCategory === "OUTS") {
+                              dataDate[i].transactionCategory = "출고";
+                          }
+                      }
+
+
+                        var numberFormatter = new Intl.NumberFormat('en-US');
+
+                        for (var i = 0; i < dataDate.length; i++) {
+
+                            // amount 값을 포맷팅하여 할당
+                            var formattedAmount = numberFormatter.format(dataDate[i].amount);
+                            dataDate[i].amount = formattedAmount;
+
+                        }
+
+
+
+
                         for (var i = 0; i < dataDate.length; i++) {
                         var dateItem = new Date(dataDate[i].trDate) ;
 
@@ -58,6 +62,8 @@
 
                         var formatDate = Year + "-"+ month + "-"+day;
                         dataDate[i].trDate = formatDate ;
+
+
 
 
                         response.draw = response.draw;

@@ -9,557 +9,135 @@
     <title>Title</title>
     <meta name="_csrf" th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.23/datatables.min.css"/>
-    <script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
-    <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.23/datatables.min.js"></script>
-
-    <script type="text/javascript" src=" https://cdn.datatables.net/buttons/1.5.2/js/dataTables.buttons.min.js"></script>
-    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.html5.min.js"></script>
-
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.dataTables.min.css">
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.2/css/uikit.min.css">
-
+    <link th:href="@{/css/transaction.css}" rel="stylesheet">
 
     <th:block layout:fragment="script">
-        <script th:src="@{/js/financial/transactionChart/Popup.js}"></script>
-        <script th:src="@{/js/financial/transactionChart/chartJs.js}"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+        <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.23/datatables.min.js"></script>
+        <script type="text/javascript" src=" https://cdn.datatables.net/buttons/1.5.2/js/dataTables.buttons.min.js"></script>
+        <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.html5.min.js"></script>
         <script th:src="@{/js/financial/transactionChart/chartdraw.js}"></script>
         <script th:src="@{/js/financial/transactionChart/SelectBox.js}"></script>
-
         <script th:src="@{/js/financial/transactionDataTable/Transactiontable.js}"></script>
-
-
     </th:block>
-<th:block layout:fragment="css">
-    <style>
-    body{
-        display:grid;
-        font-family: Nunito,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
-    }
-
-
-     .content{
-          padding-left: 1.5rem;
-
-    padding-top: 1.5rem;
-    padding-right: 1.5rem;
-        }
-
-    input[type='date']::before {
-      content: attr(data-placeholder);
-      width: 100%;
-    }
-
-    .row {
-        display: block;
-        flex-wrap: wrap;
-        margin-right: 5.25rem;
-        margin-left: 5.25rem;
-        margin-top: 3.25rem;
-        margin-bottom: 15.25rem;
-    }
-
-
-    .bg-gradient-Light {
-    background-color: #F5F5F5;
-    background-image: linear-gradient(180deg,#F5F5F5 30%,#4e73df 100%);
-    background-size: cover;
-    margin: -1px;
-    }
-    .o-hidden {
-    overflow: hidden!important;
-    }
-    .mb-5, .my-5 {
-        margin-bottom: 19rem!important;
-    }
-    .mt-5, .my-5 {
-        margin-top: 1rem!important;
-    }
-    .shadow-lg {
-        box-shadow: 0 1rem 3rem rgba(0,0,0,.175)!important;
-    }
-    .border-0 {
-        border: 0!important;
-    }
-    .card{
-              height: 70vh !important;
-            position:relative;
-             display: grid;
-            flex-direction: column;
-            min-width:0;
-            word-wrap:break-word;
-            background-color:#fff;
-            background-clip:border-box;
-            border:0px solid #e3e6f0;
-            border-radius:.35rem;
-             display: flex;
-
-
-    }
-
-    .blueBtn {
-      background-color: #4CAF50; /* Green */
-      border: none;
-      color: white;
-      padding: 7px;
-      text-align: center;
-      text-decoration: none;
-      display: inline-block;
-      font-size: 14px;
-      margin: 4px -1px;
-      cursor: pointer;
-      border-radius: 4px;
-    }
-
-
-    #myTable{
-
-           height: 300px;
-  overflow: auto; /* 내용이 넘칠 때 스크롤 표시 */
-
-    }
-    #select {
-     width:90px;
-     padding:3px;
-     border:1px solid #999;
-     font-family:'Nanumgothic';
-     border-radius:3px;
-
-    }
-     select::-ms-expand {
-       display: none;
-    }
-
-    /* page button */
-    .dataTables_wrapper .dataTables_paginate .paginate_button.current {
-        background: #4e73df;
-        color: white !important;
-
-    }
-
-    .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
-        background: linear-gradient(to bottom, #585858 0%, #111 100%);
-        color: white !important;
-    }
-
-    table.dataTable tbody  {
-        transition-duration: .28s;
-        transition-timing-function: cubic-bezier(.4, 0, .2, 1);
-        transition-property: background-color;
-          max-height: 300px;
-        overflow: auto; /* 내용이 넘칠 때 스크롤 표시 */
-        height : 350 px ;
-    }
-
-    table.dataTable.display tbody tr.odd>.sorting_1,
-    table.dataTable.order-column.stripe tbody tr.odd>.sorting_1,
-    table.dataTable.display tbody tr.even>.sorting_1,
-    table.dataTable.order-column.stripe tbody tr.even>.sorting_1,
-    table.dataTable.hover tbody tr:hover,
-    table.dataTable.display tbody tr:hover {
-        background: #E1F5FE;
-    }
-
-    .dataTables_paginate paging_simple_numbers{
-        width: 10px;
-        height : 10px ;
-
-    }
-    .dataTables_wrapper{
-
-    position: inherit;
-
-
-    }
-    .dataTables_paginate{
-
-    }
-
-    /*팝업창 css*/
-
-    #chartTable{
-        height : 400px ;
-        width: 100%;
-    }
-    .pop-conts{
-
-        margin-bottom: 10px ;
-    }
-
-    .btn-example{
-          background-color: #4e73df;
-    border: none;
-    color: white;
-    padding: revert;
-    text-align: center;
-    width: auto;
-    height: 1.95rem;
-    text-decoration: none;
-    /* display: inline-block; */
-    font-size: 14px;
-    display: flow-root;
-    margin-top: 1.55rem;
-    position: absolute;
-    margin-left: 58px;
-    cursor: pointer;
-    border-radius: 4px;
-
-
-    }
-
-    table.dataTable tbody th, table.dataTable tbody td {
-    padding: 4px 24px;
-    overflow: hidden ;
-
-}
-
-    body {
-      margin: 100px;
-      padding: 0rem 0 0 5.75rem;
-    }
-    #Chart01Td{
-        height: 80% ;
-        width:50%;
-    }
-
-    .pop-layer .pop-container {
-      padding: 6px 25px;
-      border-radius: 4px;
-    }
-
-    .pop-layer p.ctxt {
-      color: #666;
-      line-height: 25px;
-    }
-
-    .pop-layer .btn-r {
-      width: 100%;
-      margin: 110px 0 20px;
-      padding-top: 10px;
-      border-top: 1px solid #DDD;
-      text-align: right;
-      margin-top : 10px ;
-
-    }
-
-    .pop-layer {
-        display: none;
-        position: absolute;
-        top: 50%;
-        left: 54%;
-        width: 898px;
-        height: 580px;
-        background-color: #fff;
-        border: 5px solid #3571B5;
-        z-index: 10;
-    }
-
-    .dim-layer {
-      display: none;
-      position: fixed;
-      _position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 100;
-    }
-
-    .dim-layer .dimBg {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: #000;
-      opacity: .5;
-      filter: alpha(opacity=50);
-    }
-
-    .dim-layer .pop-layer {
-      display: block;
-    }
-
-    a.btn-layerClose {
-      display: inline-block;
-      height: 25px;
-      padding: 0 14px 0;
-      border: 1px solid #304a8a;
-      background-color: #3f5a9d;
-      font-size: 13px;
-      color: #fff;
-      line-height: 25px;
-    }
-
-    a.btn-layerClose:hover {
-      border: 1px solid #091940;
-      background-color: #1f326a;
-      color: #fff;
-    }
-
-
-    //카드
-
-    .card-header:first-child{
-            border-radius:calc(.35rem - 1px) calc(.35rem - 1px) 0 0;
-        }
-
-        .card-header{
-            height: 40px;
-            padding: .75rem 1.25rem;
-            margin-bottom:0;
-            background-color:#f8f9fc;
-            border-bottom:1px solid #e3e6f0;
-        }
-
-    .text-primary{
-            color: #4e73df !important;
-        }
-
-        .font-weight-bold{
-            font-weight: 700 !important;
-        }
-
-        .m-0{
-            margin: 0 !important;
-        }
-
-        h6{
-            font-size: 1rem;
-            line-height: 1.2;
-        }
-    .card-body2{
-        height: 52vh !important;
-    }
-    .card-body{
-                margin: 20px;
-            padding: 0.25rem;
-        }
-    .card shadow mb-4{
-
-    }
-
-        .chart-area{
-        display : block ;
-
-
-        }
-
-
-        .grid-container{
-
-
-             display:grid;
-            grid-template-columns: repeat(2, 1fr);
-            grid-gap:25px;
-            margin-top:25px;
-
-             grid-template-areas:
-                                  'b c ';
-
-        }
-        .container2{
-
-
-        }
-          .card2{
-            position:relative;
-            display:flex;
-            flex-direction: column;
-            min-width:0;
-            word-wrap:break-word;
-            background-color:#fff;
-            background-clip:border-box;
-            border:1px solid #e3e6f0;
-            border-radius:.35rem;
-
-        }
-
-    #a{
-        grid-area: a;
-    }
-    #b{
-        grid-area: b;
-    }
-    #c{
-        grid-area: c;
-    }
-
-    .dt-buttons{
-        display: inline ;
-    }
-    .selectboxs{
-    float: right;
-    display: flex;
-    }
-
-
-    .pop_selectDiv{
-    display: flex;
-
-    justify-content: center ;
-    }
-    #searchBtn{
-            background-color: #4e73df;
-    border: none;
-    color: white;
-    padding: revert;
-    text-align: center;
-    width: auto;
-    border-radius: 4px;
-    }
-
-h5{
-    text-align-last: center;
-    padding: 1rem;
-}
-
-
-
-
-    </style>
-</th:block>
-
 </head>
 
 <body class="bg-gradient-Light">
+    <div class="content" layout:fragment="content" >
+        <div class="container2">
+            <div class="card2 shadow mb-4" id="a">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold text-primary">거래처별 차트</h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-area">
+                    <!-- 팝업 창-->
 
-<div class="content" layout:fragment="content" >
-    <div class="container2">
-        <div class="card2 shadow mb-4" id="a">
-            <div class="card-header">
-                <h6 class="m-0 font-weight-bold text-primary">거래처별 차트</h6>
-            </div>
-            <div class="card-body">
-                <div class="chart-area">
+                    <div class="dim-layer">
+                        <div class="dimBg"></div>
+                        <div id="layer2" class="pop-layer">
+                            <div class="pop-container">
+                                <div class="pop-conts">
+                                    <!--content //-->
+                                    <h5 class="m-0 font-weight-bold text-primary">거래표
+                                    </h5>
+                                    <br>
 
+                                    <table  id="chartTable">
 
+                                        <div class="pop_selectDiv">
+                                            <select id="select_box03"></select>
+                                            <select id="select_box01" >
+                                                <option></option>
+                                            </select>
+                                            <select id="select_box02"></select>
+                                        </div>
+                                        <tr>
+                                            <td id="Chart01Td">
+                                                <canvas id="myChart4" style="width: 300px; height: 300px;"></canvas>
+                                            </td>
+                                            <td>
+                                                <canvas id="myChart5" style="width: 300px; height: 300px;"></canvas>
+                                            </td>
+                                        </tr>
 
-                <!-- 팝업 창-->
-
-                <div class="dim-layer">
-                    <div class="dimBg"></div>
-                    <div id="layer2" class="pop-layer">
-                        <div class="pop-container">
-                            <div class="pop-conts">
-                                <!--content //-->
-                                <h5 class="m-0 font-weight-bold text-primary">거래표
-                                </h5>
-                                <br>
-
-                                <table  id="chartTable">
-
-                                    <div class="pop_selectDiv">
-                                        <select id="select_box01" >
-                                            <option></option>
-                                        </select>
-                                        <select id="select_box02"></select>
+                                    </table>
+                                    <div class="btn-r">
+                                        <a href="#" class="btn-layerClose">Close</a>
                                     </div>
-                                    <tr>
-                                        <td id="Chart01Td">
-                                            <canvas id="myChart4" style="width: 300px; height: 300px;"></canvas>
-                                        </td>
-                                        <td>
-                                            <canvas id="myChart5" style="width: 300px; height: 300px;"></canvas>
-                                        </td>
-                                    </tr>
-
-                                </table>
-                                <div class="btn-r">
-                                    <a href="#" class="btn-layerClose">Close</a>
+                                    <!--// content-->
                                 </div>
-                                <!--// content-->
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <table id="myTable" class="uk-table uk-table-hover uk-table-striped card-body2" >
-                    <div class="btnDiv">
-                        <button href="#layer2" class="btn-example">차트분석</button>
+                    <table id="myTable" class="uk-table uk-table-hover uk-table-striped card-body2" >
+                        <div class="btnDiv">
+                            <button href="#layer2" class="btn-example">차트분석</button>
+                        </div>
+                        <div class="selectboxs">
+                            <!--검색 기능 -->
+                            <select id="searchType" class="form-control mr-sm-2">
+                                <option value="0">거래번호</option>
+                                <option value="1">거래처명</option>
+                                <option value="2">거래금액</option>
+                                <option value="3">거래일자</option>
+                                <option value="4">분기</option>
+                                <option value="5">주석</option>
+                                <option value="6">거래분류</option>
+                            </select>
+                            <input class="form-control mr-sm-2" type="search" id="searchValue" placeholder="Search" aria-label="Search">
+                            <button class="btn btn-outline-success my-2 my-sm-0" id="searchBtn" type="button">Search</button>
+                        </div>
+                        <!--데이터 테이블 -->
+                        <thead>
+                            <tr>
+                                <th>거래번호</th>
+                                <th>거래처명</th>
+                                <th>거래금액</th>
+                                <th>거래일자</th>
+                                <th>분기</th>
+                                <th>주석</th>
+                                <th>거래분류</th>
+                            </tr>
+                        </thead>
+                        <tfoot>
+                            <tr>
+                                <th colspan="2" style="text-align:right;white-space:nowrap;">TOTAL : </th>
+                                <th colspan="5" style="text-align:left;white-space:nowrap;"></th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+        </div>
+            <div class="grid-container">
+            <div class="card shadow mb-4" id="b">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold text-primary">거래처별 거래 금액</h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-area">
                     </div>
-                    <div class="selectboxs">
-
-                        <!--검색 기능 -->
-                        <select id="searchType" class="form-control mr-sm-2">
-                            <option value="0">거래번호</option>
-                            <option value="1">거래처명</option>
-                            <option value="2">거래금액</option>
-                            <option value="3">거래일자</option>
-                            <option value="4">분기</option>
-                            <option value="5">주석</option>
-                            <option value="6">거래분류</option>
-                        </select>
-                        <input class="form-control mr-sm-2" type="search" id="searchValue" placeholder="Search" aria-label="Search">
-                        <button class="btn btn-outline-success my-2 my-sm-0" id="searchBtn" type="button">Search</button>
+                </div>
+            </div>
+            <div class="card shadow mb-4" id="c">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold text-primary">거래처별 거래 금액</h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-area">
                     </div>
-
-                    <!-- uk-table uk-table-hover uk-table-striped  -->
-
-                    <!--데이터 테이블 -->
-                    <thead>
-
-
-                    <tr>
-                            <th>거래번호</th>
-                            <th>거래처명</th>
-                            <th>거래금액</th>
-                            <th>거래일자</th>
-                            <th>분기</th>
-                            <th>주석</th>
-                            <th>거래분류</th>
-                        </tr>
-                    </thead>
-
-                    <tfoot>
-
-                        <tr>
-                            <th colspan="2" style="text-align:right;white-space:nowrap;">TOTAL : </th>
-                            <th colspan="5" style="text-align:left;white-space:nowrap;"></th>
-                        </tr>
-
-                    </tfoot>
-
-                </table>
-
-            </div>
-        </div>
-
-        </div>
-    </div>
-
-        <div class="grid-container">
-        <div class="card shadow mb-4" id="b">
-            <div class="card-header">
-                <h6 class="m-0 font-weight-bold text-primary">거래처별 거래 금액</h6>
-            </div>
-            <div class="card-body">
-                <div class="chart-area">
-
                 </div>
             </div>
         </div>
-        <div class="card shadow mb-4" id="c">
-            <div class="card-header">
-                <h6 class="m-0 font-weight-bold text-primary">거래처별 거래 금액</h6>
-            </div>
-            <div class="card-body">
-                <div class="chart-area">
-
-                </div>
-            </div>
-        </div>
-
-
-
-
+        <!--카드 end-->
     </div>
-    <!--카드 end-->
-
-
-</div>
 </body>
 
 </html>

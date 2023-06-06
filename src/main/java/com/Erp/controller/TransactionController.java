@@ -1,5 +1,6 @@
 package com.Erp.controller;
 
+import com.Erp.constant.TransactionCategory;
 import com.Erp.dto.TransactionData;
 import com.Erp.dto.TransactionDto;
 import com.Erp.entity.Transaction;
@@ -115,13 +116,16 @@ public class TransactionController {
 
         for (Object[] obj :data){
             Transaction transaction = new Transaction() ;
+
             String companyname = (String)obj[0];
             Date trDate = (Date)obj[1];
             Long amount = (Long)obj[2];
+            TransactionCategory transactionCategory = (TransactionCategory) obj[3];
 
             transaction.setCompanyName(companyname);
             transaction.setTrDate(trDate);
             transaction.setAmount(amount);
+            transaction.setTransactionCategory(transactionCategory);
 
             transactions.add(transaction);
         }

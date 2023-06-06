@@ -47,7 +47,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     @Query("select t.trDate, t.amount from Transaction t order by t.trDate")
     List<Object[]> findTrDataList();
 
-    @Query("select t.companyName,t.trDate,t.amount from Transaction t order by t.companyName ")
+    @Query("select t.companyName,t.trDate,t.amount,t.transactionCategory from Transaction t order by t.companyName ")
     List<Object[]> findSelectName();
 
     @Query("select t.trDate, t.amount ,t.companyName from Transaction t where t.companyName like :companyName order by t.trDate")
