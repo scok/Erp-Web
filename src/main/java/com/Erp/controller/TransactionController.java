@@ -88,9 +88,9 @@ public class TransactionController {
     }
 
     @PostMapping("/transaction/select")
-    public @ResponseBody ResponseEntity<List<Transaction>> responseEntity(@RequestParam("companyName") String companyName){
+    public @ResponseBody ResponseEntity<List<Transaction>> responseEntity(@RequestParam("transactionCategory") TransactionCategory transactionCategory){
 
-        List<Object[]> transactions = transactionRepository.findDateAndAmount(companyName);
+        List<Object[]> transactions = transactionRepository.findDateAndAmount(transactionCategory);
 
         List<Transaction> transactionList = new ArrayList<>();
 
@@ -99,10 +99,14 @@ public class TransactionController {
             Date trDate = (Date)obj[0];
             Long amount = (Long)obj[1];
             String companyNames = (String)obj[2];
+            TransactionCategory transactionCategory1 = (TransactionCategory)obj[3];
+
             Transaction transaction = new Transaction();
             transaction.setTrDate(trDate);
             transaction.setAmount(amount);
             transaction.setCompanyName(companyNames);
+            transaction.setTransactionCategory(transactionCategory1);
+
             transactionList.add(transaction);
         }
         return ResponseEntity.ok(transactionList);

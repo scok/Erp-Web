@@ -3,9 +3,6 @@ $(document).ready(function() {
          var header = $('meta[name="_csrf_header"]').attr('content');
 
 
-
-
-
          //차트 1 start
           function drawTransactionChart2(xValues, yValues){
                                  var previousChart = Chart.getChart('myChart4');
@@ -62,6 +59,10 @@ $(document).ready(function() {
                       //차트2start
 
                           function drawTransactionChart3(xValues, yValues){
+                          var previousChart = Chart.getChart('myChart5');
+                            if (previousChart) {
+                              previousChart.destroy();
+                            }
                             var selectComName = $('#select_box01').val();
                         new Chart('myChart5', {
                             type: 'bar',
@@ -119,33 +120,92 @@ $(document).ready(function() {
                 return trDate ;
             };
 
-            // 입고출고 셀렉 start
-              $('#select_box03').on('change', function(){
 
 
 
 
+
+                    // 입고출고 셀렉 start
+             $('#select_box03').on('change', function(){
+
+
+                    var thisInAndOut = $(this).val();
+
+
+
+                     if (thisInAndOut === "입고") {
+                        var transactionCategory = "INS";
+                      } else if (thisInAndOut === "출고") {
+                        var transactionCategory = "OUTS";
+                      }else{
+                        return   ;
+
+                      }
+
+
+                 $.ajax({
+                  url:'/transaction/select',
+                  type:'POST',
+                   beforeSend: function(xhr) {
+                      xhr.setRequestHeader(header, token);
+                  },
+                  datatype:'JSON',
+                  data:{ transactionCategory : transactionCategory },
+
+                  success: function(response){
+
+
+
+
+                   var uniqueCompanies = [];
+                    for(let bean of response){
+
+                     $('#select_box01').empty();
+                    $('#select_box02').empty();
+
+                    var selectBox01 = $('#select_box01');
+                    var selectBox02 = $('#select_box02');
+
+
+                    selectBox01.append($('<option>', {
+                      value: '',
+                      text: '거래처명'
+                    }));
+                    selectBox02.append($('<option>', {
+                          value: '',
+                          text: '연도'
+                    }));
+
+
+
+
+
+                     if (!uniqueCompanies.includes(bean.companyName)) {
+                              uniqueCompanies.push(bean.companyName);
+
+                        $('#select_box01').append($('<option>', {
+                            value: bean.companyName,
+                            text: bean.companyName
+                        }));
+
+                    }
+                   }
 
 
               // 셀렉 조회 start
               $('#select_box01').on('change', function(){
+                $('#select_box02').empty();
 
 
-                 Chart5NValues = $(this).val();
+                var selectBox02 = $('#select_box02');
+
+                selectBox02.append($('<option>', {
+                      value: '',
+                      text: '연도'
+                }));
+
+
                     tanasctionName = $(this).val();
-                $.ajax({
-                    url:'/transaction/select',
-                    type:'POST',
-                     beforeSend: function(xhr) {
-                        xhr.setRequestHeader(header, token);
-                    },
-                    datatype:'JSON',
-                    data:{ companyName : Chart5NValues },
-
-                    success: function(response){
-
-
-
 
 
                          // 차트 초기화
@@ -177,25 +237,36 @@ $(document).ready(function() {
 
                         drawTransactionChart2(aggregatedXValues, aggregatedYValues);
 
-                        $('#select_box02').empty();
+
+
+
 
                         //2번 셀렉창에 넘길 데이터
-                        var uniqueCompanies = [] ;
-                        var selectBox02 = $('#select_box02');
-                        selectBox02.append($('<option>', {
-                          value: '',
-                          text: '연도'
-                        }));
+                        var uniqueCompanies2 = [] ;
 
 
                         for(let bean of response){
+
+
+                            $('#select_box02').empty();
+
+
+                            var selectBox02 = $('#select_box02');
+
+
+
+                            selectBox02.append($('<option>', {
+                                  value: '',
+                                  text: '연도'
+                            }));
+
 
                             var date = new Date(bean.trDate);
                             var year =  date.getFullYear();
 
 
-                             if (!uniqueCompanies.includes(year)) {
-                                uniqueCompanies.push(year);
+                             if (!uniqueCompanies2.includes(year)) {
+                                uniqueCompanies2.push(year);
 
                                 $('#select_box02').append($('<option>', {
                                     value: year,
@@ -206,15 +277,14 @@ $(document).ready(function() {
                         }
                          //for_end
 
-
-
                         //select_box02, chart5 start
-
                         $('#select_box02').on('change', function(){
                               var previousChart = Chart.getChart('myChart5');
                                 if (previousChart) {
                                   previousChart.destroy();
                                 }
+
+
                             var selectDate = $('#select_box02').val();
                                 Chart5NValues = $('#select_box02').val();
                             var enddate = {};
@@ -274,6 +344,8 @@ $(document).ready(function() {
                         //change_end
 
 
+                       });
+                                //셀렉 조희 end
 
                     },
                     //success_end
@@ -283,8 +355,7 @@ $(document).ready(function() {
                 });
 
 
-            });
-            //셀렉 조희 end
+
 
             });
             //입고 출고 셀렉 end

@@ -1,8 +1,12 @@
 
 
+
+
+
+
   $(document).ready(function() {
 
-var token = $('meta[name="_csrf"]').attr('content');
+        var token = $('meta[name="_csrf"]').attr('content');
          var header = $('meta[name="_csrf_header"]').attr('content');
 
         function drawTransactionChart2(xValues, yValues){
@@ -127,6 +131,7 @@ var token = $('meta[name="_csrf"]').attr('content');
         var Chart5NValues   ;
            //팝업 start
                 function layer_popup(el){
+
                     var $el = $(el);
                     var isDim = $el.prev().hasClass('dimBg');
 
@@ -161,153 +166,97 @@ var token = $('meta[name="_csrf"]').attr('content');
                 //팝업 end
 
                 //버튼 클릭 start
-            $('.btn-example').click(function(){
+                $('.btn-example').click(function(){
 
-            var $href = $(this).attr('href');
-            layer_popup($href);
+                var $href = $(this).attr('href');
+                layer_popup($href);
 
-                // 월별 차트 작성 start
-              $.ajax({
-                url:'/transaction/select',
-                type:'GET',
-                datatype:'json',
-                success: function(data){
-                var aggregatedData = {};
-                    for(let bean of data){
+                    // 월별 차트 작성 start
+                  $.ajax({
+                    url:'/transaction/select',
+                    type:'GET',
+                    datatype:'json',
+                    success: function(data){
+                    var aggregatedData = {};
+                    var uniqueCompanies = [] ;
+                        for(let bean of data){
 
-                      var transactionCategory = bean.transactionCategory ;
 
-                      console.log(transactionCategory);
-                      if (transactionCategory === "INS") {
-                          transactionCategory = "입고";
-                      } else if (transactionCategory === "OUTS") {
-                          transactionCategory = "출고";
-                      }
 
-                       $('#select_box03').append($('<option>', {
-                           value: transactionCategory,
-                           text: transactionCategory
-                         }));
 
-                    var selectcomName = $('#select_box01').val();
+                        var selectcomName = $('#select_box01').val();
 
-                     var ComName = bean.companyName ;
+                         var ComName = bean.companyName ;
 
-                    $('#select_box03').empty();
-                    $('#select_box01').empty();
-                    $('#select_box02').empty();
+                        $('#select_box03').empty();
+                        $('#select_box01').empty();
+                        $('#select_box02').empty();
 
-                    var selectBox03 = $('#select_box03');
-                    var selectBox01 = $('#select_box01');
-                    var selectBox02 = $('#select_box02');
+                        var selectBox03 = $('#select_box03');
+                        var selectBox01 = $('#select_box01');
+                        var selectBox02 = $('#select_box02');
 
-                     selectBox03.append($('<option>', {
+                         selectBox03.append($('<option>', {
+                              value: '',
+                              text: '거래분류'
+                        }));
+
+                        selectBox01.append($('<option>', {
                           value: '',
-                          text: '거래분류'
-                    }));
+                          text: '거래처명'
+                        }));
+                        selectBox02.append($('<option>', {
+                              value: '',
+                              text: '연도'
+                        }));
 
-                    selectBox01.append($('<option>', {
-                      value: '',
-                      text: '거래처명'
-                    }));
-                    selectBox02.append($('<option>', {
-                          value: '',
-                          text: '연도'
-                    }));
+                   var transactionCategory = bean.transactionCategory ;
 
+                       $.each(data,function(index,data){
 
+                           if (!uniqueCompanies.includes(data.transactionCategory)) {
+                              uniqueCompanies.push(data.transactionCategory);
 
-                    //if start
-                    if(ComName==selectcomName){
-
-
-                        var date = new Date(bean.trDate);
-                        var year = date.getFullYear();
-                        var month = ('0' + (date.getMonth() + 1)).slice(-2);
-
-                        var formattedDate = year + '-' + month ;
-                        var amount = bean.amount;
-
-                        if (aggregatedData[formattedDate]) {
-                            aggregatedData[formattedDate] += amount;
-                        }else{
-                            aggregatedData[formattedDate] = amount;
-                        }
-                     }
-                     //if end
-                 }
-                  //for end
-
-
-                     Chart4XValues = Object.keys(aggregatedData);
-                     Chart4YValues = Object.values(aggregatedData);
-                     Chart5NValues = ComName;
-                     drawTransactionChart2(Chart4XValues, Chart4YValues);
-
-
-
-                         var previousChart = Chart.getChart('myChart5');
-                                if (previousChart) {
-                                  previousChart.destroy();
+                                if (data.transactionCategory === "INS") {
+                                    data.transactionCategory = "입고";
+                                } else if (data.transactionCategory === "OUTS") {
+                                    data.transactionCategory = "출고";
                                 }
 
-                      var selectDate = $('#select_box02').val();
+                              $('#select_box03').append($('<option>', {
+                                  value: data.transactionCategory,
+                                  text: data.transactionCategory
+                              }));
+                             }
+                      });
 
-                            var enddate = {};
-                            for(let bean of data){
-                                var OrgDate = DateChange(bean.trDate);
+                         }
+                          //for end
 
-                                if(OrgDate==selectDate){
+                         Chart5NValues = ComName;
+                         drawTransactionChart2(Chart4XValues, Chart4YValues);
 
-                                    var date = new Date(bean.trDate);
-
-                                    var month = ('0' + (date.getMonth() + 1)).slice(-2);
-                                    var day = ('0' + date.getDay()).slice(-2);
-
-                                    var trDates = month + '-' + day ;
-                                    var amonuts = bean.amount;
-
-                                    if(enddate[trDates]){
-                                       enddate[trDates] += amonuts;
-                                    }else{
-                                       enddate[trDates] = amonuts;
+                       var previousChart = Chart.getChart('myChart5');
+                                    if (previousChart) {
+                                      previousChart.destroy();
                                     }
 
-                                }
-                                //if_end
-                            }
-                            //for_end
+                          var selectDate = $('#select_box02').val();
 
-                         Chart5XValues = Object.keys(enddate);
-                         Chart5YValues = Object.values(enddate);
-
-                        drawTransactionChart3(Chart5XValues, Chart5YValues);
-
-                        //change_end
+                            drawTransactionChart3(Chart5XValues, Chart5YValues);
+                            //change_end
 
 
-                    var uniqueCompanies = [];
-
-
-                    $.each(data,function(index,company){
-
-                         if (!uniqueCompanies.includes(company.companyName)) {
-                            uniqueCompanies.push(company.companyName);
-
-                            $('#select_box01').append($('<option>', {
-                                value: company.companyName,
-                                text: company.companyName
-                            }));
-                        }
-                    });
-                },
-                error: function(xhr, status ,error){
-                    alert(xhr.responseJSON.message);
-                }
+                    },
+                    error: function(xhr, status ,error){
+                        alert(xhr.responseJSON.message);
+                    }
+                });
+                 // 월별 차트 작성 end
             });
-             // 월별 차트 작성 end
+            //버튼end
 
 
-        });
-        //버튼end
 });
+
+

@@ -1,5 +1,6 @@
 package com.Erp.repository;
 
+import com.Erp.constant.TransactionCategory;
 import com.Erp.entity.Transaction;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -50,8 +51,8 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     @Query("select t.companyName,t.trDate,t.amount,t.transactionCategory from Transaction t order by t.companyName ")
     List<Object[]> findSelectName();
 
-    @Query("select t.trDate, t.amount ,t.companyName from Transaction t where t.companyName like :companyName order by t.trDate")
-    List<Object[]> findDateAndAmount(@Param("companyName") String companyName);
+    @Query("select t.trDate, t.amount ,t.companyName, t.transactionCategory from Transaction t where  t.transactionCategory = :transactionCategory order by t.trDate")
+    List<Object[]> findDateAndAmount(@Param("transactionCategory") TransactionCategory transactionCategory);
 
 
 }
