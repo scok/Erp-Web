@@ -10,15 +10,7 @@ $(document).ready(function () {
             "autoWidth": false,
             beforeSend:function(xhr){
                 xhr.setRequestHeader(header,token);
-            },
-            // 가로 스크롤바를 표시
-           	// 설정 값은 true 또는 false
-           	scrollX: true,
-
-           	// 세로 스크롤바를 표시
-           	// 설정 값은 px단위
-           	scrollY: 200,
-            ordering: true,
+            }
         },
         columns: [
             {"data": "proCode"},
@@ -28,6 +20,21 @@ $(document).ready(function () {
             {"data": "count"},
             {"data": "registrationDate"}
         ],
+        "language": {
+                     "emptyTable": "데이터가 없어요.",
+                     "lengthMenu": "페이지당 _MENU_ 개씩 보기",
+                     "info": "현재 _START_ - _END_ / _TOTAL_건",
+                     "infoEmpty": "데이터 없음",
+                     "infoFiltered": "( _MAX_건의 데이터에서 필터링됨 )",
+                     "search": "검색: ",
+                     "zeroRecords": "일치하는 데이터가 없어요.",
+                     "loadingRecords": "로딩중...",
+                     "processing":     "잠시만 기다려 주세요...",
+                     "paginate": {
+                         "next": "다음",
+                         "previous": "이전"
+                     }
+        },
         columnDefs: [
            {
             //체크박스 설정
@@ -117,82 +124,6 @@ function addProduction(){
         error: function (request, status) {
             alert(request.responseText);
             console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n");
-        }
-    });
-}
-//데이터 베이스 수정 기능.
-function update(){
-
-    var token = $('meta[name="_csrf"]').attr('content');
-    var header = $('meta[name="_csrf_header"]').attr('content');
-
-    var checkList = $('input[name=checker]:checked');
-
-    if(checkList.length > 1 || checkList.length == 0 ){
-        alert('데이터 수정은 1개씩 가능합니다.');
-        return
-    }
-    var code = checkList.val();
-
-    var paramData = JSON.stringify(code);
-     $.ajax({
-        url: "/products/updateProduct",
-        type: "POST",
-        contentType:"application/json",
-        data: paramData,
-        beforeSend:function(xhr){
-            xhr.setRequestHeader(header,token);
-        },
-        success: function (data) {
-            var key = Object.keys(data);    //넘겨 받은 데이터의 키 값
-            const entries = Object.entries(data);
-
-            $("#acCode").val(data.acCode).prop("selected", true); //셀렉트 박스 체크
-            $("#prCategory").val(data.prCategory).prop("selected", true); //셀렉트 박스 체크
-            $("#prDivCategory").val(data.prDivCategory).prop("selected", true); //셀렉트 박스 체크
-
-            for (let [key, value] of entries) {
-              $('input[name='+key+']').val(value);
-            }
-            modalOn();
-        },
-        error: function (request, status) {
-            alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n");
-        }
-    });
-}
-//웹페이지 삭제 기능.
-function deletePageN(){
-
-    var token = $('meta[name="_csrf"]').attr('content');
-    var header = $('meta[name="_csrf_header"]').attr('content');
-    var checkList = $('input[name=checker]:checked');
-
-    if(checkList.length == 0 ){
-        alert('1개 이상 선택해주세요.');
-        return
-    }
-
-    var values = [];
-    checkList.each(function() {
-      values.push($(this).val());
-    });
-    var paramData = JSON.stringify(values);
-     $.ajax({
-        url: "/products/deleteProduct",
-        type: "POST",
-        contentType:"application/json",
-        data: paramData,
-        dataType: "json",
-        beforeSend:function(xhr){
-            xhr.setRequestHeader(header,token);
-        },
-        success: function (data) {
-            alert("success");
-            $('#myTable').DataTable().ajax.reload();
-        },
-        error: function (request, status) {
-            alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n");
         }
     });
 }

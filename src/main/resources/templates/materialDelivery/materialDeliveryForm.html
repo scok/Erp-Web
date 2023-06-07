@@ -29,7 +29,10 @@
 <div class="content" layout:fragment="content" id="content">
     <div id="dataTables">
         <h2 id="title">자재 불출</h2>
-        <button type="button" id="btn-modal">등록</button>
+
+        <button type="button" id="btn-modal">
+            <ion-icon name="add-outline"></ion-icon>
+        </button>
 
         <table id="myTable" style="width:100%;" class="display">
             <thead>
@@ -52,7 +55,7 @@
                 <div class="close-area">X</div>
                 <form action="/materialDelivery/addMaterialDelivery" method="post" role="form" id="myForm" name="myForm">
                     <div id="container">
-                        <div id="box-left">
+                        <div id="div-area">
                             <p>불출 상품<br>
                                 <select class="form-select" id="inId" name="inId" onchange="getSectionInfo(this.value)">
                                     <option value="">==상품 선택==</option>
@@ -88,11 +91,10 @@
                             <p>불출 수량<br>
                                 <input name="maDeliveryCount" id="maDeliveryCount" type="text">
                             </p>
-                            <button id="saveBtn"  onclick="addMaDelivery()" type="button">저장</button>
-                        </div>
 
-                        <div id="box-right">
-
+                            <button id="saveBtn"  type="button" onclick="addMaDelivery()">
+                                <ion-icon name="save-outline"></ion-icon>
+                            </button>
                         </div>
                     </div>
                 </form>

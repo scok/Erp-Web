@@ -54,7 +54,7 @@ public class LogisticsService {
         inventoryRepository.save(inventory);
     }
 
-    //모든 재고 조화
+    //모든 재고 조회
     public List<Inventory> getInventoryAll() {
         return inventoryRepository.getInventoryAll();
     }

@@ -10,6 +10,23 @@ $(document).ready(function () {
     var token = $('meta[name="_csrf"]').attr('content');
     var header = $('meta[name="_csrf_header"]').attr('content');
 
+    $.fn.dataTable.ext.search.push(
+        function(settings, data, dataIndex){
+            var min = Date.parse($('#fromDate').val());
+            var max = Date.parse($('#toDate').val());
+            var targetDate = Date.parse(data[6]);
+
+            if( (isNaN(min) && isNaN(max) ) ||
+                (isNaN(min) && targetDate <= max )||
+                ( min <= targetDate && isNaN(max) ) ||
+                ( targetDate >= min && targetDate <= max) ){
+                    return true;
+            }
+            return false;
+        }
+    )
+
+
     var table = $('#myTable').DataTable({
         ajax: {
             "url":myUrl,
@@ -18,15 +35,7 @@ $(document).ready(function () {
             "autoWidth": false,
             beforeSend:function(xhr){
                 xhr.setRequestHeader(header,token);
-            },
-            // 가로 스크롤바를 표시
-           	// 설정 값은 true 또는 false
-           	scrollX: true,
-
-           	// 세로 스크롤바를 표시
-           	// 설정 값은 px단위
-           	scrollY: 200,
-            ordering: true,
+            }
         },
         columns: [
             {"data": "wioId"},
@@ -37,31 +46,66 @@ $(document).ready(function () {
             {"data": "osQuantity"},
             {"data": "inAndOutDate"},
             {"data": "divisionStatus"}
-
         ],
+        "language": {
+            "emptyTable": "데이터가 없어요.",
+            "lengthMenu": "페이지당 _MENU_ 개씩 보기",
+            "info": "현재 _START_ - _END_ / _TOTAL_건",
+            "infoEmpty": "데이터 없음",
+            "infoFiltered": "( _MAX_건의 데이터에서 필터링됨 )",
+            "search": "검색: ",
+            "zeroRecords": "일치하는 데이터가 없어요.",
+            "loadingRecords": "로딩중...",
+            "processing":     "잠시만 기다려 주세요...",
+            "paginate": {
+                "next": "다음",
+                "previous": "이전"
+            }
+        },
         columnDefs: [
-           {
-            //체크박스 설정
-             targets : 0,
-             orderable: false,
-             'render' : function(data, type, full, meta) {
-                             return '<input type="checkbox" name="checker" value="'+data+'">';
-             }
-           }
+            {
+                //체크박스 설정
+                targets : 0,
+                orderable: false,
+                'render' : function(data, type, full, meta) {
+                    return '<input type="checkbox" name="checker" value="'+data+'">';
+                }
+            }
         ],
-         initComplete: function(settings, json) {
-         //all 체크 박스 누를때 동작하는 함수
-               $("#checkall").prop("checked",false);
-               $("#checkall").click(function(){
-                 if($(this).prop("checked")){
-                     $('input[name="checker"]').prop('checked',true);
-                 }
-                 else {
-                     $('input[name="checker"]').prop('checked',false);
-                 }
+        initComplete: function(settings, json) {
+            //all 체크 박스 누를때 동작하는 함수
+            $("#checkall").prop("checked",false);
+            $("#checkall").click(function(){
+                if($(this).prop("checked")){
+                    $('input[name="checker"]').prop('checked',true);
+                }
+                else {
+                    $('input[name="checker"]').prop('checked',false);
+                }
             });
-         }
-   });
+        }
+    });
+
+    /*테이블의 컬럼별로 검색하는 기능*/
+    $('#myTable_filter').prepend('<select id="customSelect"></select>');
+    $('#myTable > thead > tr').children().each(function (indexInArray, valueOfElement) {
+        if(indexInArray  != 0){
+            $('#customSelect').append('<option>'+valueOfElement.innerHTML+'</option>');
+        }
+    });
+
+    $('.dataTables_filter input').unbind().bind('keyup', function () {
+        var colIndex = document.querySelector('#customSelect').selectedIndex;
+        table.column(colIndex).search(this.value).draw();
+    });
+
+    /* 날짜검색 이벤트 리바인딩 */
+    $('#myTable_filter').prepend('<input type="text" id="toDate" placeholder="yyyy-MM-dd"> ');
+    $('#myTable_filter').prepend('<input type="text" id="fromDate" placeholder="yyyy-MM-dd">~');
+    $('#toDate, #fromDate').unbind().bind('keyup',function(){
+        table.draw();
+    })
+
    //modal 관련 설정.
    const modal = document.getElementById("modal")
    const closeBtn = modal.querySelector(".close-area")

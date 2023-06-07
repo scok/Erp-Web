@@ -39,8 +39,13 @@
 
             <div class="tab_content" id="all_content">
 
-                <button type="button" id="updateBtn" onclick="update()">수정</button>
-                <button type="button" id="deleteBtn" onclick="deletePageN()">삭제</button>
+                <button type="button" id="updateBtn" onclick="update()">
+                    <ion-icon name="cloud-download-outline"></ion-icon>
+                </button>
+
+                <button type="button" id="deleteBtn" onclick="deletePageN()">
+                    <ion-icon name="trash-outline"></ion-icon>
+                </button>
 
             </div>
             <div class="tab_content" id="programming_content">
@@ -116,7 +121,9 @@
                     <p>특이 사항</p>
                     <input type="textarea" id="osComment" name="osComment">
                     <br>
-                    <button id="saveBtn" onclick="OrderSheetUpdate()" type="button">저장</button>
+                    <button id="saveBtn" onclick="OrderSheetUpdate()" type="button">
+                        <ion-icon name="save-outline"></ion-icon>
+                    </button>
                 </form>
             </div>
         </div>

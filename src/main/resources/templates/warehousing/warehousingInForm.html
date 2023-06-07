@@ -28,8 +28,10 @@
 
 <div class="content" layout:fragment="content" id="content">
     <div id="dataTables">
-        <h2 id="title">입고 관리</h2>
-        <button type="button" id="updateBtn" onclick="update()">상세보기</button>
+        <h1 id="title">입고 관리</h1>
+        <button type="button" id="updateBtn" onclick="update()">
+            <ion-icon name="search-outline"></ion-icon>
+        </button>
 
         <table id="myTable" style="width:100%;" class="display">
             <thead>
@@ -48,7 +50,7 @@
         <div id="modal" class="modal-overlay">
             <div class="modal-window">
                 <div class="title">
-                    <h2>입고 관리</h2>
+                    <h1>입고 관리</h1>
                 </div>
                 <div class="close-area">X</div>
                 <form action="" method="post" role="form" id="myForm" name="myForm">

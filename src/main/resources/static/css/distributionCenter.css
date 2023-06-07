@@ -1,6 +1,6 @@
 /*배경색 설정*/
 body{
-    background-color:#4e73df;
+    background-color:#FFFFFF;
 }
 /*전체 틀 설정.*/
 #content{
@@ -20,9 +20,8 @@ body{
 #title{
     text-align:center;
 }
-
 /*input 태그 스타일링*/
-input {
+.customInput {
     width: 100%;
     padding: 10px 20px;
     margin: 5px 0;
@@ -32,8 +31,24 @@ input {
     transition: 0.5s;
     outline: none;
     border-radius: 5px;
+    font-size: 15px;
 }
-input[type="text"]:focus { background-color: #E0FFFF; }
+.customInput[type="text"]:focus { background-color: #E0FFFF; }
+
+/*select css*/
+#customSelect {
+     width:150px;
+     padding:5px;
+     border:1px solid #999;
+     border-radius:3px;
+     margin-left:5px;
+}
+
+.dt-buttons{
+    width: 100px;
+    display: inline-block;
+    margin-left:10px;
+}
 
 /*모달 css 설정*/
 #modal.modal-overlay {
@@ -175,18 +190,22 @@ a {
 /*버튼 스타일링*/
 #updateBtn {
     box-shadow:inset 0px 39px 0px -50px #e67a73;
-    background-color:#4682B4;
+    background-color:#696969;
     border-radius:5px;
-    border:1px solid #4682B4;
+    border:1px solid #696969;
     display:inline-block;
     cursor:pointer;
-    color:#FFFFFF;;
-    font-family:Arial;
-    font-size:15px;
-    padding:5px 15px;
+    color:#FFFFFF;
+
+    font-size:25px;
+    padding: 3px 1px;
     text-decoration:none;
     text-shadow:0px 1px 0px #b23e35;
+
     margin-bottom:10px;
+
+    width: 47px;
+    height: 32px;
 }
 #saveBtn {
     box-shadow:inset 0px 39px 0px -50px #e67a73;
@@ -195,43 +214,80 @@ a {
     border:1px solid #3CB371;
     display:inline-block;
     cursor:pointer;
-    color:#FFFFFF;;
-    font-family:Arial;
-    font-size:15px;
-    padding:5px 15px;
+    color:#FFFFFF;
+
+    font-size:25px;
+    padding: 3px 1px;
     text-decoration:none;
     text-shadow:0px 1px 0px #b23e35;
     margin-bottom:10px;
+
+    width: 47px;
+    height: 32px;
 }
 #deleteBtn {
     box-shadow:inset 0px 39px 0px -50px #e67a73;
-    background-color:#FF0000;
+    background-color:#696969;
     border-radius:5px;
-    border:1px solid #FF0000;
+    border:1px solid #696969;
     display:inline-block;
     cursor:pointer;
     color:#FFFFFF;;
-    font-family:Arial;
-    font-size:15px;
-    padding:5px 15px;
+
+    font-size:25px;
+    padding: 3px 1px;
     text-decoration:none;
     text-shadow:0px 1px 0px #b23e35;
     margin-bottom:10px;
+
+    width: 47px;
+    height: 32px;
 }
 #btn-modal{
     box-shadow:inset 0px 39px 0px -50px #e67a73;
-    background-color:#8B008B;
+    background-color:#696969;
     border-radius:5px;
-    border:1px solid #8B008B;
+    border:1px solid #696969;
     display:inline-block;
     cursor:pointer;
-    color:#FFFFFF;;
-    font-family:Arial;
-    font-size:15px;
-    padding:5px 15px;
+    color:#FFFFFF;
+
+    font-size:25px;
+    padding: 3px 1px;
     text-decoration:none;
     text-shadow:0px 1px 0px #b23e35;
     margin-bottom:10px;
+
+    width: 47px;
+    height: 32px;
+}
+/*CSV 버튼*/
+#exportCSV{
+    box-shadow:inset 0px 39px 0px -50px #e67a73;
+    background-color:#696969;
+    border-radius:5px;
+    border:1px solid #696969;
+    display:inline-block;
+    cursor:pointer;
+    color:#FFFFFF;
+
+    font-size:25px;
+    padding: 3px 1px;
+    text-decoration:none;
+    text-shadow:0px 1px 0px #b23e35;
+    margin-bottom:10px;
+
+    width: 47px;
+    height: 32px;
+}
+/*DataTables 날짜 input css*/
+#fromDate{
+    width: 150px;
+    height: 29px;
+}
+#toDate{
+    width: 150px;
+    height: 29px;
 }
 
 /* 탭 전체 스타일 */

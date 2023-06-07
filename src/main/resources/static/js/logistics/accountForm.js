@@ -11,6 +11,22 @@ $(document).ready(function () {
     var token = $('meta[name="_csrf"]').attr('content');
     var header = $('meta[name="_csrf_header"]').attr('content');
 
+    $.fn.dataTable.ext.search.push(
+    function(settings, data, dataIndex){
+        var min = Date.parse($('#fromDate').val());
+        var max = Date.parse($('#toDate').val());
+        var targetDate = Date.parse(data[4]);
+
+        if( (isNaN(min) && isNaN(max) ) ||
+            (isNaN(min) && targetDate <= max )||
+            ( min <= targetDate && isNaN(max) ) ||
+            ( targetDate >= min && targetDate <= max) ){
+                return true;
+        }
+        return false;
+    }
+    )
+
     var table = $('#myTable').DataTable({
         ajax: {
             "url":myUrl,
@@ -21,6 +37,7 @@ $(document).ready(function () {
                 xhr.setRequestHeader(header,token);
             }
         },
+        order : [[1, 'desc']],
         columns: [
             {"data": "acCode"},
             {"data": "acCategory"},
@@ -54,18 +71,46 @@ $(document).ready(function () {
            }
         ],
          initComplete: function(settings, json) {
-         //all 체크 박스 누를때 동작하는 함수
-               $("#checkall").prop("checked",false);
-               $("#checkall").click(function(){
-                 if($(this).prop("checked")){
-                     $('input[name="checker"]').prop('checked',true);
-                 }
-                 else {
-                     $('input[name="checker"]').prop('checked',false);
-                 }
+            //all 체크 박스 누를때 동작하는 함수
+            $("#checkall").prop("checked",false);
+            $("#checkall").click(function(){
+                if($(this).prop("checked")){
+                    $('input[name="checker"]').prop('checked',true);
+                }
+                else {
+                    $('input[name="checker"]').prop('checked',false);
+                }
             });
          }
     });
+
+    /* Column별 검색기능 추가 */
+    $('#myTable_filter').prepend('<select id="customSelect"></select>');
+    $('#myTable > thead > tr').children().each(function (indexInArray, valueOfElement) {
+        if(valueOfElement.innerHTML =="작성자" || valueOfElement.innerHTML =="구매처 명"){
+            $('#customSelect').append('<option>'+valueOfElement.innerHTML+'</option>');
+        }
+    });
+    $('.dataTables_filter input').unbind().bind('keyup', function () {
+
+        var colValue = document.querySelector('#customSelect').value;   //값으로
+
+        var colHeaders = table.columns().header().toArray();
+
+        var targetIndex = colHeaders.findIndex(function(header) {
+          return header.innerHTML === colValue;
+        });
+
+        table.column(targetIndex).search(this.value).draw();
+
+    });
+    /* 날짜검색 이벤트 리바인딩 */
+    $('#myTable_filter').prepend('<input type="date" id="toDate" placeholder="yyyy-MM-dd">');
+    $('#myTable_filter').prepend('<input type="date" id="fromDate" placeholder="yyyy-MM-dd"> ~');
+    $('#toDate, #fromDate').unbind().bind("change",function(){
+        table.draw();
+    })
+
     //modal 관련 설정.
     const modal = document.getElementById("modal")
     const btnModal = document.getElementById("btn-modal")
@@ -117,16 +162,9 @@ function addAccount(){
     var formData = new FormData(document.forms.namedItem("tableUpdate"));
 
     // 초기 등록시에는 code의 값이 없을수밖에 없으니 code에 값이 없으면 배열에 저장하지 않습니다.
-    var checkKey = "code";
     var array = {}
     for(var item of formData.entries()){
-        if(item[0] == checkKey){
-            if(item[1] != null && item[1] != ''){
-                array[item[0]]=item[1];
-            }
-        }else{
-            array[item[0]]=item[1];
-        }
+        array[item[0]]=item[1];
     }
     var paramData = JSON.stringify(array);
 
@@ -180,7 +218,6 @@ function update(){
             $("#accountCategory").val(data.category).prop("selected", true); //셀렉트 박스 체크
 
             for (let [key, value] of entries) {
-              console.log(`${key}: ${value}`);
               $('input[name='+key+']').val(value);
             }
             modalOn();
@@ -218,11 +255,19 @@ function deletePageN(){
             xhr.setRequestHeader(header,token);
         },
         success: function () {
-            alert("success");
+            alert("삭제 완료.");
             $('#myTable').DataTable().ajax.reload();
         },
         error: function (request, status) {
             alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n");
         }
     });
+}
+/*데이터 베이스 엑셀화*/
+function excel(){
+    var inputs = document.getElementsByName("checker");
+    var values = Array.from(inputs).map(function(input) {
+      return input.value;
+    });
+    console.log(values);
 }

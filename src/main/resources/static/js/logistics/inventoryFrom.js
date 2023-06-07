@@ -12,7 +12,7 @@ $(document).ready(function () {
             xhr.setRequestHeader(header,token);
         },
         success: function (result) {
-            $('#myTable').DataTable({
+            var table = $('#myTable').DataTable({
                 data:result.data,
                 dataSrc:"",
                 columns: [
@@ -24,7 +24,48 @@ $(document).ready(function () {
                     {data: "osStandard"},
                     {data: "arTotalCount"},
                     {data: "acName"}
-                ]
+                ],
+
+                "language": {
+                    "emptyTable": "데이터가 없어요.",
+                    "lengthMenu": "페이지당 _MENU_ 개씩 보기",
+                    "info": "현재 _START_ - _END_ / _TOTAL_건",
+                    "infoEmpty": "데이터 없음",
+                    "infoFiltered": "( _MAX_건의 데이터에서 필터링됨 )",
+                    "search": "검색: ",
+                    "zeroRecords": "일치하는 데이터가 없어요.",
+                    "loadingRecords": "로딩중...",
+                    "processing":     "잠시만 기다려 주세요...",
+                    "paginate": {
+                        "next": "다음",
+                        "previous": "이전"
+                    }
+                },
+                columnDefs: [
+                    {
+                        targets : 6,
+                        'render' : function(data) {
+                        return '<th>'+comma(data)+'<th>';
+                        }
+                    }
+                ],
+                dom : 'Blfrtip',
+                buttons:[{
+                    extend:'csvHtml5',
+                    text: 'Export CSV',
+                    footer: true,
+                    bom: true,
+                    className: 'exportCSV'
+                }]
+            });
+            /*테이블의 컬럼별로 검색하는 기능*/
+            $('#myTable_filter').prepend('<select id="customSelect"></select>');
+            $('#myTable > thead > tr').children().each(function (indexInArray, valueOfElement) {
+                $('#customSelect').append('<option>'+valueOfElement.innerHTML+'</option>');
+            });
+            $('.dataTables_filter input').unbind().bind('keyup', function () {
+                var colIndex = document.querySelector('#customSelect').selectedIndex;
+                table.column(colIndex).search(this.value).draw();
             });
         },
         error: function (request, status) {
@@ -56,58 +97,6 @@ function modalOff() {
 //정규 표현식을 이용한 자릿수 표현
 function comma(num){
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-}
-
-//창고를 선택하면 재고를 구역별 재고 현황을 알려줍니다.
-function getSectionInfo(secCode){
-
-    var table = $("#myTable").DataTable();
-    table.destroy();
-
-    var token = $('meta[name="_csrf"]').attr('content');
-    var header = $('meta[name="_csrf_header"]').attr('content');
-
-    if(secCode == "" || secCode == null){
-        alert("창고를 선택해주세요.");
-        return;
-    }
-
-    $.ajax({
-        url: "/logistics/inventory/sectionInfo",
-        type: "POST",
-        contentType:"application/json",
-        data: JSON.stringify(secCode),
-        dataType: "json",
-        beforeSend:function(xhr){
-            xhr.setRequestHeader(header,token);
-        },
-        success: function (result) {
-            $('#myTable').DataTable({
-                data:result.data,
-                dataSrc:"",
-                columns: [
-                    {data: "secName"},
-                    {data: "secCategory"},
-                    {data: "prCode"},
-                    {data: "stackAreaCategory"},
-                    {data: "prName"},
-                    {data: "osStandard"},
-                    {data: "arTotalCount"},
-                    {data: "acName"}
-                ],
-                /*columnDefs: [
-                    {
-                        targets : 0,
-                        // 검색 기능 숨기기
-                        order: desc
-                    }
-                ]*/
-                });
-            },
-        error: function (request, status) {
-            alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n");
-        }
-    });
 }
 
 

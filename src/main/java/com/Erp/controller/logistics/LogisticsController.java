@@ -210,19 +210,5 @@ public class LogisticsController {
 
         return map;
     }
-
-    //전체 재고 조회
-    @PostMapping(value = "/sectionInfo")
-    public @ResponseBody Object getSectionInfo(@RequestBody Long inId) {
-
-        Inventory Inventory = inventorService.findByInId(inId);
-        Map<String,String> inventoryFormDtos = new HashMap<String,String>();
-
-        inventoryFormDtos.put("secCode",Inventory.getSection().getSecCode());
-        inventoryFormDtos.put("secName",Inventory.getSection().getSecName());
-        inventoryFormDtos.put("SACategory",String.valueOf(Inventory.getStackAreaCategory()));
-
-        return inventoryFormDtos;
-    }
 }
 
