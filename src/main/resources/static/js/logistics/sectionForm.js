@@ -2,6 +2,22 @@ $(document).ready(function(){
     var token = $('meta[name="_csrf"]').attr('content');
     var header = $('meta[name="_csrf_header"]').attr('content');
 
+    $.fn.dataTable.ext.search.push(
+        function(settings, data, dataIndex){
+            var min = Date.parse($('#fromDate').val());
+            var max = Date.parse($('#toDate').val());
+            var targetDate = Date.parse(data[8]);
+
+            if( (isNaN(min) && isNaN(max) ) ||
+                (isNaN(min) && targetDate <= max )||
+                ( min <= targetDate && isNaN(max) ) ||
+                ( targetDate >= min && targetDate <= max) ){
+                    return true;
+            }
+            return false;
+        }
+    )
+
     var table = $('#myTable').DataTable({
         ajax: {
             "url":"/section/check",
@@ -15,6 +31,7 @@ $(document).ready(function(){
             scrollY: 200,
             ordering: true,
         },
+        order : [[1, 'desc']],
         columns:[
             {"data":"secCode"},
             {"data":"secCategory"},
@@ -24,6 +41,7 @@ $(document).ready(function(){
             {"data":"inventoryLoadingRate"},
             {"data":"secAddress"},
             {"data":"secCreateName"},
+            {"data":"secRegDate"}
             {"data":"secRegDate"}
         ],
         "language": {
@@ -47,7 +65,7 @@ $(document).ready(function(){
                 targets : 0,
                 orderable: false,
                 'render' : function(data, type, full, meta) {
-                    return '<input type="checkbox" name="checker" value="'+data+'">';
+                    return '<span id="tableInnerCheckBox"><input type="checkbox" name="checker" value="'+data+'"></span>';
                 }
             },
             {
@@ -76,6 +94,43 @@ $(document).ready(function(){
             });
          }
     });
+
+    /* Column별 검색기능 추가 */
+    $('#myTable_filter').prepend('<select id="customSelect"></select>');
+    $('#myTable > thead > tr').children().each(function (indexInArray, valueOfElement) {
+      if(valueOfElement.innerHTML !="등록일자" && indexInArray != 0
+      &&valueOfElement.innerHTML !="용적률" && valueOfElement.innerHTML !="최대 적재량" && valueOfElement.innerHTML !="현재 적재량"){
+          $('#customSelect').append('<option>'+valueOfElement.innerHTML+'</option>');
+      }
+    });
+
+    $('#customSelect').on("change",function(){
+      table.search('').draw();
+      table.columns().search('').draw();
+    });
+
+    $('.dataTables_filter input').unbind().bind('keyup', function () {
+
+      var colValue = document.querySelector('#customSelect').value;
+
+      var colHeaders = table.columns().header().toArray();
+
+      var targetIndex = colHeaders.findIndex(function(header) {
+        return header.innerHTML === colValue;
+      });
+
+      var keyWord = this.value;
+
+      table.column(targetIndex).search(keyWord).draw();
+    });
+
+    /* 날짜검색 이벤트 리바인딩 */
+    $('#myTable_filter').prepend('<input type="date" id="toDate" placeholder="yyyy-MM-dd">');
+    $('#myTable_filter').prepend('<input type="date" id="fromDate" placeholder="yyyy-MM-dd"> ~');
+    $('#toDate, #fromDate').unbind().bind("change",function(){
+      table.draw();
+    })
+
    //modal 관련 설정.
    const modal = document.getElementById("modal")
    const btnModal = document.getElementById("btn-modal")

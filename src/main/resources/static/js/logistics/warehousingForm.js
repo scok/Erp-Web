@@ -26,7 +26,6 @@ $(document).ready(function () {
         }
     )
 
-
     var table = $('#myTable').DataTable({
         ajax: {
             "url":myUrl,
@@ -37,6 +36,7 @@ $(document).ready(function () {
                 xhr.setRequestHeader(header,token);
             }
         },
+        order : [[1, 'desc']],
         columns: [
             {"data": "wioId"},
             {"data": "acName"},
@@ -68,7 +68,7 @@ $(document).ready(function () {
                 targets : 0,
                 orderable: false,
                 'render' : function(data, type, full, meta) {
-                    return '<input type="checkbox" name="checker" value="'+data+'">';
+                    return '<span id="tableInnerCheckBox"><input type="checkbox" name="checker" value="'+data+'"></span>';
                 }
             }
         ],
@@ -99,12 +99,10 @@ $(document).ready(function () {
         table.column(colIndex).search(this.value).draw();
     });
 
-    /* 날짜검색 이벤트 리바인딩 */
-    $('#myTable_filter').prepend('<input type="text" id="toDate" placeholder="yyyy-MM-dd"> ');
-    $('#myTable_filter').prepend('<input type="text" id="fromDate" placeholder="yyyy-MM-dd">~');
-    $('#toDate, #fromDate').unbind().bind('keyup',function(){
-        table.draw();
-    })
+    $('#customSelect').on("change",function(){
+            table.search('').draw();
+            table.columns().search('').draw();
+    });
 
    //modal 관련 설정.
    const modal = document.getElementById("modal")
@@ -261,41 +259,4 @@ function update(){
             alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n");
         }
     })
-}
-//웹페이지 삭제 기능.
-function deletePageN(){
-
-    var token = $('meta[name="_csrf"]').attr('content');
-    var header = $('meta[name="_csrf_header"]').attr('content');
-
-    var checkList = $('input[name=checker]:checked');
-    if(checkList.length == 0 ){
-        alert('1개 이상 선택해주세요.');
-        return
-    }
-
-    var values = [];
-    checkList.each(function() {
-      values.push($(this).val());
-    });
-
-    var paramData = JSON.stringify(values);
-
-     $.ajax({
-        url: "/orderSheets/deleteOrderSheets",
-        type: "POST",
-        contentType:"application/json",
-        data: paramData,
-        dataType: "json",
-        beforeSend:function(xhr){
-            xhr.setRequestHeader(header,token);
-        },
-        success: function (data) {
-            alert("success");
-            $('#myTable').DataTable().ajax.reload();
-        },
-        error: function (request, status) {
-            alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n");
-        }
-    });
 }

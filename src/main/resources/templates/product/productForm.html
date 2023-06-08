@@ -42,10 +42,14 @@
             <ion-icon name="trash-outline"></ion-icon>
         </button>
 
+        <button type="button" id="exportCSV" onclick="excel()">
+            <ion-icon name="cloud-download-outline"></ion-icon>
+        </button>
+
         <table id="myTable" style="width:100%;" class="display">
             <thead>
                 <tr>
-                    <th><input type="checkbox" name="checkall" id="checkall"></th>
+                    <th style="text-align: center;"><input type="checkbox" class="checkerClass" name="checkall" id="checkall"></th>
                     <th>제품명</th>
                     <th>단가</th>
                     <th>분류</th>
@@ -62,25 +66,25 @@
                     <h2>상품 수정 및 등록</h2>
                 </div>
                 <div class="close-area">X</div>
-                <form action="/product/addProduct" method="post" role="form" id="myForm" name="myForm">
+                <form action="" method="post" role="form" id="myForm" name="myForm">
                     <div id="container">
                         <div id="div-area">
                             <p>거래처 선택<br/>
-                                <select class="form-select" name="acCode" id="acCode" onchange="getAccountCategory(this.value);">
+                                <select class="custom-select" name="acCode" id="acCode" onchange="getAccountCategory(this.value);">
                                     <option value="">==거래처 선택==</option>
                                     <option th:each="dto : ${accountFormDtos}" th:value="${dto.acCode}"
                                             th:text="${dto.acName}"></option>
                                 </select>
                             </p>
                             <p>상품 명<br>
-                                <input id="prName" name="prName" type="text">
+                                <input class="customInput" id="prName" name="prName" type="text">
                             </p>
                             <p>상품 단가<br>
-                                <input name="prPrice" id="prPrice" type="text">
+                                <input class="customInput" name="prPrice" id="prPrice" type="text">
                             </p>
                             <div class="form-group">
                                 <p>상품 분류
-                                    <select id="prDivCategory" name="prDivCategory" class="custom-select" style="width:200px;">
+                                    <select id="prDivCategory" name="prDivCategory" class="custom-select">
                                         <option value="">==분류 선택==</option>
                                         <option th:each="dto : ${T(com.Erp.constant.ProductDivisionCategory).values()}"
                                                 th:value="${dto.name()}"
@@ -93,7 +97,7 @@
                             </div>
                             <div class="form-group">
                                 <p>상품 상세 분류
-                                    <select id="prCategory" name="prCategory" class="custom-select" style="width:200px;">
+                                    <select id="prCategory" name="prCategory" class="custom-select">
                                         <option value="">==상세분류 선택==</option>
                                         <option th:each="prCategoryVal : ${T(com.Erp.constant.ProductCategory).values()}"
                                                 th:value="${prCategoryVal.name()}"

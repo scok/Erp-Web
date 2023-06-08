@@ -55,6 +55,8 @@ public class Member extends BaseEntity {
     @Column(nullable = false)
     private String paystep; //직급
 
+    private String address;
+
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)

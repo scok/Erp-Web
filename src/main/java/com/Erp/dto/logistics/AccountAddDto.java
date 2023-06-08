@@ -3,9 +3,7 @@ package com.Erp.dto.logistics;
 import com.Erp.constant.AccountCategory;
 import com.Erp.entity.logistics.Account;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.modelmapper.ModelMapper;
 
 import javax.persistence.EnumType;

@@ -23,6 +23,7 @@ $(document).ready(function () {
                 xhr.setRequestHeader(header,token);
             }
         },
+        order : [[1, 'desc']],
         columns: [
             {"data": "osCode"},
             {"data": "acCategory"},
@@ -55,7 +56,7 @@ $(document).ready(function () {
              targets : 0,
              orderable: false,
              'render' : function(data, type, full, meta) {
-                             return '<input type="checkbox" name="checker" value="'+data+'">';
+              return '<span id="tableInnerCheckBox"><input type="checkbox" name="checker" value="'+data+'"></span>';
              }
            }
         ],
@@ -72,6 +73,36 @@ $(document).ready(function () {
             });
          }
    });
+
+   /* Column별 검색기능 추가 */
+   $('#myTable_filter').prepend('<select id="customSelect"></select>');
+   $('#myTable > thead > tr').children().each(function (indexInArray, valueOfElement) {
+     if(valueOfElement.innerHTML !="총금액" && indexInArray != 0
+     &&valueOfElement.innerHTML !="입고예정일"){
+         $('#customSelect').append('<option>'+valueOfElement.innerHTML+'</option>');
+     }
+   });
+
+   $('#customSelect').on("change",function(){
+     table.search('').draw();
+     table.columns().search('').draw();
+   });
+
+   $('.dataTables_filter input').unbind().bind('keyup', function () {
+
+     var colValue = document.querySelector('#customSelect').value;
+
+     var colHeaders = table.columns().header().toArray();
+
+     var targetIndex = colHeaders.findIndex(function(header) {
+       return header.innerHTML === colValue;
+     });
+
+     var keyWord = this.value;
+
+     table.column(targetIndex).search(keyWord).draw();
+   });
+
    //modal 관련 설정.
    const modal = document.getElementById("modal")
    const closeBtn = modal.querySelector(".close-area")

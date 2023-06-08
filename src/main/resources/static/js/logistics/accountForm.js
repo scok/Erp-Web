@@ -66,7 +66,7 @@ $(document).ready(function () {
              targets : 0,
              orderable: false,
              'render' : function(data, type, full, meta) {
-                return '<input type="checkbox" name="checker" value="'+data+'">';
+                return '<span id="tableInnerCheckBox"><input type="checkbox" name="checker" value="'+data+'"></span>';
               }
            }
         ],
@@ -91,9 +91,15 @@ $(document).ready(function () {
             $('#customSelect').append('<option>'+valueOfElement.innerHTML+'</option>');
         }
     });
+
+    $('#customSelect').on("change",function(){
+        table.search('').draw();
+        table.columns().search('').draw();
+    });
+
     $('.dataTables_filter input').unbind().bind('keyup', function () {
 
-        var colValue = document.querySelector('#customSelect').value;   //값으로
+        var colValue = document.querySelector('#customSelect').value;
 
         var colHeaders = table.columns().header().toArray();
 
@@ -101,8 +107,9 @@ $(document).ready(function () {
           return header.innerHTML === colValue;
         });
 
-        table.column(targetIndex).search(this.value).draw();
+        var keyWord = this.value;
 
+        table.column(targetIndex).search(keyWord).draw();
     });
     /* 날짜검색 이벤트 리바인딩 */
     $('#myTable_filter').prepend('<input type="date" id="toDate" placeholder="yyyy-MM-dd">');
@@ -265,9 +272,50 @@ function deletePageN(){
 }
 /*데이터 베이스 엑셀화*/
 function excel(){
+
+    var token = $('meta[name="_csrf"]').attr('content');
+    var header = $('meta[name="_csrf_header"]').attr('content');
+
     var inputs = document.getElementsByName("checker");
     var values = Array.from(inputs).map(function(input) {
       return input.value;
     });
-    console.log(values);
+    paramData = {};
+    paramData[["account"]]=values;
+
+    var excelDownloadState = false;
+    if(excelDownloadState == false){
+
+        excelDownloadState = true;
+
+        //xmlhttprequest 통신.
+        var request = new XMLHttpRequest();
+        request.open('POST', 'http://localhost:8877/excel/download',true);
+        request.setRequestHeader(header, token);
+        request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+        request.responseType = 'blob';
+
+        request.onload = function(e) {
+            excelDownloadState = false;
+
+            if (this.status === 200) {
+                var blob = this.response;
+                var fileName = "Account_Info.xlsx"
+                    if(window.navigator.msSaveOrOpenBlob) {
+                        window.navigator.msSaveBlob(blob, fileName);
+                    }else{
+                        var downloadLink = window.document.createElement('a');
+                        var contentTypeHeader = request.getResponseHeader("Content-Type");
+                        downloadLink.href = window.URL.createObjectURL(new Blob([blob], { type: contentTypeHeader }));
+                        downloadLink.download = fileName;
+                        document.body.appendChild(downloadLink);
+                        downloadLink.click();
+                        document.body.removeChild(downloadLink);
+                   }
+            }else{
+               alert("엑셀파일생성에 실패하였습니다.");
+            }
+        };
+    request.send(JSON.stringify(paramData));
+    }
 }

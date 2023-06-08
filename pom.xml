@@ -112,6 +112,18 @@
 			<version>2.12.3</version>
 		</dependency>
 
+		<!-- 엑셀 업로드 의존성 주입-->
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+			<version>5.2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>5.2.0</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>

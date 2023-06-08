@@ -50,7 +50,7 @@
         <table id="myTable" style="width:100%;" class="display">
             <thead>
                 <tr>
-                    <th><input type="checkbox" name="checkall" id="checkall"></th>
+                    <th style="text-align:center"><input type="checkbox" name="checkall" id="checkall"></th>
                     <th>거래 유형</th>
                     <th>작성자</th>
                     <th>판매처 명</th>
@@ -64,7 +64,7 @@
                     <h2>판매처 수정 및 등록</h2>
                 </div>
                 <div class="close-area">X</div>
-                <form action="/account/addAccount" method="post" role="form" name="tableUpdate" id="tableUpdate">
+                <form action="" method="post" role="form" name="tableUpdate" id="tableUpdate">
                     <div id="container">
                         <div id="box-left">
                             <p>거래 구분
@@ -90,8 +90,8 @@
                             </p>
                             <p>판매처 주소
                                 <button type="button" onclick="addressSh()">주소검색</button>
-                                <input type="text" name="acAddress" id="acAddress" placeholder="도로명">
-                                <input type="text" name="acAddressDetail" id="acAddressDetail" placeholder="상세주소">
+                                <input type="text" class="customInput" name="acAddress" id="acAddress" placeholder="도로명">
+                                <input type="text" class="customInput" name="acAddressDetail" id="acAddressDetail" placeholder="상세주소">
                             </p>
                         </div>
                         <div id="box-right">

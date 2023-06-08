@@ -29,7 +29,7 @@
 
 <div class="content" layout:fragment="content" id="content">
     <div id="dataTables">
-        <h2 id="title">구매 견적서</h2>
+        <h1 id="title">구매 견적서</h1>
 
         <div class="tabs2">
             <input id="all" type="radio" name="tab_item2" value="승인대기" onclick="estimateClick(this.value)" checked>
@@ -57,7 +57,7 @@
         <table id="myTable" style="width:100%;" class="display">
             <thead>
                 <tr>
-                    <th><input type="checkbox" name="checkall" id="checkall"></th>
+                    <th style="text-align: center;"><input type="checkbox" name="checkall" id="checkall"></th>
                     <th>구분</th>
                     <th>품명</th>
                     <th>총금액</th>
@@ -79,18 +79,18 @@
                 <form action="" method="post" role="form" id="myForm" name="myForm">
 
                     <p>거래 구분<br>
-                        <input type="text" id="acCategory" name="acCategory" value="구매" readonly>
+                        <input class="customInput" style="width:50%"  type="text" id="acCategory" name="acCategory" value="구매" readonly>
                     </p>
 
                     <p>거래처 선택<br/>
-                        <select class="form-select" name="acCode" id="acCode" onchange="AcCodeChange(value)">
+                        <select class="custom-select" name="acCode" id="acCode" onchange="AcCodeChange(value)">
                             <option value="">==거래처 선택==</option>
                             <option th:each="dto : ${accountFormDtos}" th:value="${dto.acCode}"
                                     th:text="${dto.acName}"></option>
                         </select>
                     </p>
                     <p>자재 선택<br/>
-                        <select class="form-select" name="prCode" id="prCode">
+                        <select class="custom-select" name="prCode" id="prCode">
                             <option value="">==자재 선택==</option>
                         </select>
                     </p>
@@ -115,7 +115,9 @@
                     <br/>
                     <div id="DivStatus" class="divisionStatus">
                     </div>
-                    <button id="saveBtn" onclick="addEstimate()" type="button">저장</button>
+                    <button id="saveBtn"  onclick="addEstimate()" type="button">
+                        <ion-icon name="save-outline"></ion-icon>
+                    </button>
                 </form>
             </div>
         </div>

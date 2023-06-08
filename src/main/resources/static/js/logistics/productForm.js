@@ -2,6 +2,22 @@ $(document).ready(function () {
     var token = $('meta[name="_csrf"]').attr('content');
     var header = $('meta[name="_csrf_header"]').attr('content');
 
+     $.fn.dataTable.ext.search.push(
+        function(settings, data, dataIndex){
+            var min = Date.parse($('#fromDate').val());
+            var max = Date.parse($('#toDate').val());
+            var targetDate = Date.parse(data[7]);
+
+            if( (isNaN(min) && isNaN(max) ) ||
+                (isNaN(min) && targetDate <= max )||
+                ( min <= targetDate && isNaN(max) ) ||
+                ( targetDate >= min && targetDate <= max) ){
+                    return true;
+            }
+            return false;
+        }
+        )
+
     var table = $('#myTable').DataTable({
         ajax: {
             "url":"/products/check",
@@ -12,6 +28,7 @@ $(document).ready(function () {
                 xhr.setRequestHeader(header,token);
             }
         },
+        order : [[1, 'desc']],
         columns: [
             {"data": "prCode"},
             {"data": "prName"},
@@ -43,7 +60,7 @@ $(document).ready(function () {
              targets : 0,
              orderable: false,
              'render' : function(data, type, full, meta) {
-                return '<input type="checkbox" name="checker" value="'+data+'">';
+                return '<span id="tableInnerCheckBox"><input type="checkbox" name="checker" value="'+data+'"></span>';
              }
            },
            {
@@ -66,6 +83,41 @@ $(document).ready(function () {
             });
          }
    });
+    /* Column별 검색기능 추가 */
+    $('#myTable_filter').prepend('<select id="customSelect"></select>');
+    $('#myTable > thead > tr').children().each(function (indexInArray, valueOfElement) {
+       if(valueOfElement.innerHTML !="등록 일자" && indexInArray != 0 && valueOfElement.innerHTML !="단가"){
+           $('#customSelect').append('<option>'+valueOfElement.innerHTML+'</option>');
+       }
+    });
+
+    $('#customSelect').on("change",function(){
+       table.search('').draw();
+       table.columns().search('').draw();
+    });
+
+    $('.dataTables_filter input').unbind().bind('keyup', function () {
+
+       var colValue = document.querySelector('#customSelect').value;
+
+       var colHeaders = table.columns().header().toArray();
+
+       var targetIndex = colHeaders.findIndex(function(header) {
+         return header.innerHTML === colValue;
+       });
+
+       var keyWord = this.value;
+
+       table.column(targetIndex).search(keyWord).draw();
+    });
+
+    /* 날짜검색 이벤트 리바인딩 */
+    $('#myTable_filter').prepend('<input type="date" id="toDate" placeholder="yyyy-MM-dd">');
+    $('#myTable_filter').prepend('<input type="date" id="fromDate" placeholder="yyyy-MM-dd"> ~');
+    $('#toDate, #fromDate').unbind().bind("change",function(){
+       table.draw();
+    })
+
    //modal 관련 설정.
    const modal = document.getElementById("modal")
    const btnModal = document.getElementById("btn-modal")
@@ -263,4 +315,54 @@ function deletePageN(){
             alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n");
         }
     });
+}
+/*데이터 베이스 엑셀화*/
+function excel(){
+
+    var token = $('meta[name="_csrf"]').attr('content');
+    var header = $('meta[name="_csrf_header"]').attr('content');
+
+    var inputs = document.getElementsByName("checker");
+    var values = Array.from(inputs).map(function(input) {
+      return input.value;
+    });
+
+    paramData = {};
+    paramData[["product"]]=values;
+
+    var excelDownloadState = false;
+    if(excelDownloadState == false){
+
+        excelDownloadState = true;
+
+        //xmlhttprequest 통신.
+        var request = new XMLHttpRequest();
+        request.open('POST', 'http://localhost:8877/excel/download',true);
+        request.setRequestHeader(header, token);
+        request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+        request.responseType = 'blob';
+
+        request.onload = function(e) {
+            excelDownloadState = false;
+
+            if (this.status === 200) {
+                var blob = this.response;
+                var fileName = "Product_Info.xlsx"
+                    if(window.navigator.msSaveOrOpenBlob) {
+                        window.navigator.msSaveBlob(blob, fileName);
+                    }else{
+                        var downloadLink = window.document.createElement('a');
+                        var contentTypeHeader = request.getResponseHeader("Content-Type");
+                        downloadLink.href = window.URL.createObjectURL(new Blob([blob], { type: contentTypeHeader }));
+                        downloadLink.download = fileName;
+                        document.body.appendChild(downloadLink);
+                        downloadLink.click();
+                        document.body.removeChild(downloadLink);
+                   }
+            }else{
+               alert("엑셀파일생성에 실패하였습니다.");
+            }
+        };
+    request.send(JSON.stringify(paramData));
+    }
 }

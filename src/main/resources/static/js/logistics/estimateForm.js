@@ -10,6 +10,22 @@ $(document).ready(function () {
     var token = $('meta[name="_csrf"]').attr('content');
     var header = $('meta[name="_csrf_header"]').attr('content');
 
+    $.fn.dataTable.ext.search.push(
+        function(settings, data, dataIndex){
+            var min = Date.parse($('#fromDate').val());
+            var max = Date.parse($('#toDate').val());
+            var targetDate = Date.parse(data[9]);
+
+            if( (isNaN(min) && isNaN(max) ) ||
+                (isNaN(min) && targetDate <= max )||
+                ( min <= targetDate && isNaN(max) ) ||
+                ( targetDate >= min && targetDate <= max) ){
+                    return true;
+            }
+            return false;
+        }
+    )
+
     var table = $('#myTable').DataTable({
         ajax: {
             "url": myUrl,
@@ -20,6 +36,7 @@ $(document).ready(function () {
                 xhr.setRequestHeader(header,token);
             }
         },
+        order : [[1, 'desc']],
         columns: [
             {"data": "esCode"},
             {"data": "acCategory"},
@@ -53,19 +70,13 @@ $(document).ready(function () {
                  targets : 0,
                  orderable: false,
                  'render' : function(data, type, full, meta) {
-                                 return '<input type="checkbox" name="checker" value="'+data+'">';
+                    return '<span id="tableInnerCheckBox"><input type="checkbox" name="checker" value="'+data+'"></span>';
                  }
            },
            {
                 targets : 3,
                 'render' : function(data) {
                     return '<td>'+comma(data)+'<td>';
-                }
-           },
-           {
-                targets : 7,
-                'render' : function(data) {
-                     return '<td style="color:#4169E1;">'+data+'<td>';
                 }
            }
         ],
@@ -82,6 +93,40 @@ $(document).ready(function () {
             });
          }
     });
+    /* Column별 검색기능 추가 */
+    $('#myTable_filter').prepend('<select id="customSelect"></select>');
+    $('#myTable > thead > tr').children().each(function (indexInArray, valueOfElement) {
+       if(valueOfElement.innerHTML !="등록일자" && indexInArray != 0 && valueOfElement.innerHTML !="총금액"){
+           $('#customSelect').append('<option>'+valueOfElement.innerHTML+'</option>');
+       }
+    });
+
+    $('#customSelect').on("change",function(){
+       table.search('').draw();
+       table.columns().search('').draw();
+    });
+
+    $('.dataTables_filter input').unbind().bind('keyup', function () {
+
+       var colValue = document.querySelector('#customSelect').value;
+
+       var colHeaders = table.columns().header().toArray();
+
+       var targetIndex = colHeaders.findIndex(function(header) {
+         return header.innerHTML === colValue;
+       });
+
+       var keyWord = this.value;
+
+       table.column(targetIndex).search(keyWord).draw();
+    });
+
+    /* 날짜검색 이벤트 리바인딩 */
+    $('#myTable_filter').prepend('<input type="date" id="toDate" placeholder="yyyy-MM-dd">');
+    $('#myTable_filter').prepend('<input type="date" id="fromDate" placeholder="yyyy-MM-dd"> ~');
+    $('#toDate, #fromDate').unbind().bind("change",function(){
+       table.draw();
+    })
    //modal 관련 설정.
    const modal = document.getElementById("modal")
    const btnModal = document.getElementById("btn-modal")
@@ -145,7 +190,7 @@ $(document).ready(function () {
                 tableTd += '<td class="editable count" id="' + code + '-esQuantity"></td>';
                 tableTd += '<td class="SupplyValue" id='+code+'-esSupplyValue></td>';
                 tableTd += '<td class="TaxAmount" id='+code+'-esTaxAmount></td>';
-                tableTd += '<td><button type="button" id="deleteBtn" onclick="deleteRow(\''+code+'\')">삭제</button></td> </tr>';
+                tableTd += '<td><button type="button" id="deleteBtn" onclick="deleteRow(\''+code+'\')"><ion-icon name="trash-outline"></ion-icon></button></td> </tr>';
 
                 $('#productTable tbody').append(tableTd);
             },
@@ -500,7 +545,7 @@ function update(){
                 tableTd += '<td class="TaxAmount" id='+esdItem.product.prCode+'-esTaxAmount value='+esdItem.esTaxAmount+'>'+comma(esdItem.esTaxAmount)+'</td>';
                 if(item.divisionStatus == '승인대기'){
                     $("#prDelete").css("display", "");//삭제 기능을 보이게 해줍니다.
-                    tableTd += '<td><button type="button" id="deleteBtn" onclick="deleteRow(\''+esdItem.product.prCode+'\')">삭제</button></td> </tr>';
+                    tableTd += '<td><button type="button" id="deleteBtn" onclick="deleteRow(\''+esdItem.product.prCode+'\')"><ion-icon name="trash-outline"></ion-icon></button></td> </tr>';
                 }else{
                     $("#prDelete").css("display", "none");//삭제 기능을 안보이게 해줍니다.
                 }
@@ -594,6 +639,22 @@ function estimateClick(values){
     paramData[["acCategory"]] = category;
     paramData[["filter"]] = values;
 
+    $.fn.dataTable.ext.search.push(
+        function(settings, data, dataIndex){
+            var min = Date.parse($('#fromDate').val());
+            var max = Date.parse($('#toDate').val());
+            var targetDate = Date.parse(data[9]);
+
+            if( (isNaN(min) && isNaN(max) ) ||
+                (isNaN(min) && targetDate <= max )||
+                ( min <= targetDate && isNaN(max) ) ||
+                ( targetDate >= min && targetDate <= max) ){
+                    return true;
+            }
+            return false;
+        }
+    )
+
     $.ajax({
         url: "/estimates/click",
         type: "POST",
@@ -604,9 +665,10 @@ function estimateClick(values){
             xhr.setRequestHeader(header,token);
         },
         success: function (result) {
-            $('#myTable').DataTable({
+            var table = $('#myTable').DataTable({
                 data:result.data,
                 dataSrc:"",
+                order : [[1, 'desc']],
                 columns: [
                     {"data": "esCode"},
                     {"data": "acCategory"},
@@ -640,7 +702,7 @@ function estimateClick(values){
                      targets : 0,
                      orderable: false,
                      'render' : function(data, type, full, meta) {
-                                     return '<input type="checkbox" name="checker" value="'+data+'">';
+                     return '<span id="tableInnerCheckBox"><input type="checkbox" name="checker" value="'+data+'"></span>';
                     }
                     },
                     {
@@ -651,9 +713,45 @@ function estimateClick(values){
                     }
                 ]
             });
+            /* Column별 검색기능 추가 */
+            $('#myTable_filter').prepend('<select id="customSelect"></select>');
+            $('#myTable > thead > tr').children().each(function (indexInArray, valueOfElement) {
+               if(valueOfElement.innerHTML !="등록일자" && indexInArray != 0 && valueOfElement.innerHTML !="총금액"){
+                   $('#customSelect').append('<option>'+valueOfElement.innerHTML+'</option>');
+               }
+            });
+
+            $('#customSelect').on("change",function(){
+               table.search('').draw();
+               table.columns().search('').draw();
+            });
+
+            $('.dataTables_filter input').unbind().bind('keyup', function () {
+
+               var colValue = document.querySelector('#customSelect').value;
+
+               var colHeaders = table.columns().header().toArray();
+
+               var targetIndex = colHeaders.findIndex(function(header) {
+                 return header.innerHTML === colValue;
+               });
+
+               var keyWord = this.value;
+
+               table.column(targetIndex).search(keyWord).draw();
+            });
+
+            /* 날짜검색 이벤트 리바인딩 */
+            $('#myTable_filter').prepend('<input type="date" id="toDate" placeholder="yyyy-MM-dd">');
+            $('#myTable_filter').prepend('<input type="date" id="fromDate" placeholder="yyyy-MM-dd"> ~');
+            $('#toDate, #fromDate').unbind().bind("change",function(){
+               table.draw();
+            })
         },
         error: function (request, status) {
             alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n");
         }
     });
 }
+
+

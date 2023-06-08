@@ -60,7 +60,8 @@ public class MemberRepositoryTest{
 
 
         bean.setId(newday);
-        String password=passwordEncoder.encode(newday);
+        String password=passwordEncoder.encode("17102305");
+        System.out.println(password);
         bean.setPassword(password);
         bean.setName("관리자");
         bean.setBirth("1999/12/12");
@@ -72,6 +73,7 @@ public class MemberRepositoryTest{
         bean.setPaystep("2호봉");
         bean.setSalary(5000L);
         bean.setRole(MemberRole.ADMIN);
+        bean.setAddress("");
 
         Member findId = memberRepository.findMemberById(bean.getId());
         Member findEmail = memberRepository.findMemberByEmail(bean.getEmail());

@@ -49,7 +49,7 @@
         <table id="myTable" style="width:100%;" class="display">
             <thead>
                 <tr>
-                    <th><input type="checkbox" name="checkall" id="checkall"></th>
+                    <th style="text-align: center;"><input type="checkbox" name="checkall" id="checkall"></th>
                     <th>분류</th>
                     <th>창고명</th>
                     <th>현재 적재량</th>
@@ -70,11 +70,11 @@
 
                 <div class="close-area">X</div>
 
-                <form action="/section/addSection" method="post" role="form" id="myForm" name="myForm">
+                <form action="" method="post" role="form" id="myForm" name="myForm">
                     <div id="container">
                         <div id="div-area">
                             <p>분류<br/>
-                                <select class="form-select" id="secCategorySel" name="secCategory">
+                                <select class="custom-select" id="secCategorySel" name="secCategory">
                                     <option value="">==분류 선택==</option>
                                     <option th:each="secCategoryVal : ${T(com.Erp.constant.SectionCategory).values()}"
                                             th:value="${secCategoryVal.name()}"
@@ -83,15 +83,15 @@
                                 </select>
                             </p>
                             <p>창고명<br/>
-                                <input id="secName" name="secName"type="text">
+                                <input class="customInput" id="secName" name="secName"type="text">
                             </p>
                             <p>최대 적재 수량<br/>
-                                <input id="secMaxCount" name="secMaxCount" type="text">
+                                <input class="customInput" id="secMaxCount" name="secMaxCount" type="text">
                             </p>
                             <p>창고 주소<br/>
                                 <button type="button" onclick="addressSh()">주소 검색</button>
-                                <input type="text" name="secAddress" id="secAddress" placeholder="도로명">
-                                <input type="text" name="secAddressDetail" id="secAddressDetail" placeholder="상세주소">
+                                <input class="customInput" type="text" name="secAddress" id="secAddress" placeholder="도로명">
+                                <input class="customInput" type="text" name="secAddressDetail" id="secAddressDetail" placeholder="상세주소">
                             </p>
                             <input id="secCode" name="secCode" type="hidden">
                             <button id="saveBtn" onclick="addSection()" type="button">
