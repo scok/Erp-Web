@@ -70,6 +70,9 @@ public class Member extends BaseEntity {
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "member")
     private MemberImage memberImage;
 
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Income> incomes = new ArrayList<>();
+
     public static Member createid(MemberInsertDto memberInsertDto, PasswordEncoder passwordEncoder, JPAQueryFactory queryFactory){
         //입사년월
         int year = 0;
