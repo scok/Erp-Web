@@ -1,6 +1,75 @@
 $(document).ready(function(){
 
     // 버튼 클릭시 항목 이벤트
+    $('#allOpenList').on('click', function(){
+
+        var btn = $(this);
+
+        if(btn[0].innerText == '모두 펼치기'){
+            btn[0].innerText = '모두 접기';
+
+            for(let i=0; i < $('.finBtn').length; i++){
+                $('.finBtn')[i].innerText = '-';
+            }
+
+            $('.assets_group').show();
+            $('.current_assets_group').show();
+            $('.non_current_assets_group').show();
+
+            $('.cash_equivalents_group').show();
+            $('.inventory_group').show();
+
+            $('.prop_pl_equip_group').show();
+            $('.lt_invest_group').show();
+            $('.intangible_assets_group').show();
+            $('.other_non_current_assets_group').show();
+
+            $('.liabilities_group').show();
+            $('.current_liabilities_group').show();
+            $('.non_current_liabilities_group').show();
+
+            $('.st_borrowings_group').show();
+            $('.other_current_liabilities_group').show();
+            $('.lt_borrowings_group').show();
+            $('.other_non_current_liabilities_group').show();
+
+            $('.equity_group').show();
+            $('.shareholders_equity_group').show();
+            $('.retained_earnings_group').show();
+        }else{
+            btn[0].innerText = '모두 펼치기';
+
+            for(let i=0; i < $('.finBtn').length; i++){
+                $('.finBtn')[i].innerText = '+';
+            }
+
+            $('.assets_group').hide();
+            $('.current_assets_group').hide();
+            $('.non_current_assets_group').hide();
+
+            $('.cash_equivalents_group').hide();
+            $('.inventory_group').hide();
+
+            $('.prop_pl_equip_group').hide();
+            $('.lt_invest_group').hide();
+            $('.intangible_assets_group').hide();
+            $('.other_non_current_assets_group').hide();
+
+            $('.liabilities_group').hide();
+            $('.current_liabilities_group').hide();
+            $('.non_current_liabilities_group').hide();
+
+            $('.st_borrowings_group').hide();
+            $('.other_current_liabilities_group').hide();
+            $('.lt_borrowings_group').hide();
+            $('.other_non_current_liabilities_group').hide();
+
+            $('.equity_group').hide();
+            $('.shareholders_equity_group').hide();
+            $('.retained_earnings_group').hide();
+        }
+    });
+
     $('#assets_btn').on('click', function(){
 
         var btn = $(this);
@@ -10,6 +79,8 @@ $(document).ready(function(){
             $('.assets_group').show();
         }else if(btn[0].innerText == '-'){
             btn[0].innerText = '+';
+
+            console.log($('.assets_group'));
             $('.assets_group').hide();
             $('#current_assets_btn')[0].innerText = '+';
             $('.current_assets_group').hide();

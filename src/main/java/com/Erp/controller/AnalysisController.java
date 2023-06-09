@@ -27,7 +27,7 @@ public class AnalysisController {
 
         List<IncomeChartData> incomeChartData = new ArrayList<>();
 
-        incomeChartData = incomeRepository.findChartDataList();
+        //incomeChartData = incomeRepository.findChartDataList();
 
         return incomeChartData;
     }
@@ -37,7 +37,7 @@ public class AnalysisController {
 
         List<FinancialChartData> financialChartData = new ArrayList<>();
 
-        financialChartData = financialRepository.findChartDataList();
+        //financialChartData = financialRepository.findChartDataList();
 
         return financialChartData;
     }

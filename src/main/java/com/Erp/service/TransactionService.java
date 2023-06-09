@@ -1,16 +1,24 @@
 package com.Erp.service;
 
+import com.Erp.constant.DivisionStatus;
+import com.Erp.constant.TransactionCategory;
 import com.Erp.dto.TransactionDto;
 import com.Erp.entity.Income;
 import com.Erp.entity.Transaction;
+import com.Erp.entity.WarehousingInAndOut;
 import com.Erp.repository.IncomeRepository;
+import com.Erp.repository.MemberRepository;
 import com.Erp.repository.TransactionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -22,37 +30,54 @@ public class TransactionService {
     private final IncomeService incomeService;
 
 
-    public Long saveTransaction(TransactionDto dto){
+    public void inAndOut(WarehousingInAndOut warehousingInAndOut) {
+        Transaction transaction = new Transaction();
+        //LocalDateTime -> Date 형변환
+        LocalDateTime inAndOutDateTime = warehousingInAndOut.getInAndOutDate();
+        Instant instant = inAndOutDateTime.atZone(ZoneId.systemDefault()).toInstant();
+        Date trDate = Date.from(instant);
 
-        Transaction transaction = dto.getTransaction();
+        transaction.setTrDate(trDate);
+        transaction.setCompanyName(warehousingInAndOut.getOrderSheetDetail().getOrderSheet().getAccount().getAcName());
+        transaction.setAmount(warehousingInAndOut.getOrderSheetDetail().getOsSupplyValue()+warehousingInAndOut.getOrderSheetDetail().getOsTaxAmount());
+        transaction.setRemark(" ");
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(dto.getTrDate());
-        int year = calendar.get(Calendar.YEAR);
-
-        Income income = incomeRepository.findIncomeYearAndQuarter((short)year ,dto.getQuarter());
-
-        if(income != null){
-            transaction.setIncome(income);
-            transactionRepository.save(transaction);
-
-            List<Transaction> transactions = income.getTransactions();
-
-            if(transactions.size() == 0){
-                transactions = new ArrayList<>();
-            }
-            transactions.add(transaction);
-
-            income.setTransactions(transactions);
-
-            incomeService.updateTotalData(income, income.getTransactions());
-
-            incomeRepository.save(income);
-        }else {
-            transactionRepository.save(transaction);
+        if (warehousingInAndOut.getDivisionStatus()==DivisionStatus.입고){
+            transaction.setTransactionCategory(TransactionCategory.INS);
+        }else{
+            transaction.setTransactionCategory(TransactionCategory.OUTS);
         }
 
-        return transaction.getId();
+        int month =inAndOutDateTime.getMonthValue();
+        int quarter ;
+
+        if (1 <= month && 3 >= month){
+            quarter = 1 ;
+        }else if (4 <= month && 6 >= month){
+            quarter = 2 ;
+        }else if (7 <= month && 9 >= month){
+            quarter = 3 ;
+        }else {
+            quarter = 4 ;
+        }
+
+        transaction.setQuarter(quarter);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(transaction.getTrDate());
+        Short year = (short) calendar.get(Calendar.YEAR);
+
+        transaction.setWarehousingInAndOut(warehousingInAndOut);
+
+        Income income = incomeRepository.findIncomeYearAndQuarter(year, transaction.getQuarter());
+
+        income.getTransactions().add(transaction);
+
+        incomeService.saveData2(income);
+
+        transaction.setIncome(income);
+
+        transactionRepository.save(transaction);
     }
 
     public String getColumnNameByIndex(int columnIndex) {
@@ -114,6 +139,7 @@ public class TransactionService {
 
         return transactionDtos ;
     }
+
 
 
 }

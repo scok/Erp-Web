@@ -14,6 +14,8 @@ import javax.persistence.*;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity //JPA로 관리한다는 설정.
 @Table(name = "members")
@@ -76,7 +78,7 @@ public class Member extends BaseEntity {
 
         Member member = new Member();
 
-        QMember qbean = QMember.member;
+        com.Erp.entity.QMember qbean = com.Erp.entity.QMember.member;
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         String strNowDate = memberInsertDto.getDate().format(formatter);
@@ -148,5 +150,13 @@ public class Member extends BaseEntity {
         member.setRole(memberUpdateDto.getRole());
 
         return member;
+    }
+
+    public void addMember(List<Member> memberList, Member member) {
+        if (memberList.stream().anyMatch(m -> m.getId().equals(member.getId()))) {
+            // 이미 동일한 ID가 존재하는 경우 처리 로직
+            throw new IllegalArgumentException("이미 동일한 ID가 존재합니다.");
+        }
+        memberList.add(member);
     }
 }

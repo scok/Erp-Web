@@ -2,6 +2,7 @@ package com.Erp.dto;
 
 import com.Erp.constant.TransactionCategory;
 import com.Erp.entity.Transaction;
+import groovy.transform.ToString;
 import lombok.Getter;
 import lombok.Setter;
 import org.modelmapper.ModelMapper;
@@ -11,7 +12,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 
-@Setter@Getter
+@Setter@Getter@ToString
 public class TransactionDto {
 
     private Long id ; // 거래번호
@@ -40,20 +41,8 @@ public class TransactionDto {
         return modelMapper.map(transaction,TransactionDto.class);
     }
 
-    public TransactionDto() {
-    }
 
-    public TransactionDto(Long id, String companyName, Long amount, Date trDate, Integer quarter, TransactionCategory transactionCategory, String remark) {
-        this.id = id;
-        this.companyName = companyName;
-        this.amount = amount;
-        this.trDate = trDate;
-        this.quarter = quarter;
-        this.transactionCategory = transactionCategory;
-        this.remark = remark;
-    }
-
-    //    private List<WarehouseStocks> warehouseStocksList ; // 재고리스트
+//    private List<WarehouseStocks> warehouseStocksList ; // 재고리스트
 //    private List<WarehouseOuts> warehouseOutsList ; // 출고리스트
 //    private List<WarehouseIns> warehouseInsList ; // 입고리스트
 

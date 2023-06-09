@@ -55,8 +55,8 @@ $(document).ready(function(){
             cache:false,
             success:function(data){
                 console.log('데이터 추가 성공');
-                table.search(new_year ? '^' + new_year + '$' : '', true, false).draw(); // 새로 생성한 연도에 맞게 화면 갱신
                 year_select.value = new_year;
+                table.column(31).search(new_year).draw();
             },
             error:function(xhr, status, error){
                 if(xhr.status == '401'){

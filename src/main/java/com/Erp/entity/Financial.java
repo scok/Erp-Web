@@ -1,5 +1,6 @@
 package com.Erp.entity;
 
+import com.Erp.dto.FinancialDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,17 +13,14 @@ import java.lang.reflect.Method;
 @Getter @Setter
 public class Financial {
     @Id
-    @Column(name = "financial_num")
+    @Column(name = "financial_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long num ; // 재무 번호
+    private Long id ; // 재무 번호
     private Integer quarter; //분기
 
     // 자산
     private Long cash; // 현금
     private Long cash_equivalents; // 현금성 예금
-    private Long raw_mt; // 원자재 재고
-    private Long product_mt; // 제품 재고
-    private Long fixture_mt; // 비품 재고
     private Long real_estate; // 부동산
     private Long equipment; // 장비
     private Long vehicles; // 차량
@@ -48,7 +46,6 @@ public class Financial {
 
     // 자본
     private Long paid_capital; // 자본금
-    private Long netIncome; // 당기 순이익
     private Long total_capital; // 총 자본
 
     private Long totalLiabilitiesCapital; // 총 부채 및 자본
@@ -58,9 +55,8 @@ public class Financial {
 
     // 손익 계산서
     // 원자재, 제품, 비품
-    @JsonIgnore
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "income_num")
+    @OneToOne
+    @JoinColumn(name = "income_id")
     private Income incomes  ;
 
     public void setDynamicField(String fieldName, Object fieldValue) throws Exception{
@@ -76,9 +72,6 @@ public class Financial {
         this.quarter = quarter;
         this.cash = number;
         this.cash_equivalents = number;
-        this.raw_mt = number;
-        this.product_mt = number;
-        this.fixture_mt = number;
         this.real_estate = number;
         this.equipment = number;
         this.vehicles = number;
@@ -100,22 +93,49 @@ public class Financial {
         this.lt_deposits = number;
         this.total_liabilities = number;
         this.paid_capital = number;
-        this.netIncome = number;
         this.total_capital = number;
         this.totalLiabilitiesCapital = number;
         this.year = year;
     }
 
+    public Financial(FinancialDto financialDto) {
+        this.id = financialDto.getId();
+        this.quarter = financialDto.getQuarter();
+        this.cash = financialDto.getCash();
+        this.cash_equivalents = financialDto.getCash_equivalents();
+        this.real_estate = financialDto.getReal_estate();
+        this.equipment = financialDto.getEquipment();
+        this.vehicles = financialDto.getVehicles();
+        this.equity_invest = financialDto.getEquity_invest();
+        this.real_estate_invest = financialDto.getReal_estate_invest();
+        this.corporate_invest = financialDto.getCorporate_invest();
+        this.trademarks = financialDto.getTrademarks();
+        this.licenses = financialDto.getLicenses();
+        this.notes_receivable = financialDto.getNotes_receivable();
+        this.deposits = financialDto.getDeposits();
+        this.pension_assets = financialDto.getPension_assets();
+        this.total_assets = financialDto.getTotal_assets();
+        this.bank_loans = financialDto.getBank_loans();
+        this.trade_credit = financialDto.getTrade_credit();
+        this.advance_payments = financialDto.getAdvance_payments();
+        this.tax_liabilities = financialDto.getTax_liabilities();
+        this.bonds = financialDto.getBonds();
+        this.lt_borrow_pay = financialDto.getLt_borrow_pay();
+        this.lt_deposits = financialDto.getLt_deposits();
+        this.total_liabilities = financialDto.getTotal_liabilities();
+        this.paid_capital = financialDto.getPaid_capital();
+        this.total_capital = financialDto.getTotal_capital();
+        this.totalLiabilitiesCapital = financialDto.getTotalLiabilitiesCapital();
+        this.year = financialDto.getYear();
+    }
+
     @Override
     public String toString() {
         return "Financial{" +
-                "num=" + num +
+                "id=" + id +
                 ", quarter=" + quarter +
                 ", cash=" + cash +
                 ", cash_equivalents=" + cash_equivalents +
-                ", raw_mt=" + raw_mt +
-                ", product_mt=" + product_mt +
-                ", fixture_mt=" + fixture_mt +
                 ", real_estate=" + real_estate +
                 ", equipment=" + equipment +
                 ", vehicles=" + vehicles +
@@ -137,7 +157,6 @@ public class Financial {
                 ", lt_deposits=" + lt_deposits +
                 ", total_liabilities=" + total_liabilities +
                 ", paid_capital=" + paid_capital +
-                ", netIncome=" + netIncome +
                 ", total_capital=" + total_capital +
                 ", totalLiabilitiesCapital=" + totalLiabilitiesCapital +
                 ", year=" + year +

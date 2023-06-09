@@ -29,31 +29,7 @@ function convertFile(event){
       }
     });
 
-    if( target_id === 'tableToExcel'){ // 엑셀 변환
-
-        const headerCells = table.querySelectorAll("thead th");
-        const headers = Array.from(headerCells).map(cell => cell.textContent.trim());
-
-        const bodyRows = table.querySelectorAll("tbody tr");
-        const data = Array.from(bodyRows).map(row => {
-            const computedStyle = getComputedStyle(row);
-            if(computedStyle.display === 'none'){
-                row.style.display = '';
-            }
-            const rowData = Array.from(row.querySelectorAll("td")).map(cell => cell.textContent.trim());
-            return rowData;
-        });
-        const lastData = data[data.length - 1];
-        const indexToInsert = 1;
-        lastData.splice(indexToInsert, 0, '');
-        data[data.length - 1] = lastData;
-
-        const workbook = XLSX.utils.book_new();
-        const worksheet = XLSX.utils.aoa_to_sheet([headers, ...data]);
-
-        XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet 1");
-        XLSX.writeFile(workbook, "table_data.xlsx");
-    }else if(target_id === 'tableToPDF'){ // PDF 변환
+    if(target_id === 'tableToPDF'){ // PDF 변환
 
         var doc = new jspdf.jsPDF('p', 'mm', 'a4');
 
@@ -61,7 +37,53 @@ function convertFile(event){
         doc.addFont("malgun.ttf", "malgun", "normal");
         doc.setFont("malgun");
 
-        doc.autoTable({html:table, styles: { font: "malgun", fontStyle: "normal"}, includeHiddenHtml: true});
+        var tableStyle = {
+            font: "malgun",
+            fontColor: '#000000',
+            fontStyle: "normal"
+        };
+
+        doc.autoTable({
+            html:table,
+            includeHiddenHtml: true,
+            styles: tableStyle,
+            headStyles:{
+                fillColor: [66, 68, 78]
+            },
+            bodyStyles:{
+                lineColor: [198, 201, 204],
+                lineWidth: 0.5
+            },
+            columnStyles:{
+                0:{
+                    fillColor: [255, 255, 255]
+                },
+                1:{
+                    fillColor: [255, 255, 255]
+                },
+                2:{
+                    fillColor: [255, 255, 255]
+                },
+                3:{
+                    fillColor: [255, 255, 255]
+                },
+                4:{
+                    fillColor: [255, 255, 255]
+                },
+                5:{
+                    fillColor: [255, 255, 255]
+                },
+                6:{
+                    fillColor: [255, 255, 255]
+                },
+                7:{
+                    fillColor: [255, 255, 255]
+                },
+                8:{
+                    fillColor: [255, 255, 255]
+                }
+            }
+        });
 
         doc.save('data_table.pdf');
     }

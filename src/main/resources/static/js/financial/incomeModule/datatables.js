@@ -43,7 +43,7 @@ $(document).ready(function(){
             }
         },
         columns : [
-                { data : 'num'},
+                { data : 'id'},
                 { data : 'quarter'},
                 { data : 'sales_revenue',
                   render : formatNumber
@@ -63,19 +63,25 @@ $(document).ready(function(){
                 { data : 'total_revenue',
                   render : formatNumber
                 },
-                { data : 'sales_salary',
+                { data : 'salary',
                   render : formatNumber
                 },
-                { data : 'compensation',
+                { data : 'bonus',
+                  render : formatNumber
+                },
+                { data : 'plusMoney',
+                  render : formatNumber
+                },
+                { data : 'minusMoney',
+                  render : formatNumber
+                },
+                { data : 'totalMoney',
+                  render : formatNumber
+                },
+                { data : 'manage_expenses',
                   render : formatNumber
                 },
                 { data : 'advertising',
-                  render : formatNumber
-                },
-                { data : 'travel_expenses',
-                  render : formatNumber
-                },
-                { data : 'mp_salary',
                   render : formatNumber
                 },
                 { data : 'office_rent',
@@ -88,15 +94,6 @@ $(document).ready(function(){
                   render : formatNumber
                 },
                 { data : 'fixtures',
-                  render : formatNumber
-                },
-                { data : 'salary',
-                  render : formatNumber
-                },
-                { data : 'employee_benefits',
-                  render : formatNumber
-                },
-                { data : 'manage_expenses',
                   render : formatNumber
                 },
                 { data : 'raw_mat_cost',
@@ -132,6 +129,9 @@ $(document).ready(function(){
                 { data : 'income_tax',
                   render : formatNumber
                 },
+                { data : 'localTax',
+                  render : formatNumber
+                },
                 { data : 'tax_expenses',
                   render : formatNumber
                 },
@@ -163,6 +163,9 @@ $(document).ready(function(){
 
                 select.add(option);
             }
+
+            var maxYear = Math.max(...year_array);
+            this.api().column(33).search(maxYear).draw();
         },
     });
 
@@ -197,7 +200,7 @@ $(document).ready(function(){
 
                 var data_tds = data_trs[i].querySelectorAll('td');
 
-                if(i == (data_trs.length - 1) || i == 5 || i == 20 || i == 23 || i == 26 || i == 29){
+                if(i == (data_trs.length - 1) || i == 5 || i == 19 || i == 22 || i == 25 || i == 29){
 
                     var data_span1 = data_tds[1].querySelector('span');
                     var data_span2 = data_tds[2].querySelector('span');
@@ -250,85 +253,19 @@ $(document).ready(function(){
 
             /* 비용 */
 
-            // 판매비
-            var total_selling_expenses_tds = document.querySelectorAll('.total_selling_expenses');
-            var selling_expenses_group_trs = document.querySelectorAll('.selling_expenses_group');
+            // 인력 비용
+            var total_manpower_tds = document.querySelectorAll('.total_manpower');
+            var manpower_group_trs = document.querySelectorAll('.manpower_group');
 
-            for(let i=0; i<total_selling_expenses_tds.length;i++){
+            for(let i=0; i<total_manpower_tds.length;i++){
 
-                var total_span = total_selling_expenses_tds[i].querySelector('span');
+                var total_span = total_manpower_tds[i].querySelector('span');
                 var sum = 0;
 
-                for(let j=0;j<other_revenue_group_trs.length;j++){
+                for(let j=0;j<manpower_group_trs.length;j++){
 
-                    let selling_expenses_group_tds = selling_expenses_group_trs[j].querySelectorAll('td');
-                    let data_span = selling_expenses_group_tds[i+2].querySelector('span');
-
-                    let data = parseFloat(data_span.innerText.replace(/,/g, ""));
-
-                    if(!isNaN(data)){
-                        sum += data;
-                    }
-                }
-
-                total_span.innerText = sum.toLocaleString();
-            }
-
-            // 관리비
-            var total_administrative_expenses_tds = document.querySelectorAll('.total_administrative_expenses');
-            var administrative_expenses_group_trs = document.querySelectorAll('.administrative_expenses_group');
-
-            for(let i=0; i<total_administrative_expenses_tds.length;i++){
-
-                var total_span = total_administrative_expenses_tds[i].querySelector('span');
-                var sum = 0;
-
-                for(let j=0;j<administrative_expenses_group_trs.length;j++){
-
-                    let administrative_expenses_group_tds = administrative_expenses_group_trs[j].querySelectorAll('td');
-                    let data_span = administrative_expenses_group_tds[i+2].querySelector('span');
-
-                    let data = parseFloat(data_span.innerText.replace(/,/g, ""));
-
-                    if(!isNaN(data)){
-                        sum += data;
-                    }
-                }
-
-                total_span.innerText = sum.toLocaleString();
-            }
-
-            // 총 판매비와 관리비
-            var total_selling_administrative_tds = document.querySelectorAll('.total_selling_administrative');
-
-            for(let i=0; i<total_selling_administrative_tds.length;i++){
-
-                var sum = 0;
-
-                var total_span = total_selling_administrative_tds[i].querySelector('span');
-                var selling = parseFloat(total_selling_expenses_tds[i].innerText.replace(/,/g, ""));
-                var administrative = parseFloat(total_administrative_expenses_tds[i].innerText.replace(/,/g, ""));
-
-                if(!isNaN(selling) && !isNaN(administrative)){
-                    sum += selling + administrative;
-                }
-
-                total_span.innerText = sum.toLocaleString();
-            }
-
-            // 인건비
-            var total_personnel_expenses_tds = document.querySelectorAll('.total_personnel_expenses');
-            var personnel_expenses_group_trs = document.querySelectorAll('.personnel_expenses_group');
-
-            for(let i=0; i<total_personnel_expenses_tds.length;i++){
-
-                var total_span = total_personnel_expenses_tds[i].querySelector('span');
-                var sum = 0;
-
-                for(let j=0;j<personnel_expenses_group_trs.length;j++){
-
-                    let personnel_expenses_group_tds = personnel_expenses_group_trs[j].querySelectorAll('td');
-                    let data_span = personnel_expenses_group_tds[i+2].querySelector('span');
+                    let manpower_group_tds = manpower_group_trs[j].querySelectorAll('td');
+                    let data_span = manpower_group_tds[i+2].querySelector('span');
 
                     let data = parseFloat(data_span.innerText.replace(/,/g, ""));
 

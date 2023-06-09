@@ -90,17 +90,29 @@
 			<groupId>org.thymeleaf.extras</groupId>
 			<artifactId>thymeleaf-extras-springsecurity5</artifactId>
 		</dependency>
-		<!-- log4jdbc -->
-		<dependency>
-			<groupId>org.bgee.log4jdbc-log4j2</groupId>
-			<artifactId>log4jdbc-log4j2-jdbc4.1</artifactId>
-			<version>1.16</version>
-		</dependency>
+
+		<!-- 모델 매퍼를 사용하기 위한 의존성 부여 -->
 		<dependency>
 			<groupId>org.modelmapper</groupId>
 			<artifactId>modelmapper</artifactId>
-			<version>2.3.0</version>
+			<version>2.3.9</version>
 		</dependency>
+
+		<!-- Ajax로 받은 데이터(Json 타입)를 Dto 쉽게 매핑하기 위한 코드 -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.12.3</version>
+		</dependency>
+
+		<!-- Ajax로 받은 데이터(Json 타입)를 Dto 데이트 타임은 지원하지 않기 때문에 추가로 의존성 주입 -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-jsr310</artifactId>
+			<version>2.12.3</version>
+		</dependency>
+
+
 	</dependencies>
 
 	<build>

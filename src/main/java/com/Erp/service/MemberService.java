@@ -4,8 +4,11 @@ import com.Erp.dto.MemberDetailDto;
 import com.Erp.dto.MemberPayInsertDto;
 import com.Erp.dto.MemberSearchDto;
 import com.Erp.dto.MemberUpdateDto;
+import com.Erp.entity.Financial;
+import com.Erp.entity.Income;
 import com.Erp.entity.Member;
 import com.Erp.entity.MemberImage;
+import com.Erp.repository.IncomeRepository;
 import com.Erp.repository.MemberImageRepository;
 import com.Erp.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,11 +20,17 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.Calendar;
+import java.util.List;
+
 @Service//for 비즈니스 로직 담당자
 @RequiredArgsConstructor//final 이나 NotNull이 붙어 있는 변수에 생성자를 자동으로 만들어 줍니다.
 public class MemberService implements UserDetailsService {
     private final MemberRepository memberRepository;
     private final MemberImageRepository memberImageRepository;
+    private final IncomeRepository incomeRepository;
+    private final IncomeService incomeService;
+    private final FinancialService financialService;
 
     //implements UserDetailsService
     //.usernameParameter("Id") 시큐리티 설정 class에 usernameParameter확인 필요.
@@ -40,10 +49,10 @@ public class MemberService implements UserDetailsService {
                 .build();
     }
 
-
     public Member saveMember(Member member){
 
         validateDuplicateMember(member);
+
         return memberRepository.save(member);
     }
 
@@ -124,6 +133,11 @@ public class MemberService implements UserDetailsService {
         dto.setPosition(member.getPosition());
         dto.setDepartment(member.getDepartment());
         return dto;
+    }
+
+    public Member getMemberName(String code) {
+
+        return memberRepository.findMemberById(code);
     }
 
     public void updateMember(Member member) {

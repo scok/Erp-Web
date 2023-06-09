@@ -8,7 +8,7 @@ import lombok.ToString;
 @Getter @Setter @ToString
 public class FinancialDto {
 
-    private Long num ; // 재무 번호
+    private Long id ; // 재무 번호
     private Integer quarter; //분기
 
     // 자산
@@ -53,13 +53,14 @@ public class FinancialDto {
     public FinancialDto() {
     }
 
-    public FinancialDto(Financial financial, Long fixture_mt, Long netIncome) {
-        this.num = financial.getNum();
+    public FinancialDto(Financial financial, Long raw_mt, Long product_mt, Long fixture_mt, Long netIncome) {
+        this.id = financial.getId();
         this.quarter = financial.getQuarter();
+
         this.cash = financial.getCash();
         this.cash_equivalents = financial.getCash_equivalents();
-        this.raw_mt = financial.getRaw_mt();
-        this.product_mt = financial.getProduct_mt();
+        this.raw_mt = raw_mt;
+        this.product_mt = product_mt;
         this.fixture_mt = fixture_mt;
         this.real_estate = financial.getReal_estate();
         this.equipment = financial.getEquipment();
@@ -72,7 +73,9 @@ public class FinancialDto {
         this.notes_receivable = financial.getNotes_receivable();
         this.deposits = financial.getDeposits();
         this.pension_assets = financial.getPension_assets();
-        this.total_assets = financial.getTotal_assets();
+
+        this.total_assets = this.cash + this.cash_equivalents + this.raw_mt + this.product_mt + this.fixture_mt + this.real_estate + this.equipment + this.vehicles + this.equity_invest + this.real_estate_invest + this.corporate_invest + this.trademarks + this.licenses + this.notes_receivable + this.deposits + this.pension_assets;
+
         this.bank_loans = financial.getBank_loans();
         this.trade_credit = financial.getTrade_credit();
         this.advance_payments = financial.getAdvance_payments();
@@ -80,11 +83,13 @@ public class FinancialDto {
         this.bonds = financial.getBonds();
         this.lt_borrow_pay = financial.getLt_borrow_pay();
         this.lt_deposits = financial.getLt_deposits();
-        this.total_liabilities = financial.getTotal_liabilities();
-        this.paid_capital = financial.getPaid_capital();
+        this.total_liabilities = this.bank_loans + this.trade_credit + this.advance_payments + this.tax_liabilities + this.bonds + this.lt_borrow_pay + this.lt_deposits;
+
+        this.paid_capital = this.total_assets - this.total_liabilities;
         this.netIncome = netIncome;
-        this.total_capital = financial.getTotal_capital();
-        this.totalLiabilitiesCapital = financial.getTotalLiabilitiesCapital();
+        this.total_capital = this.paid_capital + this.netIncome;
+
+        this.totalLiabilitiesCapital = this.total_liabilities + this.total_capital;
         this.year = financial.getYear();
     }
 }

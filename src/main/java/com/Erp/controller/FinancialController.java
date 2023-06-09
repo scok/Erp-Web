@@ -31,7 +31,7 @@ public class FinancialController {
     public FinancialData getList(@Valid FinancialData data, @RequestParam MultiValueMap<String, String> formData) {
 
         Pattern pattern = Pattern.compile("\\d{4}");
-        String searchValue = formData.get("columns[26][search][value]").toString();
+        String searchValue = formData.get("columns[31][search][value]").toString();
         System.out.println("검색 값 : " + formData);
         Matcher matcher = pattern.matcher(searchValue);
 
@@ -53,9 +53,9 @@ public class FinancialController {
         List<FinancialDto> dto = new ArrayList<>();
 
         if(year == 0){
-            dto = financialRepository.findFinancialList();
+            dto = financialService.findFinancialsList();
         }else{
-            dto = financialRepository.findSearchList(year);
+            dto = financialService.findFinancialsList(year);
         }
 
         data.setDraw(draw);

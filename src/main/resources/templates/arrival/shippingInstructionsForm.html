@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{common/sidebar}"
+>
+<head>
+    <meta charset="utf-8"/>
+    <title>출하 관리</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta th:if="${_csrf}" name="_csrf" th:content="${_csrf.token}"/>
+    <meta th:if="${_csrf}" name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <meta th:if="${_csrf}" name="_csrf_parameter" th:content="${_csrf.parameterName}"/>
+</head>
+<th:block layout:fragment="script">
+    <script th:src="@{/js/arrivalInstructForm.js}"></script>
+    <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/select/1.3.3/js/dataTables.select.min.js"></script>
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+</th:block>
+<th:block layout:fragment="css">
+    <link th:href="@{/css/distributionCenter.css}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" herf="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.8.8/semantic.min.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.semanticui.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/select/1.3.3/css/select.dataTables.min.css" />
+</th:block>
+
+<div class="content" layout:fragment="content" id="content">
+    <div id="dataTables">
+        <h2 id="title">출하 관리</h2>
+        <button type="button" id="updateBtn" onclick="update()">수정</button>
+
+        <table id="myTable" style="width:100%;" class="display">
+            <thead>
+                <tr>
+                    <th><input type="checkbox" name="checkall" id="checkall"></th>
+                    <th>구분</th>
+                    <th>품명</th>
+                    <th>총금액</th>
+                    <th>거래처 명</th>
+                    <th>거래처 대표자 명</th>
+                    <th>거래처 홈페이지</th>
+                    <th>상태</th>
+                </tr>
+            </thead>
+        </table>
+        <div id="modal" class="modal-overlay">
+            <div class="modal-window">
+                <div class="title">
+                    <h2>출하 관리</h2>
+                </div>
+                <div class="close-area">X</div>
+                <form action="" method="post" role="form" id="myForm" name="myForm">
+
+                    <p>거래 구분<br>
+                        <input type="text" id="acCategory" name="acCategory" value="구매" readonly>
+                    </p>
+
+                    <p>거래처<br/>
+                        <select class="form-select" name="acCode" id="acCode" onchange="AcCodeChange(value)">
+                            <option value="">==거래처 선택==</option>
+                            <option th:each="dto : ${accountFormDtos}" th:value="${dto.acCode}"
+                                    th:text="${dto.acName}"></option>
+                        </select>
+                    </p>
+                    <table id="productTable" style="">
+                        <thead>
+                            <tr>
+                                <th>거래 유형</th>
+                                <th>품명</th>
+                                <th>단가</th>
+                                <th>규격</th>
+                                <th>수량</th>
+                                <th>공급가액</th>
+                                <th>세액</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                        </tbody>
+                    </table>
+                        총 금액:
+                        <p id="osTotalPrice" name="osTotalPrice"></p>
+                    <br/>
+                    <div id="DivStatus" class="divisionStatus">
+                        <input type="radio" id="divisionStatus" name="divisionStatus" value="출고" onclick="radioClick(this.value)">
+                        <label for="divisionStatus">출고</label>
+                    </div>
+
+                    <div id="DivSectionStatus" class="DivSectionStatus">
+                        <p>창고 선택<br/>
+                            <select class="form-select" name="secCode" id="secCode">
+                            </select>
+                        </p>
+                        <p>구역 선택<br/>
+                            <select class="form-select" name="SACategory" id="SACategory">
+                                <option th:each="SACategory : ${T(com.Erp.constant.StackAreaCategory).values()}"
+                                        th:value="${SACategory.name()}"
+                                        th:text="${SACategory.name()}">
+                            </select>
+                        </p>
+                    </div>
+
+                    <p>입고 예정일</p>
+                    <input type='datetime-local' id="osReceiptDate" name='osReceiptDate' readonly/>
+                    <p>특이 사항</p>
+                    <input type="textarea" id="osComment" name="osComment" readonly>
+                    <br>
+                    <button id="saveBtn" type="button" onclick="OrderSheetUpdate()">저장</button>
+                </form>
+            </div>
+            <section class="alertModal modal-section type-confirm">
+                <div class="enroll_box">
+                    <p class="menu_msg"></p>
+                </div>
+                <div class="enroll_btn">
+                    <button class="btn pink_btn btn_ok">확인</button>
+                    <button class="btn gray_btn modal_close">취소</button>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+</html>

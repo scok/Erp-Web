@@ -31,6 +31,8 @@ public class HomeController {
                     String id = user.getUsername();//로그인한 유저의 id값을 가져옵니다.
 
                     UserDto result = memberRepository.findMemberInfo(id);
+
+                    System.out.println("UserDto : " + result);
                     //유저 정보를 데이터 베이스와 연동하여 필요한 값만 가져옵니다
 
                     if (result != null) {

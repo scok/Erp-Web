@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{common/sidebar}"
+>
+<head>
+    <meta charset="utf-8">
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+</head>
+
+<div class="content" layout:fragment="content">
+    <body class="bg-gradient-primary">
+    <div class="container">
+        <div class="card o-hidden border-0 shadow-lg my-3">
+            <div class="card-body p-50">
+                <!-- Nested Row within Card Body -->
+                <form action="" role="form" method="post" th:object="${memberDetailDto}" enctype="multipart/form-data">
+                    <!-- DataTales Example -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Employee Details</h6>
+                        </div>
+                        <div class="card-body3">
+
+                            <div class="row gx-3 mb-3">
+                                <div class="col-md-6" style="text-align: center;">
+                                    <div class="image-container">
+                                        <img style="width: 250px;border: 1px solid #d1d3e2; border-radius: 1.5rem;" id="preview-image"
+                                             th:src="${memberDetailDto.imageUrl}">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="small mb-1">Name</label>
+                                    <br/>
+                                    <span th:text="*{name}"/>
+                                    <hr class="mt-2 mb-2">
+                                    <label class="small mb-1">Birth</label>
+                                    <br/>
+                                    <span th:text="|${#strings.substring(memberDetailDto.birth, 0, 4)}년${#strings.substring(memberDetailDto.birth, 4, 6)}월${#strings.substring(memberDetailDto.birth, 6, 8)}일|"/>
+                                    <hr class="mt-2 mb-2">
+                                    <label class="small mb-1">Phone number</label>
+                                    <br/>
+                                    <span th:text="|${#strings.substring(memberDetailDto.phone, 0, 3)}-${#strings.substring(memberDetailDto.phone, 3, 7)}-${#strings.substring(memberDetailDto.phone, 7, 11)}|"/>
+                                    <hr class="mt-2 mb-2">
+                                    <label class="small mb-1">Email</label>
+                                    <br/>
+                                    <span th:text="*{email}"/>
+                                    <hr class="mt-2 mb-2">
+                                </div>
+                            </div>
+
+                            <div class="row gx-3 mb-3">
+                                <div class="col-md-6">
+                                    <label class="small mb-1">address</label>
+                                    <br/>
+                                    <span th:text="*{address}"/>
+                                    <hr class="mt-2 mb-2">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="small mb-1">Bank account</label>
+                                    <br/>
+                                    <span th:text="*{bank}"/>
+                                    <hr class="mt-2 mb-2">
+                                </div>
+                            </div>
+
+                            <div class="row gx-3 mb-3">
+                                <div class="col-md-4">
+                                    <label class="small mb-1">Department</label>
+                                    <br/>
+                                    <span th:text="*{department}"/>
+                                    <hr class="mt-2 mb-2">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="small mb-1">Spot</label>
+                                    <br/>
+                                    <span th:text="*{position}"/>
+                                    <hr class="mt-2 mb-2">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="small mb-1">Rank</label>
+                                    <br/>
+                                    <span th:text="*{hobong}"/>
+                                    <hr class="mt-2 mb-2">
+                                </div>
+                            </div>
+
+                            <div class="row gx-3 mb-3">
+                                <div class="col-md-4">
+                                    <label class="small mb-1">Joining date</label>
+                                    <br/>
+                                    <span th:text="${#dates.format(#dates.createNow(), 'yyyy년MM월dd일')}"/>
+                                    <hr class="mt-2 mb-2">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="small mb-1">Employment status</label>
+                                    <br/>
+                                    <span th:text="*{status}"/>
+                                    <hr class="mt-2 mb-2">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="small mb-1">Role</label>
+                                    <br/>
+                                    <span th:text="*{role}"/>
+                                    <hr class="mt-2 mb-2">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    </body>
+</div>
+</html>

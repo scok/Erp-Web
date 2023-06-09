@@ -9,820 +9,136 @@
     <title>Title</title>
     <meta name="_csrf" th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.23/datatables.min.css"/>
-    <script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
-    <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.23/datatables.min.js"></script>
-    <script type="text/javascript" src="https://cdn.datatables.net/responsive/2.2.7/js/dataTables.responsive.min.js"></script>
-
-
-    <script type="text/javascript" src=" https://cdn.datatables.net/buttons/1.5.2/js/dataTables.buttons.min.js"></script>
-    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.html5.min.js"></script>
-    <script type="text/javascript" src="https://cdn.datatables.net/responsive/2.2.3/js/dataTables.responsive.js"></script>
-
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.dataTables.min.css">
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.2/css/uikit.min.css">
+    <link th:href="@{/css/transaction.css}" rel="stylesheet">
+
     <th:block layout:fragment="script">
-    <script th:inline="javascript">
-
-    $(document).ready(function() {
-
-        var token = $('meta[name="_csrf"]').attr('content');
-        var header = $('meta[name="_csrf_header"]').attr('content');
-
-
-
-        //날짜 변환 메소드
-                function DateChange(comeOn) {
-                    var date = new Date(comeOn);
-                    var year = date.getFullYear();
-                    var month = ('0' + (date.getMonth() + 1)).slice(-2);
-
-
-                    var trDate = year + '-' + month ;
-                    return trDate ;
-                };
-
-        var Chart4XValues = [];
-        var Chart4YValues = [];
-         var tanasctionName ;
-        var Chart5XValues = [] ;
-        var Chart5YValues = [] ;
-        var Chart5NValues   ;
-
-            $('.btn-example').click(function(){
-
-<!--             var previousChart = Chart.getChart('myChart4');-->
-<!--                  if (previousChart) {-->
-
-<!--                    previousChart.destroy();-->
-<!--                    drawTransactionChart2(Chart4XValues, Chart4YValues);-->
-<!--                  }-->
-<!--                  console.log('성공 : ' +Chart4XValues);-->
-<!--                  drawTransactionChart2(Chart4XValues, Chart4YValues);-->
-<!--              previousChart = Chart.getChart('myChart5');-->
-<!--                  if (previousChart) {-->
-<!--                    previousChart.destroy();-->
-<!--                    drawTransactionChart3(Chart5XValues, Chart5YValues);-->
-<!--                  }-->
-
-            var $href = $(this).attr('href');
-            layer_popup($href);
-
-
-                // 월별 차트 작성 start
-              $.ajax({
-                url:'/transaction/select',
-                type:'GET',
-                datatype:'json',
-                success: function(data){
-                    for(let bean of data){
-
-                     var ComName = bean.companyName ;
-
-
-                           console.log(ComName);
-
-
-                    $('#select_box01').empty();
-                     var aggregatedData = {};
-
-                        var date = new Date(bean.trDate);
-                        var year = date.getFullYear();
-                        var month = ('0' + (date.getMonth() + 1)).slice(-2);
-
-                        var formattedDate = year + '-' + month ;
-                        var amount = bean.amount;
-
-                        if (aggregatedData[formattedDate]) {
-                            aggregatedData[formattedDate] += amount;
-                        }else{
-                            aggregatedData[formattedDate] = amount;
-                        }
-                    }
-                  //for end
-
-                     Chart4XValues = Object.keys(aggregatedData);
-                     Chart4YValues = Object.values(aggregatedData);
-                     Chart5NValues = ComName;
-                    drawTransactionChart2(Chart4XValues, Chart4YValues);
-
-
-
-                         var previousChart = Chart.getChart('myChart5');
-                                if (previousChart) {
-                                  previousChart.destroy();
-                                }
-
-                      var selectDate = $('#select_box02').val();
-
-                            var enddate = {};
-                            for(let bean of data){
-                                var OrgDate = DateChange(bean.trDate);
-
-                                if(OrgDate==selectDate){
-
-                                    var date = new Date(bean.trDate);
-
-                                    var month = ('0' + (date.getMonth() + 1)).slice(-2);
-                                    var day = ('0' + date.getDay()).slice(-2);
-
-                                    var trDates = month + '-' + day ;
-                                    var amonuts = bean.amount;
-
-                                    if(enddate[trDates]){
-                                       enddate[trDates] += amonuts;
-                                    }else{
-                                       enddate[trDates] = amonuts;
-                                    }
-
-                                }
-                                //if_end
-                            }
-                            //for_end
-
-                         Chart5XValues = Object.keys(enddate);
-                         Chart5YValues = Object.values(enddate);
-
-                        drawTransactionChart3(Chart5XValues, Chart5YValues);
-
-                        //change_end
-
-
-                    var uniqueCompanies = [];
-                    $.each(data,function(index,company){
-
-                         if (!uniqueCompanies.includes(company.companyName)) {
-                            uniqueCompanies.push(company.companyName);
-
-                            $('#select_box01').append($('<option>', {
-                                value: company.companyName,
-                                text: company.companyName
-                            }));
-                        }
-                    });
-                },
-                error: function(xhr, status ,error){
-                    alert(xhr.responseJSON.message);
-                }
-            });
-             // 월별 차트 작성 end
-
-
-        });
-        //버튼end
-
-
-              // 셀렉 조회 start
-              $('#select_box01').on('change', function(){
-
-
-                 Chart5NValues = $(this).val();
-                    tanasctionName = $(this).val();
-                $.ajax({
-                    url:'/transaction/select',
-                    type:'POST',
-                     beforeSend: function(xhr) {
-                        xhr.setRequestHeader(header, token);
-                    },
-                    datatype:'JSON',
-                    data:{ companyName : Chart5NValues },
-
-                    success: function(response){
-
-                         // 차트 초기화
-                        var previousChart = Chart.getChart('myChart4');
-                        if (previousChart) {
-                          previousChart.destroy();
-                        }
-                        var resultData = {} ;
-                        var datatrDate = {};
-
-                        for (let bean of response) {
-
-                            var date = new Date(bean.trDate);
-                            var year =  date.getFullYear()+'/12';
-
-                            var amounts = bean.amount ;
-
-                            if (resultData[year]) {
-                                resultData[year] += amounts;
-                            }else{
-                                resultData[year] = amounts;
-                            }
-                        }
-                        //for_end
-
-                        var aggregatedXValues = Object.keys(resultData);
-                        var aggregatedYValues = Object.values(resultData);
-
-                        drawTransactionChart2(aggregatedXValues, aggregatedYValues);
-                          $('#select_box02').empty();
-
-                        //2번 셀렉창에 넘길 데이터
-                        var uniqueCompanies = [] ;
-                        for(let bean of response){
-
-                            var date = new Date(bean.trDate);
-                            var year =  date.getFullYear();
-
-
-                             if (!uniqueCompanies.includes(year)) {
-                                uniqueCompanies.push(year);
-
-                                $('#select_box02').append($('<option>', {
-                                    value: year,
-                                    text: year
-                            }));
-
-                            }
-                        }
-                         //for_end
-
-
-
-                        //select_box02, chart5 start
-
-                        $('#select_box02').on('change', function(){
-                              var previousChart = Chart.getChart('myChart5');
-                                if (previousChart) {
-                                  previousChart.destroy();
-                                }
-                            var selectDate = $('#select_box02').val();
-                                Chart5NValues = $('#select_box02').val();
-                            var enddate = {};
-                            var amonuts = [] ;
-                            var OrgDate = [] ;
-                            var totalData = {} ;
-                            var totalData02 = 0;
-
-                           // key와 val add 메소드
-                          function addKey(key,val){
-                                 if(enddate[key]){
-                                   enddate[key] += val;
-                                }else{
-                                   enddate[key] = val;
-                                }
-                                return enddate ;
-                            };
-
-                            for(let bean of response){
-                                OrgDate = DateChange(bean.trDate);
-                                  amonuts = bean.amount;
-                                  var compareDate =  OrgDate.split('-') ;
-                                  var dateYear = compareDate[0] ;
-
-                                    if(dateYear===selectDate){
-                                        var dateMonth = parseInt(compareDate[1]);
-
-                                        if(dateMonth>= 1 && dateMonth<=3){
-                                            var keyVal = dateYear+ '-03' ;
-                                              addKey(keyVal,amonuts);
-
-                                        }else if(dateMonth>=4 && dateMonth<=6){
-                                              var keyVal = dateYear+ '-06' ;
-                                               addKey(keyVal,amonuts);
-
-                                        }else if(dateMonth>= 7 && dateMonth<=9){
-                                            var keyVal = dateYear+ '-09' ;
-                                               addKey(keyVal,amonuts);
-
-                                        }else{
-                                            var keyVal = dateYear+ '-12' ;
-                                                addKey(keyVal,amonuts);
-                                        }
-                                    }
-                                    for(var key in enddate){
-                                        totalData02 += enddate[key];
-                                    }
-
-                            }
-                            //for_end
-
-                         var aggregatedXValues = Object.keys(enddate);
-                         var aggregatedYValues = Object.values(enddate);
-
-                        drawTransactionChart3(aggregatedXValues, aggregatedYValues);
-                        });
-                        //change_end
-
-
-
-                    },
-                    //success_end
-                    error: function(xhr, status ,error){
-                    alert(xhr.responseJSON.message);
-                    }
-                });
-
-
-            });
-            //셀렉 조희 end
-
-
-
-
-
-
-
-
-            //차트start
-             function drawTransactionChart2(xValues, yValues){
-                 var previousChart = Chart.getChart('myChart4');
-                  if (previousChart) {
-                    previousChart.destroy();
-                  }
-
-            new Chart('myChart4', {
-                type: 'bar',
-                data: {
-                    labels: xValues,
-                    datasets: [{
-                        label:'거래금액',
-                        data: yValues,
-                        borderColor: 'rgba(104, 19, 16,0.8)',
-                        backgroundColor: 'rgba(104, 19, 16,0.8)',
-
-                   }]
-                },
-                options: {
-                     scales: {
-                          x: {
-                            ticks: {
-                              font: {
-                                size: 10 // x축 레이블 폰트 크기 설정
-                              }
-                            }
-                          },
-                          y: {
-                            ticks: {
-                              font: {
-                                size: 10 // y축 레이블 폰트 크기 설정
-                              }
-                            }
-                          }
-                        },
-                    maintainAspectRatio: false,
-
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                        },
-                        title: {
-                            display: true,
-                            text: Chart5NValues+' 연도별 '
-                        }
-                    }
-                }
-            });
-
-        }
-        //차트4 end
-              function drawTransactionChart3(xValues, yValues){
-
-            new Chart('myChart5', {
-                type: 'bar',
-                data: {
-                    labels: xValues,
-                    datasets: [{
-                        label: '거래금액',
-                        data: yValues,
-                        borderColor: 'rgba(73, 135, 16,0.8)',
-                        backgroundColor: 'rgba(73, 135, 16,0.8)',
-
-                   }]
-                },
-                options: {
-                    scales: {
-                      x: {
-                        ticks: {
-                          font: {
-                            size: 10 // x축 레이블 폰트 크기 설정
-                          }
-                        }
-                      },
-                      y: {
-                        ticks: {
-                          font: {
-                            size: 10 // y축 레이블 폰트 크기 설정
-                          }
-                        }
-                      }
-                    },
-                     maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                        },
-                        title: {
-                            display: true,
-                            text: tanasctionName  + ' 분기별 '
-                        }
-                    }
-                }
-            });
-
-        }
-        //차트5end
-
-
-
-         //데이터 테이블 start
-         $.fn.dataTable.ext.search.push(
-            function(settings, data, dataIndex){
-                var min = Date.parse($('#fromDate').val());
-                var max = Date.parse($('#toDate').val());
-                var targetDate = Date.parse(data[3]);
-
-                if( (isNaN(min) && isNaN(max) ) ||
-                    (isNaN(min) && targetDate <= max )||
-                    ( min <= targetDate && isNaN(max) ) ||
-                    ( targetDate >= min && targetDate <= max) ){
-                        return true;
-                }
-                return false;
-            }
-         );
-
-          if (!$.fn.DataTable.isDataTable('#myTable')) {
-
-
-            var table =  $('#myTable').DataTable({
-                "serverSide": true,
-                "processing": true,
-                "autoWidth": false,
-                searching: true,
-                ordering: true,
-                ajax: {
-                    "url": "/transaction/data",
-                    "type": "POST",
-                    beforeSend:function(xhr){
-                        xhr.setRequestHeader(header, token);
-                    },
-                    "data": function (d) {
-                        d.start = d.start;
-                        d.length = d.length;
-
-                        d.searchType = $("#searchType").val();
-                        d.searchValue = $("#searchValue").val();
-
-                        d.columnIndex = d.order[0].column;
-                        d.orderDir = d.order[0].dir;
-
-                    },
-                  "dataSrc": function (response) {
-                      var dataDate = response.data;
-
-                      for (var i = 0; i < dataDate.length; i++) {
-                        var dateItem = new Date(dataDate[i].trDate) ;
-
-
-                        var Year = dateItem.getFullYear();
-                        var month = ("0" + (dateItem.getMonth() + 1)).slice(-2);
-
-                        var day = ("0" + dateItem.getDay()).slice(-2);
-
-                        var formatDate = Year + "-"+ month + "-"+day;
-                        dataDate[i].trDate = formatDate ;
-
-
-                      }
-                      return response.data;
-                    }
-                },
-                columns: [
-                    { "data": "id" },
-                    { "data": "companyName" },
-                    { "data": "amount" },
-                    { "data": "trDate" },
-                    { "data": "quarter" },
-                    { "data": "remark" },
-                    { "data": "transactionCategory" }
-                ],
-                "language": {
-                    "emptyTable": "데이터가 없어요.",
-                    "lengthMenu": "Page _MENU_ ",
-                    "info": "현재 _START_ - _END_ / _TOTAL_건",
-                    "infoEmpty": "데이터 없음",
-                    "infoFiltered": "( _MAX_건의 데이터에서 필터링됨 )",
-                    "search": "검색: ",
-                    "zeroRecords": "일치하는 데이터가 없어요.",
-                    "loadingRecords": "로딩중...",
-                    "processing": "잠시만 기다려 주세요...",
-                    "paginate": {
-                        "next": "다음",
-                        "previous": "이전"
-                    }
-                },
-                "footerCallback": function() {
-                    var api = this.api(), data;
-                    var result = 0;
-                    api.column(2, {search:'applied'}).data().each(function(data, index) {
-                        result += parseFloat(data);
-                    });
-                    $(api.column(3).footer()).html(result.toLocaleString() + '원');
-                },
-
-
-              <!--엑셀 파일 전송-->
-               dom: 'lrtpBfa',
-                buttons: [{
-                        extend: 'csvHtml5',
-                        text: 'Excel',
-                        footer: true,
-                        className: 'blueBtn',
-                        exportOptions: {
-                            charset: 'euc-kr'
-                        },
-                        bom: true
-
-                    }],
-            });
-
-
-            <!--검색 기능-->
-
-          $("#searchBtn").click(function () {
-            var numCols = table.columns().nodes().length;
-            for(var i=0; i<numCols; i++) { table.column(i).search(''); }
-
-            var searchType = $("#searchType").val();
-            var searchValue = $("#searchValue").val();
-
-            table.column(searchType).search(searchValue).draw();
-        });
-
-
-               $('#myTable thead th').click(function () {
-            var columnIndex = $(this).index();
-            var orderDir = $(this).hasClass('asc') ? 'desc' : 'asc';
-
-            // DataTables의 정렬 업데이트
-            table.order(columnIndex, orderDir).draw();
-
-            // 현재 클릭한 컬럼에 클래스를 추가하여 정렬 방향을 표시
-            $('#myTable thead th').removeClass('asc').removeClass('desc');
-            $(this).addClass(orderDir);
-
-
-        });
-
-     }
-
-
-<!--        $('#myTable_filter').prepend('<select id="select"></select>&nbsp;');-->
-<!--        $('#myTable > thead > tr').children().each(function (indexInArray, valueOfElement) {-->
-<!--            $('#select').append('<option>'+valueOfElement.innerHTML+'</option>');-->
-<!--        });-->
-
-<!--        $('.dataTables_filter input').unbind().bind('keyup', function () {-->
-<!--            var colIndex = document.querySelector('#select').selectedIndex;-->
-<!--            var table = $('#myTable').DataTable();-->
-<!--            table.column(colIndex).search(this.value).draw();-->
-<!--        });-->
-
-        $("#myTable_filter").attr("hidden", "hidden");
-
-
-
-<!--        $('#myTable_filter').prepend('<input type="text" id="toDate" style="width:90px" placeholder="yyyy-MM-dd"> ');-->
-<!--        $('#myTable_filter').prepend('<input type="text" id="fromDate" style="width:90px" placeholder="yyyy-MM-dd">&nbsp;~');-->
-<!--        $('#toDate, #fromDate').unbind().bind('keyup',function(){-->
-<!--            table.draw();-->
-<!--        });-->
-
-
-
-
-
-        function layer_popup(el){
-            var $el = $(el);
-            var isDim = $el.prev().hasClass('dimBg');
-
-            isDim ? $('.dim-layer').fadeIn() : $el.fadeIn();
-
-            var $elWidth = ~~($el.outerWidth()),
-                $elHeight = ~~($el.outerHeight()),
-                docWidth = $(document).width(),
-                docHeight = $(document).height();
-
-            if ($elHeight < docHeight || $elWidth < docWidth) {
-                $el.css({
-                    marginTop: -$elHeight /2,
-                    marginLeft: -$elWidth/2
-                });
-            } else {
-                $el.css({top: 0, left: 0});
-            }
-
-            $el.find('a.btn-layerClose').click(function(){
-                isDim ? $('.dim-layer').fadeOut() : $el.fadeOut();
-                return false;
-            });
-
-            $('.layer .dimBg').click(function(){
-                $('.dim-layer').fadeOut();
-                return false;
-            });
-        }
-
-
-    });// ready 닫기
-
-        </script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+        <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.23/datatables.min.js"></script>
+        <script type="text/javascript" src=" https://cdn.datatables.net/buttons/1.5.2/js/dataTables.buttons.min.js"></script>
+        <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.html5.min.js"></script>
+        <script th:src="@{/js/financial/transactionChart/chartdraw.js}"></script>
+        <script th:src="@{/js/financial/transactionChart/SelectBox.js}"></script>
+        <script th:src="@{/js/financial/transactionDataTable/Transactiontable.js}"></script>
     </th:block>
-
-    <th:block layout:fragment="css">
-    <style>
-        .content{
-            margin:auto;
-            margin-right:10px;
-        }
-
-        .grid-container{
-            display:grid;
-            grid-template-columns: repeat(2, 1fr);
-            grid-gap:10px;
-            margin-top:20px;
-        }
-
-
-
-        .grid-item{
-            background-color: lightgray;
-            padding:20px;
-        }
-
-        .card{
-            position:relative;
-            display:flex;
-            flex-direction: column;
-            min-width:0;
-            word-wrap:break-word;
-            background-color:#fff;
-            background-clip:border-box;
-            border:1px solid #e3e6f0;
-            border-radius:.35rem;
-        }
-
-        .shadow{
-            box-shadow: 0 .15rem 1.75rem 0 rgba(58,59,69,.15)!important;
-        }
-
-        .mb-4{
-            margin-bottom: 1.5rem !important;
-        }
-
-        .card-header:first-child{
-            border-radius:calc(.35rem - 1px) calc(.35rem - 1px) 0 0;
-        }
-
-        .card-header{
-            padding: .75rem 1.25rem;
-            margin-bottom:0;
-            background-color:#f8f9fc;
-            border-bottom:1px solid #e3e6f0;
-            overflow:hidden;
-        }
-
-        .card-body{
-            flex: 1 1 auto;
-            min-height: 1px;
-            padding: 1.25rem;
-            overflow:hidden;
-        }
-
-        .chart-area{
-            display:flex;
-            position:relative;
-            margin: auto;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .text-primary{
-            color: #4e73df !important;
-        }
-
-        .font-weight-bold{
-            font-weight: 700 !important;
-        }
-
-        .m-0{
-            margin: 0 !important;
-        }
-
-        h6{
-            display:inline;
-            font-size: 1rem;
-            line-height: 1.2;
-            float:left;
-        }
-
-        .grid-container2{
-            display:grid;
-            grid-template-columns: repeat(1, 1fr);
-            grid-gap:10px;
-        }
-
-        .card2{
-            position:relative;
-            display:flex;
-            flex-direction: column;
-            min-width:0;
-            word-wrap:break-word;
-            background-color:#fff;
-            background-clip:border-box;
-            border:1px solid #e3e6f0;
-            border-radius:.35rem;
-            padding: 20px;
-        }
-        .btn-example{
-
-        }
-
-        .searchBtn{
-
-        }
-    </style>
-    </th:block>
-
 </head>
 
-<div class="content" layout:fragment="content">
-    <div class="grid-container2">
-        <div class="card2 shadow mb-4">
-            <table id="myTable" class="uk-table uk-table-hover uk-table-striped">
-                <div class="selectboxs">
-                    <!--검색 기능 -->
-                    <select id="searchType" class="form-control mr-sm-2">
-                        <option value="0">거래번호</option>
-                        <option value="1">거래처명</option>
-                        <option value="2">거래금액</option>
-                        <option value="3">거래일자</option>
-                        <option value="4">분기</option>
-                        <option value="5">주석</option>
-                        <option value="6">거래분류</option>
-                    </select>
-                    <input class="form-control mr-sm-2" type="search" id="searchValue" placeholder="Search" aria-label="Search">
-                    <button class="btn btn-outline-success my-2 my-sm-0" id="searchBtn" type="button">Search</button>
+<body class="bg-gradient-Light">
+    <div class="content" layout:fragment="content" >
+        <div class="container2">
+            <div class="card2 shadow mb-4" id="a">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold text-primary">거래처별 차트</h6>
                 </div>
+                <div class="card-body">
+                    <div class="chart-area">
+                    <!-- 팝업 창-->
 
-                <!-- uk-table uk-table-hover uk-table-striped  -->
+                    <div class="dim-layer">
+                        <div class="dimBg"></div>
+                        <div id="layer2" class="pop-layer">
+                            <div class="pop-container">
+                                <div class="pop-conts">
+                                    <!--content //-->
+                                    <h5 class="m-0 font-weight-bold text-primary">거래표
+                                    </h5>
+                                    <br>
 
-                <!--데이터 테이블 -->
-                <thead>
+                                    <table  id="chartTable">
 
+                                        <div class="pop_selectDiv">
+                                            <select id="select_box03"></select>
+                                            <select id="select_box01" >
+                                                <option></option>
+                                            </select>
+                                            <select id="select_box02"></select>
+                                        </div>
+                                        <tr>
+                                            <td id="Chart01Td">
+                                                <canvas id="myChart4" style="width: 300px; height: 300px;"></canvas>
+                                            </td>
+                                            <td>
+                                                <canvas id="myChart5" style="width: 300px; height: 300px;"></canvas>
+                                            </td>
+                                        </tr>
 
-                <tr>
-                    <th>거래번호</th>
-                    <th>거래처명</th>
-                    <th>거래금액</th>
-                    <th>거래일자</th>
-                    <th>분기</th>
-                    <th>주석</th>
-                    <th>거래분류</th>
-                </tr>
-                </thead>
-                <button href="#layer2" class="btn-example">Chart</button>
-                <tfoot>
+                                    </table>
+                                    <div class="btn-r">
+                                        <a href="#" class="btn-layerClose">Close</a>
+                                    </div>
+                                    <!--// content-->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-                <tr>
-                    <th colspan="2" style="text-align:right;white-space:nowrap;">TOTAL : </th>
-                    <th colspan="5" style="text-align:left;white-space:nowrap;"></th>
-                </tr>
+                    <table id="myTable" class="uk-table uk-table-hover uk-table-striped card-body2" >
+                        <div class="btnDiv">
+                            <button href="#layer2" class="btn-example">차트분석</button>
+                        </div>
+                        <div class="selectboxs">
 
-                </tfoot>
-
-            </table>
+                            <!--검색 기능 -->
+                            <select id="searchType" class="form-control mr-sm-2">
+                                <option value="0">거래번호</option>
+                                <option value="1">거래처명</option>
+                                <option value="2">거래금액</option>
+                                <option value="3">거래일자</option>
+                                <option value="4">분기</option>
+                                <option value="5">주석</option>
+                                <option value="6">거래분류</option>
+                            </select>
+                            <input class="form-control mr-sm-2" type="search" id="searchValue" placeholder="Search" aria-label="Search">
+                            <button class="btn btn-outline-success my-2 my-sm-0" id="searchBtn" type="button">Search</button>
+                        </div>
+                        <!--데이터 테이블 -->
+                        <thead>
+                            <tr>
+                                <th>거래번호</th>
+                                <th>거래처명</th>
+                                <th>거래금액</th>
+                                <th>거래일자</th>
+                                <th>분기</th>
+                                <th>주석</th>
+                                <th>거래분류</th>
+                            </tr>
+                        </thead>
+                        <tfoot>
+                            <tr>
+                                <th colspan="2" style="text-align:right;white-space:nowrap;">TOTAL : </th>
+                                <th colspan="5" style="text-align:left;white-space:nowrap;"></th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
         </div>
+        </div>
+            <div class="grid-container">
+            <div class="card shadow mb-4" id="b">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold text-primary">거래처별 거래 금액</h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-area">
+                    </div>
+                </div>
+            </div>
+            <div class="card shadow mb-4" id="c">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold text-primary">거래처별 거래 금액</h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-area">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--카드 end-->
     </div>
-
-
-    <div class="grid-container">
-        <div class="card shadow mb-4" id="b">
-            <div class="card-header">
-                <h6 class="m-0 font-weight-bold text-primary">거래처별 거래 금액</h6>
-            </div>
-            <div class="card-body">
-                <div class="chart-area">
-
-                </div>
-            </div>
-        </div>
-        <div class="card shadow mb-4" id="c">
-            <div class="card-header">
-                <h6 class="m-0 font-weight-bold text-primary">거래처별 거래 금액</h6>
-            </div>
-            <div class="card-body">
-                <div class="chart-area">
-
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
+</body>
 
 </html>

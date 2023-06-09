@@ -2,8 +2,11 @@ package com.Erp.service;
 
 import com.Erp.dto.MemberPayDetailDto;
 import com.Erp.dto.MemberPayInsertDto;
+import com.Erp.entity.Financial;
+import com.Erp.entity.Income;
 import com.Erp.entity.Member;
 import com.Erp.entity.MemberPay;
+import com.Erp.repository.IncomeRepository;
 import com.Erp.repository.MemberPayRepository;
 import com.Erp.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +20,9 @@ public class MemberPayService {
 
     private final MemberPayRepository memberPayRepository;
     private final MemberRepository memberRepository;
+    private final IncomeRepository incomeRepository;
+    private final IncomeService incomeService;
+    private final FinancialService financialService;
 
     public MemberPay saveMemberPay(MemberPay memberPay){
 
@@ -72,5 +78,37 @@ public class MemberPayService {
 
     public List<MemberPay> getMemberPayList(Long id){
         return memberPayRepository.getMemberPayList(String.valueOf(id));
+    }
+
+    public void updateMemberData(MemberPay memberPay){
+
+        Member member = memberPay.getMember();
+
+        if (member != null){
+            short year = (short) member.getDate().getYear();
+            int quarter = (int) Math.ceil((double) member.getDate().getMonthValue() / 3);
+
+            Income income = incomeRepository.findIncomeYearAndQuarter(year, quarter);
+
+            if(income != null){
+
+                int startMonth = (quarter - 1) * 3 + 1;
+                Integer endMonth  = startMonth + 2;
+
+                List<Member> members = memberRepository.findMemberYear((int) year, startMonth, endMonth);
+
+                if (members.stream().noneMatch(m -> m.getId().equals(member.getId()))) {
+                    members.add(member);
+                }
+
+                incomeService.saveData(income, members);
+
+                Financial financial = income.getFinancial();
+
+                if(financial != null){
+                    financialService.saveData(financial);
+                }
+            }
+        }
     }
 }
