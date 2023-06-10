@@ -13,14 +13,14 @@ import java.time.format.DateTimeFormatter;
 
 @Getter @Setter @ToString
 public class WarehousingInAndOutFormDto {
-    private Long wioId;
-    private String acName;
-    private String secName;
-    private StackAreaCategory stackAreaCategory;
-    private String prName;
-    private int osQuantity;
-    private String inAndOutDate;
-    private DivisionStatus divisionStatus;
+    private Long wioId; //입고, 출고 코드
+    private String acName;  //거래처 명
+    private String secName; //창고 명
+    private StackAreaCategory stackAreaCategory;    //구역 명
+    private String prName;  //상품 명
+    private int osQuantity; //수량
+    private String inAndOutDate;    //입고, 출고 일자
+    private DivisionStatus divisionStatus;  //상태
 
     public static WarehousingInAndOutFormDto of(WarehousingInAndOut warehousingInAndOut){
 
@@ -34,10 +34,14 @@ public class WarehousingInAndOutFormDto {
             warehousingInAndOutFormDto.setAcName(warehousingInAndOut.getOrderSheetDetail().getProduct().getAccount().getAcName());
             warehousingInAndOutFormDto.setPrName(warehousingInAndOut.getOrderSheetDetail().getProduct().getPrName());
             warehousingInAndOutFormDto.setOsQuantity(warehousingInAndOut.getOrderSheetDetail().getOsQuantity());
-        }else{
+        }else if(warehousingInAndOut.getProduction() != null){
             warehousingInAndOutFormDto.setAcName(warehousingInAndOut.getProduction().getProduct().getAccount().getAcName());
             warehousingInAndOutFormDto.setPrName(warehousingInAndOut.getProduction().getProduct().getPrName());
             warehousingInAndOutFormDto.setOsQuantity(warehousingInAndOut.getProduction().getCount());
+        }else if(warehousingInAndOut.getMaterialDelivery() != null){
+            warehousingInAndOutFormDto.setAcName(warehousingInAndOut.getMaterialDelivery().getProduct().getAccount().getAcName());
+            warehousingInAndOutFormDto.setPrName(warehousingInAndOut.getMaterialDelivery().getProduct().getPrName());
+            warehousingInAndOutFormDto.setOsQuantity(warehousingInAndOut.getMaterialDelivery().getMaDeliveryCount());
         }
         warehousingInAndOutFormDto.setSecName(warehousingInAndOut.getSection().getSecName());
         warehousingInAndOutFormDto.setStackAreaCategory(warehousingInAndOut.getStackAreaCategory());

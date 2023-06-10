@@ -62,4 +62,8 @@ public class MaterialDeliveryService {
             }
         }
     }
+
+    public MaterialDelivery findById(String maCode) {
+        return materialDeliveryRepository.findById(Long.valueOf(maCode)).orElseThrow(EntityNotFoundException::new);
+    }
 }

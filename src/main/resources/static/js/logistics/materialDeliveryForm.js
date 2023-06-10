@@ -2,6 +2,22 @@ $(document).ready(function () {
     var token = $('meta[name="_csrf"]').attr('content');
     var header = $('meta[name="_csrf_header"]').attr('content');
 
+    $.fn.dataTable.ext.search.push(
+        function(settings, data, dataIndex){
+            var min = Date.parse($('#fromDate').val());
+            var max = Date.parse($('#toDate').val());
+            var targetDate = Date.parse(data[1]);
+
+            if( (isNaN(min) && isNaN(max) ) ||
+                (isNaN(min) && targetDate <= max )||
+                ( min <= targetDate && isNaN(max) ) ||
+                ( targetDate >= min && targetDate <= max) ){
+                    return true;
+            }
+            return false;
+        }
+    )
+
     var table = $('#myTable').DataTable({
         ajax: {
             "url":"/materialDelivery/check",
@@ -12,31 +28,82 @@ $(document).ready(function () {
                 xhr.setRequestHeader(header,token);
             }
         },
+        order : [[0, 'desc']],
         columns: [
+            {"data": "maDeliveryId"},
             {"data": "maDeliveryDate"},
             {"data": "prName"},
             {"data": "maDeliveryCount"},
             {"data": "secName"},
             {"data": "stackAreaCategory"},
             {"data": "productionLine"},
-            {"data": "createBy"}
+            {"data": "createName"}
         ],
         "language": {
-                 "emptyTable": "데이터가 없어요.",
-                 "lengthMenu": "페이지당 _MENU_ 개씩 보기",
-                 "info": "현재 _START_ - _END_ / _TOTAL_건",
-                 "infoEmpty": "데이터 없음",
-                 "infoFiltered": "( _MAX_건의 데이터에서 필터링됨 )",
-                 "search": "검색: ",
-                 "zeroRecords": "일치하는 데이터가 없어요.",
-                 "loadingRecords": "로딩중...",
-                 "processing":     "잠시만 기다려 주세요...",
-                 "paginate": {
-                     "next": "다음",
-                     "previous": "이전"
-                 }
+            "emptyTable": "데이터가 없어요.",
+            "lengthMenu": "페이지당 _MENU_ 개씩 보기",
+            "info": "현재 _START_ - _END_ / _TOTAL_건",
+            "infoEmpty": "데이터 없음",
+            "infoFiltered": "( _MAX_건의 데이터에서 필터링됨 )",
+            "search": "검색: ",
+            "zeroRecords": "일치하는 데이터가 없어요.",
+            "loadingRecords": "로딩중...",
+            "processing":     "잠시만 기다려 주세요...",
+            "paginate": {
+             "next": "다음",
+             "previous": "이전"
+            }
+        },
+        columnDefs: [
+        {
+            targets : 0,
+            'render' : function(data) {
+            return '<td><span class="maId">'+data+'</span></td>';
+            }
+        },
+        {
+            targets : 3,
+            'render' : function(data) {
+            return '<td>'+comma(data)+'</td>';
+            }
         }
+        ]
    });
+
+    /* Column별 검색기능 추가 */
+    $('#myTable_filter').prepend('<select id="customSelect"></select>');
+    $('#myTable > thead > tr').children().each(function (indexInArray, valueOfElement) {
+       if(valueOfElement.innerHTML !="불출 일자" && valueOfElement.innerHTML !="불출 수량" && valueOfElement.innerHTML !="불출 코드"){
+           $('#customSelect').append('<option>'+valueOfElement.innerHTML+'</option>');
+       }
+    });
+
+    $('#customSelect').on("change",function(){
+       table.search('').draw();
+       table.columns().search('').draw();
+    });
+
+    $('.dataTables_filter input').unbind().bind('keyup', function () {
+
+       var colValue = document.querySelector('#customSelect').value;
+
+       var colHeaders = table.columns().header().toArray();
+
+       var targetIndex = colHeaders.findIndex(function(header) {
+         return header.innerHTML === colValue;
+       });
+
+       var keyWord = this.value;
+
+       table.column(targetIndex).search(keyWord).draw();
+    });
+    /* 날짜검색 이벤트 리바인딩 */
+    $('#myTable_filter').prepend('<input type="date" id="toDate" placeholder="yyyy-MM-dd">');
+    $('#myTable_filter').prepend('<input type="date" id="fromDate" placeholder="yyyy-MM-dd"> ~');
+    $('#toDate, #fromDate').unbind().bind("change",function(){
+       table.draw();
+    })
+
    //modal 관련 설정.
    const modal = document.getElementById("modal")
    const btnModal = document.getElementById("btn-modal")
@@ -70,15 +137,19 @@ function modalOff() {
     modal.style.display = "none"
     $('#myTable').DataTable().ajax.reload();
     $("#myForm")[0].reset();
- }
-
+}
+//정규 표현식을 이용한 자릿수 표현
+function comma(num){
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
 //창고의 정보를 가져옵니다.
 function getSectionInfo(value){
+
     var token = $('meta[name="_csrf"]').attr('content');
     var header = $('meta[name="_csrf_header"]').attr('content');
 
      $.ajax({
-        url: "/logistics/sectionInfo",
+        url: "/logistics/inventory/sectionInfo",
         type: "POST",
         contentType:"application/json",
         data: JSON.stringify(value),
@@ -119,69 +190,102 @@ function addMaDelivery(){
     var token = $('meta[name="_csrf"]').attr('content');
     var header = $('meta[name="_csrf_header"]').attr('content');
 
+    var inId = $("#inId option:selected").val();
+    var productionLine = $("#productionLine option:selected").val();
+    var maDeliveryCount = $("#maDeliveryCount").val();
+
+    if(inId == null || inId == ""){
+        alert("불출 상품을 선택해주세요.");
+        return;
+    }
+
+    if(productionLine == null || productionLine == ""){
+        alert("작업 라인을 선택해주세요.");
+        return;
+    }
+
+    var pattern = /^\d+$/;
+    if (!pattern.test(maDeliveryCount) || maDeliveryCount<=0) {
+      alert("불출 수량을 재대로 입력해주세요.");
+      return;
+    }
+
     var formData = new FormData(document.forms.namedItem("myForm"));
 
     var array = {}
     for(var item of formData.entries()){
-        if(item[1] != null && item[1] != ''){
-            array[item[0]]=item[1];
-        }else{
-            return;
-            alert("재대로 선택해주세요.");
-        }
+        array[item[0]]=item[1];
     }
+
     var paramData = JSON.stringify(array);
-        $.ajax({
-            url: "/materialDelivery/addMaterialDelivery",
-            type: "POST",
-            contentType:"application/json",
-            data: paramData,
-            beforeSend:function(xhr){
-                xhr.setRequestHeader(header,token);
-            },
-            success: function (data) {
-                alert("success");
-                $('#myTable').DataTable().ajax.reload();
-                modalOff()
-            },
-            error: function (request, status, error) {
-                console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
-            }
-        });
-    }
 
-//웹페이지 삭제 기능.
-function deletePageN(){
-
-    var token = $('meta[name="_csrf"]').attr('content');
-    var header = $('meta[name="_csrf_header"]').attr('content');
-    var checkList = $('input[name=checker]:checked');
-
-    if(checkList.length == 0 ){
-        alert('1개 이상 선택해주세요.');
-        return
-    }
-
-    var values = [];
-    checkList.each(function() {
-      values.push($(this).val());
-    });
-    var paramData = JSON.stringify(values);
-     $.ajax({
-        url: "/materialDelivery/deleteMaDelivery",
+    $.ajax({
+        url: "/materialDelivery/addMaterialDelivery",
         type: "POST",
         contentType:"application/json",
         data: paramData,
-        dataType: "json",
         beforeSend:function(xhr){
             xhr.setRequestHeader(header,token);
         },
         success: function (data) {
             alert("success");
             $('#myTable').DataTable().ajax.reload();
+            modalOff();
         },
-        error: function (request, status) {
-            alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n");
+        error: function (request, status, error) {
+            console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+            alert(request.responseText);
         }
     });
 }
+/*데이터 베이스 엑셀화*/
+function excel(){
+
+    var token = $('meta[name="_csrf"]').attr('content');
+    var header = $('meta[name="_csrf_header"]').attr('content');
+
+    var inputs = document.getElementsByClassName("maId");
+    var values = Array.from(inputs).map(function(input) {
+      return input.innerText ;
+    });
+    console.log(values);
+    paramData = {};
+    paramData[["materialDelivery"]]=values;
+
+    var excelDownloadState = false;
+    if(excelDownloadState == false){
+
+        excelDownloadState = true;
+
+        //xmlhttprequest 통신.
+        var request = new XMLHttpRequest();
+        request.open('POST', 'http://localhost:8877/excel/download',true);
+        request.setRequestHeader(header, token);
+        request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+        request.responseType = 'blob';
+
+        request.onload = function(e) {
+            excelDownloadState = false;
+
+            if (this.status === 200) {
+                var blob = this.response;
+                var fileName = "MaterialDelivery_Info.xlsx"
+                    if(window.navigator.msSaveOrOpenBlob) {
+                        window.navigator.msSaveBlob(blob, fileName);
+                    }else{
+                        var downloadLink = window.document.createElement('a');
+                        var contentTypeHeader = request.getResponseHeader("Content-Type");
+                        downloadLink.href = window.URL.createObjectURL(new Blob([blob], { type: contentTypeHeader }));
+                        downloadLink.download = fileName;
+                        document.body.appendChild(downloadLink);
+                        downloadLink.click();
+                        document.body.removeChild(downloadLink);
+                   }
+            }else{
+               alert("엑셀파일생성에 실패하였습니다.");
+            }
+        };
+    request.send(JSON.stringify(paramData));
+    }
+}
+

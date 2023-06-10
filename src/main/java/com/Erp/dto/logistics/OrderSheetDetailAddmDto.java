@@ -1,6 +1,7 @@
 package com.Erp.dto.logistics;
 
 
+import com.Erp.entity.logistics.OrderSheetDetail;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -42,5 +43,19 @@ public class OrderSheetDetailAddmDto {
         //이 경우는 웹에서 받아온 JSON 데이터에는 값이 존재하지만 POJO클래스에서는 값이 존재하지 않을경우
         //예외를 발생하지 않는다 라는 설정입니다.
         return objectMapper.convertValue(data, OrderSheetDetailAddmDto.class);
+    }
+
+    public static OrderSheetDetailAddmDto of(OrderSheetDetail orderSheetDetail){
+        OrderSheetDetailAddmDto orderSheetDetailAddmDto = new OrderSheetDetailAddmDto();
+
+        orderSheetDetailAddmDto.setOsdId(orderSheetDetail.getOsdId());
+        orderSheetDetailAddmDto.setOsPrice(orderSheetDetail.getOsPrice());
+        orderSheetDetailAddmDto.setOsQuantity(orderSheetDetail.getOsQuantity());
+        orderSheetDetailAddmDto.setPrCode(orderSheetDetail.getProduct().getPrCode());
+        orderSheetDetailAddmDto.setOsStandard(orderSheetDetail.getOsStandard());
+        orderSheetDetailAddmDto.setOsSupplyValue(orderSheetDetail.getOsSupplyValue());
+        orderSheetDetailAddmDto.setOsTaxAmount(orderSheetDetail.getOsTaxAmount());
+
+        return orderSheetDetailAddmDto;
     }
 }

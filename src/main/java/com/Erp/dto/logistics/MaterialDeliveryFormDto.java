@@ -13,17 +13,18 @@ import org.modelmapper.TypeMap;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Getter @Setter@ToString
 public class MaterialDeliveryFormDto {
 
-    private Long maDeliveryId; // 자재불출 id
+    private Long maDeliveryId;
 
-    private LocalDateTime maDeliveryDate; // 불출일자
+    private String maDeliveryDate; // 불출일자
 
     private String prName; // 불출할 상품(자재)
 
-    private Long maDeliveryCount; // 불출수량
+    private int maDeliveryCount; // 불출수량
 
     private String secName; // 자재를 불출할 창고
 
@@ -33,21 +34,24 @@ public class MaterialDeliveryFormDto {
     @Enumerated(EnumType.STRING)
     private ProductionLine productionLine; // 자재를 불출받을 공장라인
 
-    private String createBy; // 등록인
+    private String createName; // 등록인
 
-
-
-    private static ModelMapper modelMapper = new ModelMapper();
-    static {
-        TypeMap<MaterialDelivery, MaterialDeliveryFormDto> typeMap = modelMapper.createTypeMap(MaterialDelivery.class, MaterialDeliveryFormDto.class);
-        typeMap.addMappings(mapper -> {
-            mapper.map(src -> src.getProduct().getPrName(), MaterialDeliveryFormDto::setPrName);
-            mapper.map(src -> src.getSection().getSecName(), MaterialDeliveryFormDto::setSecName);
-            mapper.map(src -> src.getStackAreaCategory(), MaterialDeliveryFormDto::setStackAreaCategory);
-        });
-    }
     public static MaterialDeliveryFormDto of(MaterialDelivery maDelivery){
-        return modelMapper.map(maDelivery, MaterialDeliveryFormDto.class);
+        MaterialDeliveryFormDto materialDeliveryFormDto = new MaterialDeliveryFormDto();
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String newMaDate = maDelivery.getMaDeliveryDate().format(formatter);
+
+        materialDeliveryFormDto.setMaDeliveryId(maDelivery.getMaDeliveryId());
+        materialDeliveryFormDto.setMaDeliveryDate(newMaDate);
+        materialDeliveryFormDto.setPrName(maDelivery.getProduct().getPrName());
+        materialDeliveryFormDto.setMaDeliveryCount(maDelivery.getMaDeliveryCount());
+        materialDeliveryFormDto.setSecName(maDelivery.getSection().getSecName());
+        materialDeliveryFormDto.setStackAreaCategory(maDelivery.getStackAreaCategory());
+        materialDeliveryFormDto.setProductionLine(maDelivery.getProductionLine());
+        materialDeliveryFormDto.setCreateName(maDelivery.getCreateName());
+
+        return materialDeliveryFormDto;
     }
 
 }

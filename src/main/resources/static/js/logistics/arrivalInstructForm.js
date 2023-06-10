@@ -58,7 +58,14 @@ $(document).ready(function () {
              'render' : function(data, type, full, meta) {
               return '<span id="tableInnerCheckBox"><input type="checkbox" name="checker" value="'+data+'"></span>';
              }
-           }
+           },
+            {
+                targets : 3,
+                orderable: false,
+                'render' : function(data) {
+                 return '<td>'+comma(data)+'</td>';
+                }
+            }
         ],
          initComplete: function(settings, json) {
          //all 체크 박스 누를때 동작하는 함수
@@ -252,7 +259,6 @@ function OrderSheetUpdate(){
         error: function (message,request, status) {
             alert(Object.values(message));
             console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n");
-        /*    action_popup.alert("경고창 테스트!!!");*/
         }
    });
 }

@@ -42,7 +42,6 @@ $(document).ready(function(){
             {"data":"secAddress"},
             {"data":"secCreateName"},
             {"data":"secRegDate"}
-            {"data":"secRegDate"}
         ],
         "language": {
             "emptyTable": "데이터가 없어요.",

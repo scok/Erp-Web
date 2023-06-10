@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,6 +58,16 @@ public class LogisticsService {
     //모든 재고 조회
     public List<Inventory> getInventoryAll() {
         return inventoryRepository.getInventoryAll();
+    }
+
+    //특정 입고 출고 아이디 찾기
+    public WarehousingInAndOut widFindById(String widId) {
+        return warehousingInAndOutRepository.findById(Long.valueOf(widId)).orElseThrow(EntityNotFoundException::new);
+    }
+
+    //특정 재고 아이디 찾기
+    public Inventory inFindById(String inId) {
+        return inventoryRepository.findById(Long.valueOf(inId)).orElseThrow(EntityNotFoundException::new);
     }
 }
 

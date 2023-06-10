@@ -132,13 +132,13 @@ public class LogisticsController {
 
     //입고 관리 페이지 접속
     @GetMapping(value = "/inWarehousing/list")
-    public String goWarehousingInList(Model model) {
+    public String goWarehousingInList() {
         return "warehousing/warehousingInForm";
     }
 
     // 데이터 베이스에 있는 입고 테이블의 정보 조회
     @GetMapping(value = "/inWarehousing/check")
-    public @ResponseBody Object getWarehousingInList(Model model) {
+    public @ResponseBody Object getWarehousingInList() {
         List<WarehousingInAndOutFormDto> warehousingInAndOutFormDtos = logisticsService.getWarehousingInList();
 
         Map<String, Object> map = new HashMap<String, Object>();
@@ -147,15 +147,36 @@ public class LogisticsController {
         return data;
     }
 
+    // 데이터 베이스에 있는 입고 테이블의 정보 조회
+    @PostMapping(value = "/warehousingInAndOut/Detail")
+    public @ResponseBody ResponseEntity getWarehousingInAndOutDetail(@RequestBody String widId) {
+        widId = widId.substring(1,widId.length()-1);
+        WarehousingInAndOut warehousing = logisticsService.widFindById(widId);
+        WarehousingInAndOutDetailDto warehousingInAndOutDetailDto = new WarehousingInAndOutDetailDto();
+        if (warehousing.getOrderSheetDetail() != null){
+            warehousingInAndOutDetailDto = WarehousingInAndOutDetailDto.order(warehousing);
+        }else if(warehousing.getProduction() != null){
+            warehousingInAndOutDetailDto = WarehousingInAndOutDetailDto.production(warehousing);
+        }else if(warehousing.getMaterialDelivery() != null){
+            warehousingInAndOutDetailDto = WarehousingInAndOutDetailDto.Delivery(warehousing);
+        }
+
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("data", warehousingInAndOutDetailDto);
+        Object data = map;
+        return new ResponseEntity<>(data,HttpStatus.OK);
+    }
+
+
     //출고 관리 페이지 접속
     @GetMapping(value = "/outWarehousing/list")
-    public String goWarehousingOutList(Model model) {
+    public String goWarehousingOutList() {
         return "warehousing/warehousingOutForm";
     }
 
     // 데이터 베이스에 있는 출고 테이블의 정보 조회
     @GetMapping(value = "/outWarehousing/check")
-    public @ResponseBody Object getWarehousingOutList(Model model) {
+    public @ResponseBody Object getWarehousingOutList() {
 
         List<WarehousingInAndOutFormDto> warehousingInAndOutFormDtos = logisticsService.getWarehousingOutList();
 
@@ -167,10 +188,7 @@ public class LogisticsController {
 
     //재고 관리 페이지 접속
     @GetMapping(value = "/inventory/list")
-    public String goInventoryList(Model model) {
-
-        List<SectionFormDto> sectionFormDtos = sectionService.sectionListAll();
-        model.addAttribute("sectionFormDtos",sectionFormDtos);
+    public String goInventoryList() {
         return "inventory/inventoryFrom";
     }
 
@@ -194,19 +212,15 @@ public class LogisticsController {
 
     // 데이터 베이스에 재고 테이블 일부만 보기
     @PostMapping(value = "/inventory/sectionInfo")
-    public @ResponseBody Object getSectionInfo(@RequestBody String secCode) {
+    public @ResponseBody Object getSectionInfo(@RequestBody String inCode) {
+        Map<String, Object> map = new HashMap<String,Object>();
 
-        secCode=secCode.substring(1,secCode.length()-1);
-        List<Inventory> inventorise = inventorService.findInventorySecCode(secCode);
-        List<InventoryFormDto> inventoryFormDtos = new ArrayList<InventoryFormDto>();
+        inCode=inCode.substring(1,inCode.length()-1);
+        Inventory inventory = inventorService.findByInId(Long.valueOf(inCode));
 
-        for(Inventory inventory: inventorise){
-            InventoryFormDto inventoryFormDto = InventoryFormDto.of(inventory);
-            inventoryFormDtos.add(inventoryFormDto);
-        }
-
-        Map<String, Object> map = new HashMap<String, Object>();
-        map.put("data", inventoryFormDtos);
+        map.put("secCode",inventory.getSection().getSecCode());
+        map.put("secName",inventory.getSection().getSecName());
+        map.put("SACategory",inventory.getStackAreaCategory());
 
         return map;
     }
