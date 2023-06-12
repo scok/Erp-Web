@@ -1,5 +1,6 @@
 package com.Erp.service.logistics;
 
+import com.Erp.dto.ProductionChartDto;
 import com.Erp.dto.logistics.ProductionFormDto;
 import com.Erp.entity.logistics.MaterialDelivery;
 import com.Erp.entity.logistics.Production;
@@ -39,5 +40,9 @@ public class ProductionService {
 
     public Production findById(String proId) {
         return productionRepository.findById(Long.valueOf(proId)).orElseThrow(EntityNotFoundException::new);
+    }
+
+    public List<ProductionChartDto> productionGetChartData() {
+        return productionRepository.productionsChartDate();
     }
 }

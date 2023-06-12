@@ -50,7 +50,7 @@ $(document).ready(function () {
                         }
                     },
                     {
-                        targets : 6,
+                        targets : 7,
                         'render' : function(data) {
                         return '<th>'+comma(data)+'<th>';
                         }

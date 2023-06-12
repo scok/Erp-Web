@@ -197,4 +197,9 @@ public class OrderSheetService {
         orderSheet.setDivisionStatus(DivisionStatus.valueOf(status));
         return orderSheet;
     }
+
+    public List<OrderSheet> orderSheetListAll() {
+
+        return orderSheetRepository.findByAll();
+    }
 }

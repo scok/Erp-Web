@@ -20,7 +20,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/members/login","/members/login/error").permitAll()    // 모든 사용자가 접속할 수 있는 영역.
+                .antMatchers("/members/login","/members/login/error","/productionForm/**","/userInfo/**").permitAll()    // 모든 사용자가 접속할 수 있는 영역.
                 .mvcMatchers("/members/admin/**").hasRole("ADMIN") //권한이 부여된 사용자 외 접근 불가능하게 하는 설정.
                 .anyRequest().authenticated()//그 외엔 모든 사용자가 인증 절차를 가져야 함을 설정
                 .and()

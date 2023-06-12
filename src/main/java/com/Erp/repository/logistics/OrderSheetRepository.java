@@ -30,4 +30,7 @@ public interface OrderSheetRepository extends JpaRepository<OrderSheet, String> 
 
     @Query(" select o from OrderSheet o where o.pageYandN = 'Y' and o.acCategory = :acCategory and o.divisionStatus = :filter")
     List<OrderSheet> findBuyOrderSheetFilter(@Param("acCategory") AccountCategory acCategory, @Param("filter") DivisionStatus filter);
+
+    @Query(" select o from OrderSheet o where o.pageYandN = 'Y' ")
+    List<OrderSheet> findByAll();
 }

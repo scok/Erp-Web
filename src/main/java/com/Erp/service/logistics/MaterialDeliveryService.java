@@ -52,17 +52,6 @@ public class MaterialDeliveryService {
         return materialDeliveryRepository.save(maDelivery);
     }
 
-    // 삭제하기
-    @Transactional
-    public void deleteMaDelivery(List<Long> id){
-        for(Long item : id){
-            if(item != null){
-                MaterialDelivery materialDelivery = materialDeliveryRepository.findById(item).orElseThrow(EntityNotFoundException::new);
-                materialDelivery.setPageYandN("N");
-            }
-        }
-    }
-
     public MaterialDelivery findById(String maCode) {
         return materialDeliveryRepository.findById(Long.valueOf(maCode)).orElseThrow(EntityNotFoundException::new);
     }
