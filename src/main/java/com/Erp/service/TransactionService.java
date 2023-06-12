@@ -27,7 +27,7 @@ public class TransactionService {
     private final TransactionRepository transactionRepository ;
     private final MemberRepository memberRepository ;
 
-
+    //물류에서 거래처로 데이터 전송
     public void inAndOut(WarehousingInAndOut warehousingInAndOut) {
         Transaction transaction = new Transaction();
         //LocalDateTime -> Date 형변환
@@ -48,7 +48,7 @@ public class TransactionService {
 
         int month =inAndOutDateTime.getMonthValue();
         int quarter ;
-
+        // 분기 처리
         if (1 <= month && 3 >= month){
             quarter = 1 ;
         }else if (4 <= month && 6 >= month){
@@ -60,9 +60,7 @@ public class TransactionService {
         }
 
         transaction.setQuarter(quarter);
-
         transactionRepository.save(transaction);
-
     }
 
 

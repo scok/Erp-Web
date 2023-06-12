@@ -45,7 +45,7 @@
                                     <!--content //-->
                                     <h5 class="m-0 font-weight-bold text-primary">거래표
                                     </h5>
-                                    <br>
+
 
                                     <table  id="chartTable">
 
@@ -74,7 +74,6 @@
                             </div>
                         </div>
                     </div>
-
                     <table id="myTable" class="uk-table uk-table-hover uk-table-striped card-body2" >
                         <div class="btnDiv">
                             <button href="#layer2" class="btn-example">차트분석</button>
@@ -120,19 +119,21 @@
             <div class="grid-container">
             <div class="card shadow mb-4" id="b">
                 <div class="card-header">
-                    <h6 class="m-0 font-weight-bold text-primary">거래처별 거래 금액</h6>
+                    <h6 class="m-0 font-weight-bold text-primary">입고 거래처 Top5</h6>
                 </div>
                 <div class="card-body">
                     <div class="chart-area">
+                        <canvas id="myChartPie" class="myChartPie1"></canvas>
                     </div>
                 </div>
             </div>
             <div class="card shadow mb-4" id="c">
                 <div class="card-header">
-                    <h6 class="m-0 font-weight-bold text-primary">거래처별 거래 금액</h6>
+                    <h6 class="m-0 font-weight-bold text-primary">출고 거래처 Top5</h6>
                 </div>
                 <div class="card-body">
-                    <div class="chart-area">
+                    <div class="chart-area" id="chart01">
+                        <canvas id="myChartPie2" class="myChartPie2" style="width:500px ; height: 500px ;"></canvas>
                     </div>
                 </div>
             </div>
@@ -140,5 +141,4 @@
         <!--카드 end-->
     </div>
 </body>
-
 </html>

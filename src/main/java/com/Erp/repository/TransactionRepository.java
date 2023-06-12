@@ -55,4 +55,19 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     List<Object[]> findDateAndAmount(@Param("transactionCategory") TransactionCategory transactionCategory);
 
 
+    @Query(value = "SELECT company_name, COUNT(*) AS  transaction_count " +
+            "FROM Transactions " +
+            "WHERE transaction_category IN ('INS') " +
+            "GROUP BY company_name, transaction_category " +
+            "ORDER BY transaction_count DESC " +
+            "LIMIT 5", nativeQuery = true)
+    List<Object[]> findTop5CountINS();
+
+    @Query(value = "SELECT company_name, COUNT(*) AS  transaction_count " +
+            "FROM Transactions " +
+            "WHERE transaction_category IN ('OUTS') " +
+            "GROUP BY company_name, transaction_category " +
+            "ORDER BY transaction_count DESC " +
+            "LIMIT 5", nativeQuery = true)
+    List<Object[]> findTop5CountOuts();
 }

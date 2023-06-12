@@ -19,7 +19,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -37,7 +39,6 @@ public class TransactionController {
         int draw = Integer.parseInt(formData.get("draw").get(0));
         int num = Integer.parseInt(formData.get("searchType").get(0));
         String nameParam = formData.get("columns["+num+"][search][value]").get(0);
-
         String orderColumnIndexList = formData.get("columnIndex").get(0);
         String orderDirList = formData.get("orderDir").get(0);
 
@@ -45,7 +46,6 @@ public class TransactionController {
         String orderDir = orderDirList != null  ? orderDirList : null;
 
         int page = start / length ;
-
 
         Pageable pageable;
 
@@ -71,18 +71,15 @@ public class TransactionController {
                 total = (int)transactionRepository.countByName(nameParam);
                 data = transactionRepository.findDataByName(nameParam, pageable);
             }
-
         } else {
             total = (int)transactionRepository.count();
             data = transactionRepository.findAllData(pageable);
         }
 
-
         response.setDraw(draw);
         response.setData(data);
         response.setRecordTotal(total);
         response.setRecordFiltered(total);
-
 
         return ResponseEntity.ok(response);
     }
@@ -106,10 +103,48 @@ public class TransactionController {
             transaction.setAmount(amount);
             transaction.setCompanyName(companyNames);
             transaction.setTransactionCategory(transactionCategory1);
-
             transactionList.add(transaction);
         }
         return ResponseEntity.ok(transactionList);
+    }
+
+
+    @GetMapping(value = "/transaction/countIn")
+    @ResponseBody
+    public List<Transaction> chartCountIn(){
+        List<Object[]> data = transactionRepository.findTop5CountINS();
+        List<Transaction> transactions = new ArrayList<>() ;
+
+        for (Object[] obj :data){
+            Transaction transaction = new Transaction();
+            String companyName = (String) obj[0];
+            BigInteger count = (BigInteger)obj[1];
+
+            transaction.setCompanyName(companyName);
+            transaction.setAmount(count.longValue());
+
+            transactions.add(transaction);
+        }
+
+        return transactions;
+    }
+
+    @GetMapping(value = "/transaction/countOut")
+    @ResponseBody
+    public List<Transaction> chartCountOut(){
+        List<Object[]> data = transactionRepository.findTop5CountOuts();
+        List<Transaction> transactions = new ArrayList<>() ;
+
+        for (Object[] obj :data){
+            Transaction transaction = new Transaction();
+            String companyName = (String) obj[0];
+            BigInteger count = (BigInteger)obj[1];
+
+            transaction.setCompanyName(companyName);
+            transaction.setAmount(count.longValue());
+            transactions.add(transaction);
+        }
+        return transactions;
     }
 
     @GetMapping(value = "/transaction/select")
@@ -120,7 +155,6 @@ public class TransactionController {
 
         for (Object[] obj :data){
             Transaction transaction = new Transaction() ;
-
             String companyname = (String)obj[0];
             Date trDate = (Date)obj[1];
             Long amount = (Long)obj[2];
@@ -130,12 +164,9 @@ public class TransactionController {
             transaction.setTrDate(trDate);
             transaction.setAmount(amount);
             transaction.setTransactionCategory(transactionCategory);
-
             transactions.add(transaction);
         }
-
         return transactions ;
-
     }
 
 
