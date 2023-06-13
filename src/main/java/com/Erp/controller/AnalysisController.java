@@ -1,5 +1,6 @@
 package com.Erp.controller;
 
+import com.Erp.dto.AllChartData;
 import com.Erp.dto.FinancialChartData;
 import com.Erp.dto.IncomeChartData;
 import com.Erp.repository.FinancialRepository;
@@ -40,5 +41,15 @@ public class AnalysisController {
         financialChartData = financialRepository.findChartDataList();
 
         return financialChartData;
+    }
+
+    @GetMapping("/analysis/getAllChartData")
+    public @ResponseBody List<AllChartData> getAllChartDataList(){
+
+        List<AllChartData> allChartData = new ArrayList<>();
+
+        allChartData = incomeRepository.findChartDataList2();
+
+        return allChartData;
     }
 }

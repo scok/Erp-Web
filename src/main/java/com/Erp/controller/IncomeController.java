@@ -32,20 +32,17 @@ public class IncomeController {
     @ResponseBody
     public IncomeData getList(@Valid IncomeData data, @RequestParam MultiValueMap<String, String> formData) {
 
+        Pattern pattern = Pattern.compile("\\d{4}");
+        String searchValue = formData.get("columns[33][search][value]").toString();
+        Matcher matcher = pattern.matcher(searchValue);
+
         Short year = 0;
 
-        if(formData.get("columns[28][search][value]") != null){
-
-            Pattern pattern = Pattern.compile("\\d{4}");
-            String searchValue = formData.get("columns[28][search][value]").toString();
-            Matcher matcher = pattern.matcher(searchValue);
-
-            if(matcher.find()){
-                String value = matcher.group(0);
-                year = Short.parseShort(value);
-            }else{
-                System.out.println("데이터 없음");
-            }
+        if(matcher.find()){
+            String value = matcher.group(0);
+            year = Short.parseShort(value);
+        }else{
+            System.out.println("데이터 없음");
         }
 
         int draw = Integer.parseInt(formData.get("draw").get(0));
@@ -57,9 +54,9 @@ public class IncomeController {
         List<IncomeDto> incomeDtos = new ArrayList<>();
 
         if(year == 0){
-            incomeDtos = incomeRepository.findIncomesList();
+            incomeDtos = incomeService.findIncomesList();
         }else{
-            incomeDtos = incomeRepository.findSearchList(year);
+            incomeDtos = incomeService.findIncomesList(year);
         }
 
         data.setDraw(draw);
@@ -77,7 +74,7 @@ public class IncomeController {
 
         Short year = incomeService.addData(dto);
 
-        return new ResponseEntity(dto.getYear(), HttpStatus.OK);
+        return new ResponseEntity(year, HttpStatus.OK);
     }
 
     @PostMapping("/incomes/dataSave")

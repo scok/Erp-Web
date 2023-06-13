@@ -19,15 +19,16 @@ public class MemberImage extends BaseEntity {
     private String orImageName;     //원본 이미지 이름
     private String imageUrl;        //이미지 조회 경로
 
+
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "memberId")
     private Member member;
 
-    public void updateMemberImage(String orImageName,String imageName,String imageUrl){
-        this.orImageName=orImageName;
-        this.imageName=imageName;
-        this.imageUrl=imageUrl;
-
+    public void updateMemberImage(String orImageName, String imageName, String imageUrl, Member member) {
+        this.orImageName = orImageName;
+        this.imageName = imageName;
+        this.imageUrl = imageUrl;
+        this.member = member;
     }
 
 }

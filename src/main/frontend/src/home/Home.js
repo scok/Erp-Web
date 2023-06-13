@@ -1,10 +1,15 @@
 import PrTable from "./content/ProductionTable";
 import PrChart from "./content/ProductionChart";
 import Checkbox from "./content/ChartCheck";
+import DateSetting from "./content/ChartDate";
 
 import {useState} from 'react';
 import {useEffect} from 'react';
 import axios from 'axios';
+
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 import * as React from 'react';
 import Card from '@mui/material/Card';
@@ -16,8 +21,6 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 
 function App() {
-
-
     /*수신 받은 데이터*/
     const [receivedData ,setReceivedData] = useState(null);
 
@@ -35,7 +38,7 @@ function App() {
                 setError(null);
                 setLoading(true);
 
-                const url = 'http://localhost:8877/productionForm';
+                const url = '/react/productionForm';
 
                 const response = await axios.get(url);
 
@@ -43,8 +46,6 @@ function App() {
 
                 console.log('response.data');
                 console.log(response.data);
-
-
             }catch(err){
                 setError(err);
 
@@ -69,24 +70,29 @@ function App() {
         return null;
     }
 
+    //버튼의 콜백 함수. 기존 데이터를 업데이트 해줍니다.
+    const onClickButton = (data) => {
+        setReceivedData(data);
+    };
+
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '150vh',marginTop:"20px"}}>
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh',marginTop:"20px"}}>
         <Card sx={{ width: '85%' , height: '100%' }}>
          <CardHeader
                 avatar={
                   <BarChartIcon  sx={{fontSize: 50}}/>
                 }
-                title="생산 현황"
+                title="월간 생산 현황"
                 titleTypographyProps={{
                     fontWeight: 1000,
                     sx: {
                       fontSize: "h4.fontSize",
-                      width:"200px"
+                      width:"250px"
                     },
                 }}
               />
         <CardContent>
-            <Checkbox content={receivedData} />
+            <DateSetting filterData={onClickButton} />
             <PrChart content={receivedData}/>
             <PrTable content={receivedData}/>
         </CardContent>

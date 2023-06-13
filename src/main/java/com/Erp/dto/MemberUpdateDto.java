@@ -12,7 +12,9 @@ import javax.persistence.Enumerated;
 import java.time.LocalDate;
 
 @Getter@Setter@ToString
-public class MemberInsertDto{
+public class MemberUpdateDto {
+
+    private Long id;
 
     private String password;
 
@@ -42,6 +44,6 @@ public class MemberInsertDto{
 
     @Enumerated(EnumType.STRING)
     private MemberRole role;
+
+    private String imageUrl ;
 }
-
-

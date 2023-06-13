@@ -1,6 +1,7 @@
 package com.Erp.service;
 
 import com.Erp.dto.FinancialDto;
+import com.Erp.dto.IncomeDto;
 import com.Erp.dto.SaveDto;
 import com.Erp.entity.Financial;
 import com.Erp.entity.Income;
@@ -10,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -20,109 +23,126 @@ public class FinancialService {
 
     public Short addData(FinancialDto dto) {
 
-        for (int i = 1; i < 5; i++) {
-            Financial financial = new Financial(0L, dto.getYear(), i);
+        List<Financial> financials = financialRepository.findSearchList(dto.getYear());
 
-            Income income = incomeRepository.findIncomeYearAndQuarter(dto.getYear(), i);
+        if(financials.size() == 0){
+            for (int i = 1; i < 5; i++) {
+                Financial financial = new Financial(0L, dto.getYear(), i);
 
-            financial.setIncomes(income);
+                financialRepository.save(financial);
 
-            updateTotalData(financial, income);
+                Income income = incomeRepository.findIncomeYearAndQuarter(dto.getYear(), i);
 
-            financialRepository.save(financial);
+                if(income != null){
+                    financial.setIncomes(income);
+                    saveData(financial);
+                    income.setFinancial(financial);
+                    incomeRepository.save(income);
+                }
+            }
+
+            return dto.getYear();
+        }else {
+            return  -1;
         }
+    }
 
-        return dto.getYear();
+    public void saveData(Financial financial){
+
+        Income income = financial.getIncomes();
+
+        long total_assets = 0L;
+        long total_liabilities = 0L;
+        long paid_capital = 0L;
+        long total_capital = 0L;
+        long totalLiabilitiesCapital = 0L;
+
+        total_assets = financial.getCash() + financial.getCash_equivalents() + income.getRaw_mat_cost() + income.getComponents_cost() + income.getFixtures() + financial.getReal_estate() + financial.getEquipment() + financial.getVehicles() + financial.getEquity_invest() + financial.getReal_estate_invest() + financial.getCorporate_invest() + financial.getTrademarks() + financial.getLicenses() + financial.getNotes_receivable() + financial.getDeposits() + financial.getPension_assets();
+        total_liabilities = financial.getBank_loans() + financial.getTrade_credit() + financial.getAdvance_payments() + financial.getTax_liabilities() + financial.getBonds() + financial.getLt_borrow_pay() + financial.getLt_deposits();
+        paid_capital = total_assets - total_liabilities;
+        total_capital = paid_capital + income.getNetIncome();
+        totalLiabilitiesCapital = total_liabilities + total_capital;
+
+        financial.setTotal_assets(total_assets);
+        financial.setTotal_liabilities(total_liabilities);
+        financial.setPaid_capital(paid_capital);
+        financial.setTotal_capital(total_capital);
+        financial.setTotalLiabilitiesCapital(totalLiabilitiesCapital);
+
+        financialRepository.save(financial);
     }
 
     public Long updateData(SaveDto dto) throws Exception{
 
-        Long id = Long.valueOf(dto.getNum());
+        Long id = dto.getNum();
         Long value = Long.valueOf(dto.getValue());
 
         Financial financial = financialRepository.findById(id).orElseThrow(EntityNotFoundException::new);
 
         financial.setDynamicField(dto.getName(), value);
 
-        Income income = incomeRepository.findIncomeYearAndQuarter(financial.getYear(), financial.getQuarter());
+        saveData(financial);
 
-        updateTotalData(financial, income);
-
-        financialRepository.save(financial);
-
-        return financial.getNum();
+        return financial.getId();
     }
 
-    public void updateTotalData(Financial financial, Income income){
+    public List<FinancialDto> findFinancialsList() {
 
-        financial.setFixture_mt(income.getFixtures());
-        financial.setTotal_assets(getTotalAssets(financial, income));
-        financial.setTotal_liabilities(getliabilities(financial));
-        financial.setPaid_capital(getPaidCapital(financial, income));
-        financial.setTotal_capital(getTotalCapital(financial, income));
-        financial.setTotalLiabilitiesCapital(getTotalLiabilitiesCapital(financial, income));
+        List<FinancialDto> financialDtos = new ArrayList<>();
+
+        List<Financial> financials = financialRepository.findAll();
+
+        for (Financial financial : financials){
+
+            Income income = financial.getIncomes();
+
+            Long raw_mt = 0L;
+            Long product_mt = 0L;
+            Long fixture_mt = 0L;
+            Long netIncome = 0L;
+
+            if(income != null){
+                raw_mt = income.getRaw_mat_cost();
+                product_mt = income.getComponents_cost();
+                fixture_mt = income.getFixtures();
+                netIncome = income.getNetIncome();
+            }
+
+            FinancialDto financialDto = new FinancialDto(financial, raw_mt, product_mt, fixture_mt, netIncome);
+
+            financialDtos.add(financialDto);
+        }
+
+        return financialDtos;
     }
 
-    public Long getCurrentAssets(Financial financial, Income income){
+    public List<FinancialDto> findFinancialsList(Short year) {
 
-        Long result = 0L;
+        List<FinancialDto> financialDtos = new ArrayList<>();
 
-        result = financial.getCash() + financial.getCash_equivalents() + financial.getRaw_mt() + financial.getProduct_mt() + income.getFixtures();
+        List<Financial> financials = financialRepository.findSearchList(year);
 
-        return result;
-    }
+        for (Financial financial : financials){
 
-    public Long getNonCurrentAssets(Financial financial){
+            Income income = financial.getIncomes();
 
-        Long result = 0L;
+            Long raw_mt = 0L;
+            Long product_mt = 0L;
+            Long fixture_mt = 0L;
+            Long netIncome = 0L;
 
-        result = financial.getReal_estate() + financial.getEquipment() + financial.getVehicles() + financial.getEquity_invest() + financial.getReal_estate_invest() + financial.getCorporate_invest() + financial.getTrademarks() + financial.getLicenses() + financial.getNotes_receivable() + financial.getDeposits() + financial.getPension_assets();
+            if(income != null){
+                raw_mt = income.getRaw_mat_cost();
+                product_mt = income.getComponents_cost();
+                fixture_mt = income.getFixtures();
+                netIncome = income.getNetIncome();
+            }
 
-        return result;
-    }
+            FinancialDto financialDto = new FinancialDto(financial, raw_mt, product_mt, fixture_mt, netIncome);
 
-    public Long getTotalAssets(Financial financial, Income income){
+            financialDtos.add(financialDto);
+        }
 
-        Long result = 0L;
-
-        result = getCurrentAssets(financial, income) + getNonCurrentAssets(financial);
-
-        return result;
-    }
-
-    public Long getliabilities(Financial financial){
-
-        Long result = 0L;
-
-        result = financial.getBank_loans() + financial.getTrade_credit() + financial.getAdvance_payments() + financial.getTax_liabilities() + financial.getBonds() + financial.getLt_borrow_pay() + financial.getLt_deposits();
-
-        return result;
-    }
-
-    public Long getPaidCapital(Financial financial, Income income){
-
-        Long result = 0L;
-
-        result = getTotalAssets(financial, income) - getliabilities(financial);
-
-        return result;
-    }
-
-    public Long getTotalCapital(Financial financial, Income income){
-
-        Long result = 0L;
-
-        result = getPaidCapital(financial, income) + income.getNetIncome();
-
-        return result;
-    }
-
-    public Long getTotalLiabilitiesCapital(Financial financial, Income income){
-
-        Long result = 0L;
-
-        result = getliabilities(financial) + getTotalCapital(financial, income);
-
-        return result;
+        return financialDtos;
     }
 }

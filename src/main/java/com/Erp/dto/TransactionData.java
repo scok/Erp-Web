@@ -12,10 +12,14 @@ import java.util.List;
 @Setter
 @Getter
 public class TransactionData {
+    private int start ;
+    private int length ;
     private int draw;
     private int recordTotal;
     private int recordFiltered;
     private List<Transaction> data;
+    private int totalPages; // 총 페이지 수
+    private int currentPage;
 
     public List<Transaction> getData() {
         if (data == null) {
@@ -23,4 +27,5 @@ public class TransactionData {
         }
         return data;
     }
+
 }

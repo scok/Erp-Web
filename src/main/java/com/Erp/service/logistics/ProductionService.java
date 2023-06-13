@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +43,11 @@ public class ProductionService {
         return productionRepository.findById(Long.valueOf(proId)).orElseThrow(EntityNotFoundException::new);
     }
 
-    public List<ProductionChartDto> productionGetChartData() {
-        return productionRepository.productionsChartDate();
+    public List<ProductionChartDto> productionGetMonthChartData(LocalDateTime startDateTime,LocalDateTime endDateTime) {
+        return productionRepository.productionsChartData(startDateTime,endDateTime);
+    }
+
+    public List<ProductionChartDto> productionGetChartDataFilter(LocalDateTime startDate, LocalDateTime endDate) {
+        return productionRepository.productionsChartDataFilter(startDate,endDate);
     }
 }

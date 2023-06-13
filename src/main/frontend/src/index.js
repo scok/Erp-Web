@@ -10,7 +10,6 @@ import User from './home/HomeUserInfo';
 /*import App from './App';*/
 import reportWebVitals from './reportWebVitals';
 
-
 ReactDOM.render(
   <User />,
   document.getElementById('userInfo')

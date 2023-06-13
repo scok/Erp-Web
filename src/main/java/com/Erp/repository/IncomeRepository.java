@@ -1,5 +1,6 @@
 package com.Erp.repository;
 
+import com.Erp.dto.AllChartData;
 import com.Erp.dto.IncomeChartData;
 import com.Erp.dto.IncomeDto;
 import com.Erp.entity.Income;
@@ -11,32 +12,8 @@ import java.util.List;
 
 public interface IncomeRepository extends JpaRepository<Income,Long> {
 
-    @Query(value = "SELECT NEW com.Erp.dto.IncomeDto(i," +
-            " SUM(CASE WHEN t.transactionCategory = 'OUTS' THEN t.amount ELSE 0 END)," +
-            " SUM(CASE WHEN m.department = '판매' THEN m.salary ELSE 0 END)," +
-            " SUM(CASE WHEN m.department = '판매' THEN m.compensation ELSE 0 END)," +
-            " SUM(CASE WHEN m.department = '관리' THEN m.salary ELSE 0 END)," +
-            " SUM(m.salary))" +
-            " FROM Income i" +
-            " LEFT JOIN Transaction t ON i.num = t.income.num" +
-            " LEFT JOIN Member m ON i.member.id = m.id" +
-            " GROUP BY i.id" +
-            " ORDER BY i.year DESC, i.quarter ASC")
-    List<IncomeDto> findIncomesList();
-
-    @Query(value = "SELECT NEW com.Erp.dto.IncomeDto(i," +
-            " SUM(CASE WHEN t.transactionCategory = 'OUTS' THEN t.amount ELSE 0 END)," +
-            " SUM(CASE WHEN m.department = '판매' THEN m.salary ELSE 0 END)," +
-            " SUM(CASE WHEN m.department = '판매' THEN m.compensation ELSE 0 END)," +
-            " SUM(CASE WHEN m.department = '관리' THEN m.salary ELSE 0 END)," +
-            " SUM(m.salary))" +
-            " FROM Income i" +
-            " LEFT JOIN Transaction t ON i.num = t.income.num" +
-            " LEFT JOIN Member m ON i.member.id = m.id" +
-            " WHERE i.year = :year" +
-            " GROUP BY i.id" +
-            " ORDER BY i.year DESC, i.quarter ASC")
-    List<IncomeDto> findSearchList(@Param("year") Short year);
+    @Query(" select i from Income i where i.year = :year order by i.quarter asc")
+    List<Income> findSearchList(@Param("year") Short year);
 
     @Query(value = " select new com.Erp.dto.IncomeChartData(sum(i.sales_revenue), sum(i.operate_revenue)," +
             " sum(i.operate_expenses)," +
@@ -45,6 +22,15 @@ public interface IncomeRepository extends JpaRepository<Income,Long> {
             " group by i.year" +
             " order by i.year asc")
     List<IncomeChartData> findChartDataList();
+
+    @Query(value = " select new com.Erp.dto.AllChartData(sum(i.total_revenue), sum(i.netIncome)," +
+            " sum(i.operate_expenses), count(distinct(m.id)), sum(i.operate_income), sum(i.sales_revenue)," +
+            " sum(f.total_assets), i.year)" +
+            " from Income i, Member m" +
+            " JOIN Financial f ON i.financial.id = f.id" +
+            " group by i.year" +
+            " order by i.year asc")
+    List<AllChartData> findChartDataList2();
 
     @Query(" select i from Income i where i.year = :year and i.quarter = :quarter")
     Income findIncomeYearAndQuarter(@Param("year") Short year, @Param("quarter") Integer quarter);

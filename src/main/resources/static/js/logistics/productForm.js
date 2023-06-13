@@ -178,7 +178,7 @@ function getAccountCategory(acCode){
             $('#prStandard').remove();
             $("#prDivCategory").val(data).prop("selected", true); //셀렉트 박스 체크
             if(data == "제품"){
-                 $('#standard').append(`<input type="text" id="prStandard" name="prStandard" placeholder="제품 규격을 입력해주세요.">`);
+                 $('#standard').append(`<input type="text" id="prStandard" class="customInput" name="prStandard" placeholder="제품 규격을 입력해주세요.">`);
             }
         },
         error: function (request, status) {
