@@ -15,7 +15,7 @@
 </head>
 
 <th:block layout:fragment="script">
-    <script th:src="@{/js/sectionForm.js}"></script>
+    <script th:src="@{/js/logistics/sectionForm.js}"></script>
     <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/select/1.3.3/js/dataTables.select.min.js"></script>
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
@@ -33,20 +33,31 @@
 <div class="content" layout:fragment="content" id="content">
     <div id="dataTables">
         <h2 id="title">창고 목록</h2>
-        <button type="button" id="updateBtn" onclick="update()">수정</button>
-        <button type="button" id="btn-modal">등록</button>
-        <button type="button" id="deleteBtn" onclick="deletePageN()">삭제</button>
+
+        <button type="button" id="btn-modal">
+            <ion-icon name="add-outline"></ion-icon>
+        </button>
+
+        <button type="button" id="updateBtn" onclick="update()">
+            <ion-icon name="cloud-download-outline"></ion-icon>
+        </button>
+
+        <button type="button" id="deleteBtn" onclick="deletePageN()">
+            <ion-icon name="trash-outline"></ion-icon>
+        </button>
 
         <table id="myTable" style="width:100%;" class="display">
             <thead>
                 <tr>
-                    <th><input type="checkbox" name="checkall" id="checkall"></th>
+                    <th style="text-align: center;"><input type="checkbox" name="checkall" id="checkall"></th>
                     <th>분류</th>
                     <th>창고명</th>
                     <th>현재 적재량</th>
                     <th>최대 적재량</th>
                     <th>용적률</th>
                     <th>주소</th>
+                    <th>등록자</th>
+                    <th>등록일자</th>
                 </tr>
             </thead>
         </table>
@@ -59,12 +70,11 @@
 
                 <div class="close-area">X</div>
 
-                <form action="/section/addSection" method="post" role="form" id="myForm" name="myForm">
+                <form action="" method="post" role="form" id="myForm" name="myForm">
                     <div id="container">
-
-                        <div id="box-left">
+                        <div id="div-area">
                             <p>분류<br/>
-                                <select class="form-select" id="secCategorySel" name="secCategory">
+                                <select class="custom-select" id="secCategorySel" name="secCategory">
                                     <option value="">==분류 선택==</option>
                                     <option th:each="secCategoryVal : ${T(com.Erp.constant.SectionCategory).values()}"
                                             th:value="${secCategoryVal.name()}"
@@ -72,28 +82,26 @@
                                     </option>
                                 </select>
                             </p>
-
                             <p>창고명<br/>
-                                <input id="secName" name="secName"type="text">
+                                <input class="customInput" id="secName" name="secName"type="text">
                             </p>
                             <p>최대 적재 수량<br/>
-                                <input id="secMaxCount" name="secMaxCount" type="text">
+                                <input class="customInput" id="secMaxCount" name="secMaxCount" type="text">
                             </p>
                             <p>창고 주소<br/>
-                                <input id="secAddress" name="secAddress" type="text">
+                                <button type="button" onclick="addressSh()">주소 검색</button>
+                                <input class="customInput" type="text" name="secAddress" id="secAddress" placeholder="도로명">
+                                <input class="customInput" type="text" name="secAddressDetail" id="secAddressDetail" placeholder="상세주소">
                             </p>
                             <input id="secCode" name="secCode" type="hidden">
-                            <button id="saveBtn" onclick="addSection()" type="button">저장하기</button>
-                        </div>
-
-
-                        <div id="box-right">
-
+                            <button id="saveBtn" onclick="addSection()" type="button">
+                                <ion-icon name="save-outline"></ion-icon>
+                            </button>
                         </div>
                     </div>
                 </form>
             </div>
         </div>
-</div>
+    </div>
 </div>
 </html>

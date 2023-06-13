@@ -13,7 +13,7 @@
     <meta th:if="${_csrf}" name="_csrf_parameter" th:content="${_csrf.parameterName}"/>
 </head>
 <th:block layout:fragment="script">
-    <script th:src="@{/js/estimateForm.js}"></script>
+    <script th:src="@{/js/logistics/estimateForm.js}"></script>
     <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/select/1.3.3/js/dataTables.select.min.js"></script>
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
@@ -28,15 +28,35 @@
 
 <div class="content" layout:fragment="content" id="content">
     <div id="dataTables">
-        <h2 id="title">판매 견적서</h2>
-        <button type="button" id="updateBtn" onclick="update()">수정</button>
-        <button type="button" id="btn-modal">등록</button>
-        <button type="button" id="deleteBtn" onclick="deletePageN()">삭제</button>
+        <h1 id="title">판매 견적서</h1>
+
+        <div class="tabs2">
+            <input id="all" type="radio" name="tab_item2" value="승인대기" onclick="estimateClick(this.value)" checked>
+            <label class="tab_item2" for="all">상신</label>
+
+            <input id="programming" type="radio" name="tab_item2" value="승인" onclick="estimateClick(this.value)">
+            <label class="tab_item2" for="programming">완료</label>
+
+            <input id="end" type="radio" name="tab_item2" value="반려" onclick="estimateClick(this.value)">
+            <label class="tab_item2" for="end">반려</label>
+        </div>
+
+        <button type="button" id="btn-modal">
+            <ion-icon name="add-outline"></ion-icon>
+        </button>
+
+        <button type="button" id="updateBtn" onclick="update()">
+            <ion-icon name="cloud-download-outline"></ion-icon>
+        </button>
+
+        <button type="button" id="deleteBtn" onclick="deletePageN()">
+            <ion-icon name="trash-outline"></ion-icon>
+        </button>
 
         <table id="myTable" style="width:100%;" class="display">
             <thead>
                 <tr>
-                    <th><input type="checkbox" name="checkall" id="checkall"></th>
+                    <th style="text-align: center;"><input type="checkbox" name="checkall" id="checkall"></th>
                     <th>구분</th>
                     <th>품명</th>
                     <th>총금액</th>
@@ -58,19 +78,19 @@
                 <form action="" method="post" role="form" id="myForm" name="myForm">
 
                     <p>거래 구분<br>
-                        <input type="text" id="acCategory" name="acCategory" value="판매" readonly>
+                        <input class="customInput" type="text" id="acCategory" name="acCategory" style="width:50%" value="판매" readonly>
                     </p>
 
                     <p>거래처 선택<br/>
-                        <select class="form-select" name="acCode" id="acCode" onchange="AcCodeChange(value)">
+                        <select class="custom-select" name="acCode" id="acCode" onchange="AcCodeChange(value)">
                             <option value="">==거래처 선택==</option>
                             <option th:each="dto : ${accountFormDtos}" th:value="${dto.acCode}"
                                     th:text="${dto.acName}"></option>
                         </select>
                     </p>
-                    <p>상품 선택<br/>
-                        <select class="form-select" name="prCode" id="prCode">
-                            <option value="">==상품 선택==</option>
+                    <p>제품 선택<br/>
+                        <select class="custom-select" name="prCode" id="prCode">
+                            <option value="">==제품 선택==</option>
                         </select>
                     </p>
                     <table id="productTable" style="">
@@ -94,7 +114,9 @@
                     <br/>
                     <div id="DivStatus" class="divisionStatus">
                     </div>
-                    <button id="saveBtn" onclick="addEstimate()" type="button">저장</button>
+                    <button id="saveBtn" onclick="addEstimate()" type="button">
+                        <ion-icon name="save-outline"></ion-icon>
+                    </button>
                 </form>
             </div>
         </div>

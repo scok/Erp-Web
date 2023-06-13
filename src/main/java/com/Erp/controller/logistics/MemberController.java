@@ -1,4 +1,4 @@
-package com.Erp.controller;
+package com.Erp.controller.logistics;
 
 import com.Erp.dto.*;
 import com.Erp.entity.*;

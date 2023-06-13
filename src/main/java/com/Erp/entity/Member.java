@@ -26,6 +26,9 @@ public class Member extends BaseEntity {
     @Column(unique = true)//unique = true 해당 값은 유니크한 값이 들어간다. 중복 x
     private String id;  //사원번호
 
+    @Column( nullable = false)
+    private String password;    //password
+
     @Column(nullable = false)
     private String name;
 
@@ -46,7 +49,7 @@ public class Member extends BaseEntity {
     
     @Column(nullable = false)
     private LocalDate date; //입사날짜
-    
+
     @Column(nullable = false)
     private String department; //부서
 
