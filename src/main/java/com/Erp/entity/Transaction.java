@@ -28,8 +28,7 @@ import java.util.List;
     private Date trDate ; // 거래일자
     @Column( nullable = false)
     private Integer quarter ; // 분기
-    @Column( nullable = false)
-    private String remark ; // 주석
+
     @Enumerated(EnumType.STRING)
     private TransactionCategory transactionCategory; // 거래분류
 

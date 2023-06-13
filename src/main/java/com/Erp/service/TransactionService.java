@@ -38,7 +38,7 @@ public class TransactionService {
         transaction.setTrDate(trDate);
         transaction.setCompanyName(warehousingInAndOut.getOrderSheetDetail().getOrderSheet().getAccount().getAcName());
         transaction.setAmount(warehousingInAndOut.getOrderSheetDetail().getOsSupplyValue()+warehousingInAndOut.getOrderSheetDetail().getOsTaxAmount());
-        transaction.setRemark(" ");
+
 
         if (warehousingInAndOut.getDivisionStatus()==DivisionStatus.입고){
             transaction.setTransactionCategory(TransactionCategory.INS);
@@ -86,8 +86,6 @@ public class TransactionService {
             case 4:
                 return "quarter";
             case 5:
-                return "remark";
-            case 6:
                 return "transactionCategory";
             default:
                 return "";

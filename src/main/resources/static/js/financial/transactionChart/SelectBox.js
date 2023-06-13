@@ -2,7 +2,7 @@ $(document).ready(function() {
     var token = $('meta[name="_csrf"]').attr('content');
     var header = $('meta[name="_csrf_header"]').attr('content');
 
-    //날짜 변환 메소드
+    //date 패턴 변환 메소드
     function DateChange(comeOn) {
         var date = new Date(comeOn);
         var year = date.getFullYear();
@@ -27,6 +27,7 @@ $(document).ready(function() {
                 text: '연도'
             }));
         }
+
         var aggregatedXValues = [] ;
         var aggregatedYValues = [] ;
         drawTransactionChart2(aggregatedXValues, aggregatedYValues);
@@ -219,6 +220,7 @@ $(document).ready(function() {
             previousChart.destroy();
         }
         var selectComName = $('#select_box01').val();
+        var select_box1 = $('#select_box03').val();
         new Chart('myChart4', {
             type: 'bar',
             data: {
@@ -254,7 +256,7 @@ $(document).ready(function() {
                     },
                     title: {
                         display: true,
-                        text: (selectComName==null) ? '연도별 거래금액 차트' : selectComName + ' 연도별 거래금액 차트'
+                        text: (select_box1==null) ? '연도별 거래금액 차트' : selectComName + ' 연도별 거래금액 차트'
                     }
                 }
             }
@@ -265,11 +267,12 @@ $(document).ready(function() {
     //차트2start
 
     function drawTransactionChart3(xValues, yValues){
+        var selectComName = $('#select_box01').val();
         var previousChart = Chart.getChart('myChart5');
         if (previousChart) {
             previousChart.destroy();
         }
-        var selectComName = $('#select_box01').val();
+        var select_box1 = $('#select_box03').val();
         new Chart('myChart5', {
             type: 'bar',
             data: {
@@ -305,7 +308,7 @@ $(document).ready(function() {
                     },
                     title: {
                         display: true,
-                        text: (selectComName==null) ? '분기별 거래금액 차트' : selectComName + ' 분기별 거래금액 차트'
+                        text: (select_box1==null) ? '분기별 거래금액 차트' : selectComName + ' 분기별 거래금액 차트'
                     }
                 }
             }

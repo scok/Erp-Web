@@ -20,7 +20,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
             "cast(t.amount as string) = :nameParam OR " +
             "t.trDate LIKE %:nameParam% OR " +
             " CAST(t.quarter AS string) = :nameParam OR " +
-            "t.remark LIKE %:nameParam% OR " +
             "t.transactionCategory LIKE %:nameParam% ")
     long countByName(@Param("nameParam") String nameParam);
 
@@ -30,7 +29,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
             "cast(t.amount as string) = :nameParam OR " +
             "t.trDate LIKE %:nameParam% OR " +
             " CAST(t.quarter AS string) = :nameParam OR " +
-            "t.remark LIKE %:nameParam% OR " +
             "t.transactionCategory LIKE %:nameParam%    ")
     List<Transaction> findDataByName(@Param("nameParam") String nameParam, Pageable pageable);
 

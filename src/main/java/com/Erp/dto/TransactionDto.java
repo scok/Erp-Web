@@ -25,8 +25,6 @@ public class TransactionDto {
     @NotNull(message = "꼭")
     private Integer quarter ; // 분기
     private TransactionCategory transactionCategory; // 거래분류
-    @NotEmpty(message = "꼭")
-    private String remark ; // 주석
 
     private static ModelMapper modelMapper = new ModelMapper() ;
 

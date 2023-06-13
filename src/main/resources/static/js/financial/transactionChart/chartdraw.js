@@ -148,7 +148,7 @@ $(document).ready(function() {
                     yValues
                 ,
                 datasets: [{
-                    label: '입고 거래수',
+                    label: '출고 거래수',
                     backgroundColor: [
                         'rgb(68, 150, 77)',
                         'rgb(149, 146, 137)',

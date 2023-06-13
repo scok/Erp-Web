@@ -4,6 +4,7 @@ $(document).ready(function() {
 
     //데이터 테이블 start
     if (!$.fn.DataTable.isDataTable('#myTable')) {
+
         var table =  $('#myTable').DataTable({
             "serverSide": true,
             "processing": true,
@@ -15,6 +16,7 @@ $(document).ready(function() {
                     xhr.setRequestHeader(header, token);
                 },
                 "data": function (d) {
+
                     d.searchType = $("#searchType").val();
                     d.searchValue = $("#searchValue").val();
                     d.columnIndex = d.order[0].column;
@@ -65,7 +67,6 @@ $(document).ready(function() {
                 { "data": "amount" },
                 { "data": "trDate" },
                 { "data": "quarter" },
-                { "data": "remark" },
                 { "data": "transactionCategory" }
             ],
             "language": {
@@ -83,26 +84,7 @@ $(document).ready(function() {
                 "previous": "이전"
                 }
             },
-            "initComplete": function(settings, json) {
-                // 기능 코드 추가
-                $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
-                    var min = Date.parse($('#fromDate').val());
-                    var max = Date.parse($('#toDate').val());
-                    var targetDate = Date.parse(data[5]);
 
-                    if ((isNaN(min) && isNaN(max)) ||
-                        (isNaN(min) && targetDate <= max) ||
-                        (min <= targetDate && isNaN(max)) ||
-                        (targetDate >= min && targetDate <= max)) {
-                        return true;
-                    }
-                    return false;
-                });
-                $('#toDate, #fromDate').unbind().bind('keyup',function(){
-                    table.draw();
-                })
-
-            },
             //거래금액 합산
             "footerCallback": function() {
                 var api = this.api(), data;
