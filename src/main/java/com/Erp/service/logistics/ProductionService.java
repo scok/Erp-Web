@@ -1,12 +1,17 @@
 package com.Erp.service.logistics;
 
+import com.Erp.dto.ProductionChartDto;
 import com.Erp.dto.logistics.ProductionFormDto;
+import com.Erp.entity.logistics.MaterialDelivery;
 import com.Erp.entity.logistics.Production;
 import com.Erp.repository.logistics.ProductionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,15 +27,7 @@ public class ProductionService {
         List<ProductionFormDto> productionFormDtos = new ArrayList<ProductionFormDto>();
 
         for(Production production : productionList){
-            ProductionFormDto dto = new ProductionFormDto();
-
-            dto.setProCode(production.getProCode());
-            dto.setProductionLine(production.getProductionLine());
-            dto.setCount(production.getCount());
-            dto.setMeName(production.getMeName());
-            dto.setRegistrationDate(production.getRegistrationDate());
-            dto.setPrName(production.getProduct().getPrName());
-
+            ProductionFormDto dto = ProductionFormDto.of(production);
             productionFormDtos.add(dto);
         }
 
@@ -40,5 +37,17 @@ public class ProductionService {
     @Transactional
     public Production save(Production production) {
         return productionRepository.save(production);
+    }
+
+    public Production findById(String proId) {
+        return productionRepository.findById(Long.valueOf(proId)).orElseThrow(EntityNotFoundException::new);
+    }
+
+    public List<ProductionChartDto> productionGetMonthChartData(LocalDateTime startDateTime,LocalDateTime endDateTime) {
+        return productionRepository.productionsChartData(startDateTime,endDateTime);
+    }
+
+    public List<ProductionChartDto> productionGetChartDataFilter(LocalDateTime startDate, LocalDateTime endDate) {
+        return productionRepository.productionsChartDataFilter(startDate,endDate);
     }
 }

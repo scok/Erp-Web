@@ -80,15 +80,15 @@ public class ProductionController {
 
         Member member = memberService.getMemberName(principal.getName());
         Product product = productService.findByCode(dto.getPrCode());
-
-        Production production = Production.of(dto,member,product);
-
-        production = productionService.save(production);
-
         Section section = sectionService.findBySecCode(dto.getSecCode());
+
         int secTotalCount = section.getSecTotalCount();
 
         if((secTotalCount + dto.getCount())<section.getSecMaxCount()){//창고에 맥스 수량보다 많이 넣으면 오류를 보내줍니다.
+
+            Production production = Production.of(dto,member,product,section);
+
+            production = productionService.save(production);
 
             section.setSecTotalCount(secTotalCount + dto.getCount());
 
@@ -104,28 +104,26 @@ public class ProductionController {
             warehousingInAndOut = logisticsService.WarehousingSave(warehousingInAndOut);
 
             if (String.valueOf(warehousingInAndOut.getDivisionStatus()).equals("입고")) {
-                Inventory inventory = inventorService.inventorService(section.getSecCode(), dto.getSACategory(), dto.getPrCode());
+                Inventory inventory = new Inventory();
+                inventory = inventorService.inventorService(section.getSecCode(), dto.getSACategory(), dto.getPrCode());
 
                 if (inventory != null) {
                     inventorService.updateInQuantity(inventory, dto.getCount());
                 } else {
-                    Inventory inventory1 = new Inventory();
-                    System.out.println(dto.getSACategory());
-                    inventory1.setStackAreaCategory(dto.getSACategory());
-                    inventory1.setInQuantity(dto.getCount());
-                    inventory1.setInStandard(product.getPrStandard());
-                    inventory1.setProduct(product);
-                    inventory1.setSection(section);
-                    inventory1.setPageYandN("Y");
+                    inventory.setStackAreaCategory(dto.getSACategory());
+                    inventory.setInQuantity(dto.getCount());
+                    inventory.setInStandard(product.getPrStandard());
+                    inventory.setProduct(product);
+                    inventory.setSection(section);
+                    inventory.setPageYandN("Y");
 
-                    logisticsService.InventorySave(inventory1);
+                    logisticsService.InventorySave(inventory);
                 }
             }
+            sectionService.saveSection(section);
+            return new ResponseEntity<>(HttpStatus.OK);
         }else{
-            errorMessage ="창고에 여유 공간이 없습니다.";
-            throw new RuntimeException(errorMessage);
+            return new ResponseEntity<>("창고에 여유 공간이 없습니다.",HttpStatus.BAD_REQUEST);
         }
-        sectionService.saveSection(section);
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

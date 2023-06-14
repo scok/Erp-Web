@@ -1,10 +1,15 @@
 import PrTable from "./content/ProductionTable";
 import PrChart from "./content/ProductionChart";
 import Checkbox from "./content/ChartCheck";
+import DateSetting from "./content/ChartDate";
 
 import {useState} from 'react';
 import {useEffect} from 'react';
 import axios from 'axios';
+
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 import * as React from 'react';
 import Card from '@mui/material/Card';
@@ -20,12 +25,39 @@ function App() {
 
     /*수신 받은 데이터*/
     const [receivedData ,setReceivedData] = useState(null);
+    const [receivedWeather, setReceivedWeather] = useState(null);
+    const [weatherImage, setWeatherImage] = useState(null);
+    const [weatherCity, setWeatherCity] = useState(null);
+    const [wind, setWind] = useState(null);
+    const [humidity, setHumidity] = useState(null);
+    const [cloud, setCloud] = useState(null);
 
     /*데이터 로딩시 true로 변경*/
     const [loading ,setLoading] = useState(false);
 
     /*오류 발생시 정보가 들어 있는 예외 객체*/
     const [error ,setError] = useState(null);
+
+    useEffect(() => {
+        axios.get('https://api.openweathermap.org/data/2.5/weather',{
+            params:{
+                q:'Seoul',
+                appid:'5e3d585848cc5ef63405ab101b0f863a'
+            }
+        })
+        .then(response =>{
+            console.log(response.data);
+            setReceivedWeather(Math.floor(response.data.main.temp - 273));
+            setWeatherImage("http://openweathermap.org/img/wn/" + response.data.weather[0].icon + "@2x.png")
+            setWeatherCity(response.data.name)
+            setWind(response.data.wind.speed)
+            setHumidity(response.data.main.humidity)
+            setCloud(response.data.clouds.all)
+        })
+        .catch(error => {
+            console.log(error);
+        });
+    }, []);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -35,7 +67,7 @@ function App() {
                 setError(null);
                 setLoading(true);
 
-                const url = 'http://localhost:8877/productionForm';
+                const url = '/react/productionForm';
 
                 const response = await axios.get(url);
 
@@ -43,8 +75,6 @@ function App() {
 
                 console.log('response.data');
                 console.log(response.data);
-
-
             }catch(err){
                 setError(err);
 
@@ -69,29 +99,74 @@ function App() {
         return null;
     }
 
+    //버튼의 콜백 함수. 기존 데이터를 업데이트 해줍니다.
+    const onClickButton = (data) => {
+        setReceivedData(data);
+    };
+
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '150vh',marginTop:"20px"}}>
-        <Card sx={{ width: '85%' , height: '100%' }}>
-         <CardHeader
-                avatar={
-                  <BarChartIcon  sx={{fontSize: 50}}/>
-                }
-                title="생산 현황"
-                titleTypographyProps={{
-                    fontWeight: 1000,
-                    sx: {
-                      fontSize: "h4.fontSize",
-                      width:"200px"
-                    },
-                }}
-              />
-        <CardContent>
-            <Checkbox content={receivedData} />
-            <PrChart content={receivedData}/>
-            <PrTable content={receivedData}/>
-        </CardContent>
-        </Card>
-	</div>
+    <div>
+        <div style={{float: 'right'}}>
+            <div className="container card shadow">
+              <div className="top-section" style={{backgroundColor:'#73685d'}}>
+                <div className="left-section">
+                    <div className="image-container">
+                        <img src={weatherImage}/>
+                    </div>
+                </div>
+                <div className="right-section">
+                    <div className="text-column" style={{color:'white'}}>
+                        <p>{receivedWeather} °C</p>
+                        <p>{weatherCity}</p>
+                    </div>
+                </div>
+              </div>
+              <div className="bottom-section" style={{ display: 'flex', width: '100%', backgroundColor:'#f3f4ee'}}>
+                <table style={{ width: '100%', marginTop: '10px'}}>
+                    <tbody>
+                        <tr>
+                            <td style={{ width: '33.33%', textAlign: 'center' }}>
+                                <i className="wi wi-strong-wind wi-fw"></i>
+                                <p>{wind} m/s</p>
+                            </td>
+                            <td style={{ width: '33.33%', textAlign: 'center' }}>
+                                <i className="wi wi-humidity wi-fw"></i>
+                                <p>{humidity} %</p>
+                            </td>
+                            <td style={{ width: '33.33%', textAlign: 'center' }}>
+                                <i className="wi wi-cloud wi-fw"></i>
+                                <p>{cloud} %</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+              </div>
+            </div>
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop:"20px"}}>
+
+            <Card sx={{ width: '85%' , height: '100%' }}>
+             <CardHeader
+                    avatar={
+                      <BarChartIcon  sx={{fontSize: 50}}/>
+                    }
+                    title="월간 생산 현황"
+                    titleTypographyProps={{
+                        fontWeight: 1000,
+                        sx: {
+                          fontSize: "h4.fontSize",
+                          width:"250px"
+                        },
+                    }}
+                  />
+            <CardContent>
+                <DateSetting filterData={onClickButton} />
+                <PrChart content={receivedData}/>
+                <PrTable content={receivedData}/>
+            </CardContent>
+            </Card>
+        </div>
+    </div>
   );
 }
 export default App;

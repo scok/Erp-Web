@@ -4,6 +4,8 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import './sidebarJsFile/main.js';
 import './sidebarCssFile/sidebar.css';
+import './weatherCssFile/css/weather-icons.min.css';
+import './weatherCssFile/css/div.css';
 
 import App from './home/Home';
 import User from './home/HomeUserInfo';

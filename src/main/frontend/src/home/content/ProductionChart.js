@@ -7,7 +7,6 @@ export default function DataTable(props) {
 
     const ChartData = props.content;
 
-
     const options = {
         legend: {
             display: false, // label 숨기기
