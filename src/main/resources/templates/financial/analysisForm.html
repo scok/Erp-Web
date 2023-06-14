@@ -10,16 +10,132 @@
 </head>
 
 <th:block layout:fragment="script">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script th:src="@{/js/financial/analysis/chartMade.js}"></script>
-    <script th:src="@{/js/financial/analysis/chartData.js}"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script th:src="@{/js/financial/analysis/chartMade.js}"></script>
+<script th:src="@{/js/financial/analysis/chartData.js}"></script>
 </th:block>
 
 <th:block layout:fragment="css">
-    <link th:href="@{/css/analysis.css}" rel="stylesheet">
+<link th:href="@{/css/analysis.css}" rel="stylesheet">
 </th:block>
 
 <div class="content" layout:fragment="content">
+    <h2>재무 DashBoard</h2>
+    <div class="card shadow mb-4">
+        <div class="card-header">
+            <h6 class="m-0 font-weight-bold text-primary">한 눈에 보기</h6>
+        </div>
+        <div class="grid-container2">
+            <div class="card-body">
+                <div class="card shadow mb-4">
+                    <div class="card-header">
+                        <h6 class="m-0 font-weight-bold text-primary">수입</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-area">
+                            <canvas id="revenue"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="card shadow mb-4">
+                    <div class="card-header">
+                        <h6 class="m-0 font-weight-bold text-primary">순이익</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-area">
+                            <canvas id="netIncome"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="card shadow mb-4">
+                    <div class="card-header">
+                        <h6 class="m-0 font-weight-bold text-primary">수입 및 순이익 추이</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-area">
+                            <canvas id="rv_nI_chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="card shadow mb-4">
+                    <div class="card-header">
+                        <h6 class="m-0 font-weight-bold text-primary">운영 비용</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-area">
+                            <canvas id="operate_expenses"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="card shadow mb-4">
+                    <div class="card-header">
+                        <h6 class="m-0 font-weight-bold text-primary">직원 수</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-area">
+                            <canvas id="member_ratio"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="card shadow mb-4">
+                    <div class="card-header">
+                        <h6 class="m-0 font-weight-bold text-primary">운영 비용 및 직원 수 비율 비교</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-area">
+                            <canvas id="oe_mr_chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="card shadow mb-4">
+                    <div class="card-header">
+                        <h6 class="m-0 font-weight-bold text-primary">총이익</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-area">
+                            <canvas id="total_income"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="card shadow mb-4">
+                    <div class="card-header">
+                        <h6 class="m-0 font-weight-bold text-primary">매출 회전율</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-area">
+                            <canvas id="turnOver"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="card shadow mb-4">
+                    <div class="card-header">
+                        <h6 class="m-0 font-weight-bold text-primary">총이익 대비 매출회전율</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-area">
+                            <canvas id="ti_to_chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="grid-container">
         <div class="card shadow mb-4">
             <div class="card-header">
@@ -72,52 +188,6 @@
                             <canvas id="asset_growth"></canvas>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-        <div class="card shadow mb-4">
-            <div class="card-header">
-                <h6 class="m-0 font-weight-bold text-primary">거래처별 거래 금액</h6>
-            </div>
-            <div class="card-body">
-                <div class="chart-area">
-                    <canvas id="myChart3"></canvas>
-                </div>
-            </div>
-        </div>
-        <div class="card shadow mb-4">
-            <div class="card-header">
-                <h6 class="m-0 font-weight-bold text-primary">기간별 거래 금액 현황</h6>
-                <select id="amount_year_select">
-                    <option value="1w">1주</option>
-                    <option value="1m">1개월</option>
-                    <option value="6m">6개월</option>
-                    <option value="1y">1년</option>
-                </select>
-            </div>
-            <div class="card-body">
-                <div class="chart-area">
-
-                </div>
-            </div>
-        </div>
-        <div class="card shadow mb-4">
-            <div class="card-header">
-                <h6 class="m-0 font-weight-bold text-primary">기간별 거래 금액 현황</h6>
-            </div>
-            <div class="card-body">
-                <div class="chart-area">
-
-                </div>
-            </div>
-        </div>
-        <div class="card shadow mb-4">
-            <div class="card-header">
-                <h6 class="m-0 font-weight-bold text-primary">기간별 거래 금액 현황</h6>
-            </div>
-            <div class="card-body">
-                <div class="chart-area">
-
                 </div>
             </div>
         </div>

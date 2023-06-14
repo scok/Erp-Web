@@ -134,6 +134,16 @@ $(document).ready(function(){
                 { data : 'year'}
         ],
         initComplete: function () {
+            this.api()
+                .columns()
+                .every(function () {
+                    var column = this;
+                    $('#year_select').on('change', function(){
+                        var val = $.fn.dataTable.util.escapeRegex($(this).val());
+                        column.search(val ? '^' + val + '$' : '', true, false).draw();
+                    });
+                });
+
             year_array = [...new Set(year_array)];
 
             var select = document.getElementById('year_select');
@@ -147,18 +157,10 @@ $(document).ready(function(){
                 select.add(option);
             }
 
+            sortOptions(select);
             var maxYear = Math.max(...year_array);
+            select.value = maxYear;
             this.api().column(31).search(maxYear).draw();
-
-            this.api()
-                .columns()
-                .every(function () {
-                    var column = this;
-                    $('#year_select').on('change', function(){
-                        var val = $.fn.dataTable.util.escapeRegex($(this).val());
-                        column.search(val ? '^' + val + '$' : '', true, false).draw();
-                    });
-                });
         },
     });
 
@@ -594,6 +596,21 @@ function formatNumber(data, type){
     var number = $.fn.dataTable.render.number(',', '.', 0).display(data);
 
     return number;
+}
+
+// 연도 배열 정렬
+function sortOptions(sortSelect){
+
+    var options = Array.from(sortSelect.options);
+
+    options.sort(function(a, b){
+
+        return b.value.localeCompare(a.value);
+    });
+
+    options.forEach(function(option){
+        sortSelect.appendChild(option);
+    });
 }
 
 export {table};

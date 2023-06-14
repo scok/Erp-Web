@@ -6,6 +6,7 @@ import com.Erp.dto.FinancialDto;
 import com.Erp.dto.IncomeDto;
 import com.Erp.dto.SaveDto;
 import com.Erp.entity.*;
+import com.Erp.entity.logistics.Product;
 import com.Erp.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -32,10 +33,8 @@ public class IncomeService {
                 Income income = new Income(0L, dto.getYear(), i);
 
                 Integer year = Integer.valueOf(dto.getYear());
-                int startMonth = (i - 1) * 3 + 1;
-                Integer endMonth  = startMonth + 2;
 
-                List<Member> members = memberRepository.findMemberYear(year, startMonth, endMonth);
+                List<Member> members = memberRepository.findMemberYear(year, i);
 
                 saveData(income, members);
 
@@ -78,6 +77,8 @@ public class IncomeService {
 
         List<Transaction> transactions = transactionRepository.findTransactionList(Integer.valueOf(income.getYear()), income.getQuarter());
 
+        income.setTransactions(transactions);
+
         Long sales_revenue = 0L;
         Long salary = 0L;
         Long bonus = 0L;
@@ -110,14 +111,14 @@ public class IncomeService {
             MemberPay memberPay = memberPayRepository.findByMemberId(member.getId());
 
             if(memberPay != null){
-                salary += memberPay.getSalary();
-                bonus += memberPay.getBonus();
-                plusMoney += memberPay.getPlusMoney();
-                minusMoney += memberPay.getMinusMoney();
-                totalMoney += memberPay.getTotalMoney();
-                manage_expenses += (memberPay.getNightPay() + memberPay.getFoodPay() + memberPay.getCarPay() + memberPay.getKukInsurance() + memberPay.getGoInsurance() + memberPay.getSanInsurance() + memberPay.getGunInsurance());
-                income_tax += memberPay.getIncomeTax();
-                localTax += memberPay.getLocalTax();
+                salary += memberPay.getSalary() * 3;
+                bonus += memberPay.getBonus() * 3;
+                plusMoney += memberPay.getPlusMoney() * 3;
+                minusMoney += memberPay.getMinusMoney() * 3;
+                totalMoney += memberPay.getTotalMoney() * 3;
+                manage_expenses += (memberPay.getNightPay() + memberPay.getFoodPay() + memberPay.getCarPay() + memberPay.getKukInsurance() + memberPay.getGoInsurance() + memberPay.getSanInsurance() + memberPay.getGunInsurance()) * 3;
+                income_tax += memberPay.getIncomeTax() * 3;
+                localTax += memberPay.getLocalTax() * 3;
             }
         }
 
@@ -164,11 +165,18 @@ public class IncomeService {
         income.setTax_expenses(tax_expenses);
 
         incomeRepository.save(income);
+
+        for (Transaction transaction : transactions){
+            transaction.setIncome(income);
+            transactionRepository.save(transaction);
+        }
     }
 
     public void saveData2(Income income) {
 
         List<Transaction> transactions = income.getTransactions();
+
+        income.setTransactions(transactions);
 
         Long sales_revenue = 0L;
         Long salary = 0L;
@@ -199,23 +207,21 @@ public class IncomeService {
         }
 
         Integer year = Integer.valueOf(income.getYear());
-        int startMonth = (income.getQuarter() - 1) * 3 + 1;
-        Integer endMonth  = startMonth + 2;
 
-        List<Member> members = memberRepository.findMemberYear(year, startMonth, endMonth);
+        List<Member> members = memberRepository.findMemberYear(year, income.getQuarter());
 
         for (Member member : members){
             MemberPay memberPay = memberPayRepository.findByMemberId(member.getId());
 
             if(memberPay != null){
-                salary += memberPay.getSalary();
-                bonus += memberPay.getBonus();
-                plusMoney += memberPay.getPlusMoney();
-                minusMoney += memberPay.getMinusMoney();
-                totalMoney += memberPay.getTotalMoney();
-                manage_expenses += (memberPay.getNightPay() + memberPay.getFoodPay() + memberPay.getCarPay() + memberPay.getKukInsurance() + memberPay.getGoInsurance() + memberPay.getSanInsurance() + memberPay.getGunInsurance());
-                income_tax += memberPay.getIncomeTax();
-                localTax += memberPay.getLocalTax();
+                salary += memberPay.getSalary() * 3;
+                bonus += memberPay.getBonus() * 3;
+                plusMoney += memberPay.getPlusMoney() * 3;
+                minusMoney += memberPay.getMinusMoney() * 3;
+                totalMoney += memberPay.getTotalMoney() * 3;
+                manage_expenses += (memberPay.getNightPay() + memberPay.getFoodPay() + memberPay.getCarPay() + memberPay.getKukInsurance() + memberPay.getGoInsurance() + memberPay.getSanInsurance() + memberPay.getGunInsurance()) * 3;
+                income_tax += memberPay.getIncomeTax() * 3;
+                localTax += memberPay.getLocalTax() * 3;
             }
         }
 
@@ -262,6 +268,11 @@ public class IncomeService {
         income.setTax_expenses(tax_expenses);
 
         incomeRepository.save(income);
+
+        for (Transaction transaction : transactions){
+            transaction.setIncome(income);
+            transactionRepository.save(transaction);
+        }
     }
 
     public List<IncomeDto> findIncomesList(){
@@ -288,6 +299,8 @@ public class IncomeService {
 
             incomeDtos.add(incomeDto);
         }
+
+        System.out.println("결과 : " + incomeDtos);
 
         return incomeDtos;
     }
@@ -330,14 +343,10 @@ public class IncomeService {
         income.setDynamicField(dto.getName(), dto.getValue().longValue());
 
         Integer year = Integer.valueOf(income.getYear());
-        int startMonth = (income.getQuarter() - 1) * 3 + 1;
-        Integer endMonth  = startMonth + 2;
 
-        List<Member> members = memberRepository.findMemberYear(year, startMonth, endMonth);
+        List<Member> members = memberRepository.findMemberYear(year, income.getQuarter());
 
         saveData(income, members);
-
-        incomeRepository.save(income);
 
         return income.getId();
     }

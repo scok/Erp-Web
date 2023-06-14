@@ -2,6 +2,7 @@ package com.Erp.entity;
 
 import com.Erp.constant.TransactionCategory;
 import com.Erp.dto.TransactionDto;
+import com.Erp.entity.logistics.WarehousingInAndOut;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,8 +30,6 @@ import java.util.List;
     private Date trDate ; // 거래일자
     @Column( nullable = false)
     private Integer quarter ; // 분기
-    @Column( nullable = false)
-    private String remark ; // 주석
     @Enumerated(EnumType.STRING)
     private TransactionCategory transactionCategory; // 거래분류
 

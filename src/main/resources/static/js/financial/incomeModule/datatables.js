@@ -164,7 +164,9 @@ $(document).ready(function(){
                 select.add(option);
             }
 
+            sortOptions(select);
             var maxYear = Math.max(...year_array);
+            select.value = maxYear;
             this.api().column(33).search(maxYear).draw();
         },
     });
@@ -308,6 +310,21 @@ function formatNumber(data, type){
     var number = $.fn.dataTable.render.number(',', '.', 0).display(data);
 
     return number;
+}
+
+// 연도 배열 정렬
+function sortOptions(sortSelect){
+
+    var options = Array.from(sortSelect.options);
+
+    options.sort(function(a, b){
+
+        return b.value.localeCompare(a.value);
+    });
+
+    options.forEach(function(option){
+        sortSelect.appendChild(option);
+    });
 }
 
 export {table};

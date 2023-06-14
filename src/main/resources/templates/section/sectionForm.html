@@ -15,18 +15,18 @@
 </head>
 
 <th:block layout:fragment="script">
-    <script th:src="@{/js/logistics/sectionForm.js}"></script>
-    <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/select/1.3.3/js/dataTables.select.min.js"></script>
-    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<script th:src="@{/js/logistics/sectionForm.js}"></script>
+<script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/select/1.3.3/js/dataTables.select.min.js"></script>
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 </th:block>
 
 <th:block layout:fragment="css">
-    <link th:href="@{/css/distributionCenter.css}" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css" />
-    <link rel="stylesheet" herf="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.8.8/semantic.min.css" />
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.semanticui.min.css" />
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/select/1.3.3/css/select.dataTables.min.css" />
+<link th:href="@{/css/distributionCenter.css}" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css" />
+<link rel="stylesheet" herf="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.8.8/semantic.min.css" />
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.semanticui.min.css" />
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/select/1.3.3/css/select.dataTables.min.css" />
 </th:block>
 
 
@@ -48,17 +48,17 @@
 
         <table id="myTable" style="width:100%;" class="display">
             <thead>
-                <tr>
-                    <th style="text-align: center;"><input type="checkbox" name="checkall" id="checkall"></th>
-                    <th>분류</th>
-                    <th>창고명</th>
-                    <th>현재 적재량</th>
-                    <th>최대 적재량</th>
-                    <th>용적률</th>
-                    <th>주소</th>
-                    <th>등록자</th>
-                    <th>등록일자</th>
-                </tr>
+            <tr>
+                <th style="text-align: center;"><input type="checkbox" name="checkall" id="checkall"></th>
+                <th>분류</th>
+                <th>창고명</th>
+                <th>현재 적재량</th>
+                <th>최대 적재량</th>
+                <th>용적률</th>
+                <th>주소</th>
+                <th>등록자</th>
+                <th>등록일자</th>
+            </tr>
             </thead>
         </table>
 

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta
+      name="description"
+      content="Web site created using create-react-app"
+    />
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+    <!-- IONICONS -->
+    <script src="https://unpkg.com/ionicons@5.2.3/dist/ionicons.js"></script>
+
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <title>React App</title>
+  </head>
+  <body id="body-pd">
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+
+    <div class="l-navbar" id="navbar">
+      <nav class="nav">
+        <div>
+          <div class="nav__brand">
+            <ion-icon name="menu-outline" class="nav__toggle" id="nav-toggle"></ion-icon>
+          </div>
+          <div class="nav__list">
+            <!--유저 정보 표기란은 다른 클래스 이용필요. collapse 부트스트랩 사이트 cdn하면 충돌 일어남 사용 주의-->
+            <span class="nav__link" >
+                <img src="./sidebarImg/cat.png" name="person-sharp" class="nav__big__icon"></img>
+                <span class="nav_name">
+                    <div id="userInfo"></div>
+                </span>
+            </span>
+            <!--active-->
+            <a href="/" class="nav__link">
+              <ion-icon name="home-outline" class="nav__icon"></ion-icon>
+              <span class="nav_name">home</span>
+            </a>
+
+            <div href="#" class="nav__link collapse">
+              <ion-icon name="person-outline" class="nav__icon"></ion-icon>
+              <span class="nav_name">인사/급여</span>
+
+              <ion-icon name="chevron-down-outline" class="collapse__link"></ion-icon>
+
+              <ul class="collapse__menu">
+                <li class="nav-item">
+                  <a href="/members/admin/new" class="collapse__sublink akorea">직원 등록</a>
+                </li>
+                <li class="nav-item">
+                  <a href="/members/list" class="collapse__sublink akorea">직원 리스트</a>
+                </li>
+                <li class="nav-item">
+                  <a href="/members/admin/paydetail" class="collapse__sublink akorea">직원 급여 등록</a>
+                </li>
+                <a href="/admin/detail/${session.User.id}" class="collapse__sublink akorea">마이페이지</a>
+              </ul>
+            </div>
+            <div href="#" class="nav__link collapse">
+              <ion-icon name="cart-outline" class="nav__icon"></ion-icon>
+              <span class="nav_name">구매 관리</span>
+
+              <ion-icon name="chevron-down-outline" class="collapse__link"></ion-icon>
+
+              <ul class="collapse__menu">
+                <a href="http://localhost:8877/buys/list" class="collapse__sublink akorea">거래처 조회</a>
+                <a href="http://localhost:8877/products/list" class="collapse__sublink akorea">상품 조회</a>
+                <a href="http://localhost:8877/buyEstimates/list" class="collapse__sublink akorea">견적서 조회</a>
+                <a href="http://localhost:8877/buyOrderSheets/list" class="collapse__sublink akorea">주문서 조회</a>
+              </ul>
+            </div>
+
+            <div href="#" class="nav__link collapse">
+              <ion-icon name="airplane-outline" class="nav__icon"></ion-icon>
+              <span class="nav_name">물류 관리</span>
+
+              <ion-icon name="chevron-down-outline" class="collapse__link"></ion-icon>
+
+              <ul class="collapse__menu">
+                <a href="http://localhost:8877/section/list" class="collapse__sublink akorea">창고 관리</a>
+                <a href="http://localhost:8877/logistics/buyOrderSheet/list" class="collapse__sublink akorea">입하 관리</a>
+                <a href="http://localhost:8877/logistics/inWarehousing/list" class="collapse__sublink akorea">입고 관리</a>
+                <a href="http://localhost:8877/logistics/inventory/list" class="collapse__sublink akorea">재고 조회</a>
+                <a href="http://localhost:8877/logistics/sellerOrderSheet/list" class="collapse__sublink akorea">출하 관리</a>
+                <a href="http://localhost:8877/logistics/outWarehousing/list" class="collapse__sublink akorea">출고 관리</a>
+              </ul>
+            </div>
+
+            <div href="#" class="nav__link collapse">
+              <ion-icon name="hardware-chip-outline" class="nav__icon"></ion-icon>
+              <span class="nav_name">생산 관리</span>
+
+              <ion-icon name="chevron-down-outline" class="collapse__link"></ion-icon>
+
+              <ul class="collapse__menu">
+                <a href="http://localhost:8877/materialDelivery/list" class="collapse__sublink akorea">자재 불출</a>
+                <a href="http://localhost:8877/productions/list" class="collapse__sublink akorea">실적 등록</a>
+              </ul>
+            </div>
+
+            <div href="#" class="nav__link collapse">
+              <ion-icon name="business-outline" class="nav__icon"></ion-icon>
+              <span class="nav_name">영업 관리</span>
+
+              <ion-icon name="chevron-down-outline" class="collapse__link"></ion-icon>
+
+              <ul class="collapse__menu">
+                <a href="http://localhost:8877/sellers/list" class="collapse__sublink akorea">거래처 조회</a>
+                <a href="http://localhost:8877/sellerEstimates/list" class="collapse__sublink akorea">견적서 조회</a>
+                <a href="http://localhost:8877/sellerOrderSheets/list" class="collapse__sublink akorea">주문서 조회</a>
+              </ul>
+            </div>
+
+
+            <div href="#" class="nav__link collapse">
+              <ion-icon name="business-outline" class="nav__icon"></ion-icon>
+              <span class="nav_name">재무/회계</span>
+
+              <ion-icon name="chevron-down-outline" class="collapse__link"></ion-icon>
+
+              <ul class="collapse__menu">
+                <a href="http://localhost:8877/financials/financial" class="collapse__sublink akorea">재무회계표</a>
+                <a href="http://localhost:8877/incomes/income" class="collapse__sublink akorea">손익계산서</a>
+                <a href="http://localhost:8877/transaction/form" class="collapse__sublink akorea">거래명세표</a>
+                <a href="http://localhost:8877/analyses/analysis" class="collapse__sublink akorea">데이터 분석</a>
+              </ul>
+            </div>
+          </div>
+          <a href="http://localhost:8877/members/logout" class="nav__link">
+            <ion-icon name="log-out-outline" class="nav__icon"></ion-icon>
+            <span class="nav_name">Log out</span>
+          </a>
+        </div>
+      </nav>
+    </div>
+    <div id="root"></div>
+  </body>
+</html>

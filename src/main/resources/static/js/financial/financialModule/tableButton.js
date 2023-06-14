@@ -376,4 +376,22 @@ $(document).ready(function(){
             btn[0].innerText = '+';
         }
     });
+
+    $('#modalCloseBtn').on('click', function(){
+
+        document.getElementById('financialModal').style.display = 'none';
+        setTimeout(function(){
+            document.getElementById('financialModal').classList.remove('show');
+        })
+        document.getElementById('modalBackdrop').style.display = 'none';
+    });
+
+    $('#dModalCloseBtn').on('click', function(){
+
+        document.getElementById('duplicateModal').style.display = 'none';
+        setTimeout(function(){
+            document.getElementById('duplicateModal').classList.remove('show');
+        })
+        document.getElementById('modalBackdrop').style.display = 'none';
+    });
 });

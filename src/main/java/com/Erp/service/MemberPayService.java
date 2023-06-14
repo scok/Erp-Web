@@ -86,16 +86,13 @@ public class MemberPayService {
 
         if (member != null){
             short year = (short) member.getDate().getYear();
-            int quarter = (int) Math.ceil((double) member.getDate().getMonthValue() / 3);
+            int quarter = (int) Math.ceil(((double) (member.getDate().getMonthValue() - 1) / 3) + 1);
 
             Income income = incomeRepository.findIncomeYearAndQuarter(year, quarter);
 
             if(income != null){
 
-                int startMonth = (quarter - 1) * 3 + 1;
-                Integer endMonth  = startMonth + 2;
-
-                List<Member> members = memberRepository.findMemberYear((int) year, startMonth, endMonth);
+                List<Member> members = memberRepository.findMemberYear((int) year, income.getQuarter());
 
                 if (members.stream().noneMatch(m -> m.getId().equals(member.getId()))) {
                     members.add(member);

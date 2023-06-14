@@ -5,9 +5,8 @@ import com.Erp.constant.TransactionCategory;
 import com.Erp.dto.TransactionDto;
 import com.Erp.entity.Income;
 import com.Erp.entity.Transaction;
-import com.Erp.entity.WarehousingInAndOut;
+import com.Erp.entity.logistics.WarehousingInAndOut;
 import com.Erp.repository.IncomeRepository;
-import com.Erp.repository.MemberRepository;
 import com.Erp.repository.TransactionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -40,7 +39,6 @@ public class TransactionService {
         transaction.setTrDate(trDate);
         transaction.setCompanyName(warehousingInAndOut.getOrderSheetDetail().getOrderSheet().getAccount().getAcName());
         transaction.setAmount(warehousingInAndOut.getOrderSheetDetail().getOsSupplyValue()+warehousingInAndOut.getOrderSheetDetail().getOsTaxAmount());
-        transaction.setRemark(" ");
 
         if (warehousingInAndOut.getDivisionStatus()==DivisionStatus.입고){
             transaction.setTransactionCategory(TransactionCategory.INS);
@@ -71,11 +69,15 @@ public class TransactionService {
 
         Income income = incomeRepository.findIncomeYearAndQuarter(year, transaction.getQuarter());
 
-        income.getTransactions().add(transaction);
+        if(income != null){
+            System.out.println(income.getTransactions());
 
-        incomeService.saveData2(income);
+            income.getTransactions().add(transaction);
 
-        transaction.setIncome(income);
+            incomeService.saveData2(income);
+
+            transaction.setIncome(income);
+        }
 
         transactionRepository.save(transaction);
     }

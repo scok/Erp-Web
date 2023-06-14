@@ -21,7 +21,7 @@
 }
 
 .data-table thead{
-    background: #42444e;
+    background: #73685d;
 }
 
 .data-table th, td{
@@ -214,12 +214,4 @@ h6{
 #yearSelect{
     height:50px;
     font-size:15px;
-}
-
-.pdf-table{
-
-}
-
-.pdf-table-header{
-    background-color: #42444e;
 }

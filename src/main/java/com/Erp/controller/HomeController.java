@@ -44,6 +44,6 @@ public class HomeController {
         }else {
             System.out.println("세션 영역에 이미 정보가 있습니다.");
         }
-        return "home/home";
+        return "redirect:http://localhost:3000/";
     }
 }

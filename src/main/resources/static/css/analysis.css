@@ -7,7 +7,11 @@
     display:grid;
     grid-template-columns: repeat(2, 1fr);
     grid-gap:10px;
-    height:100vh;
+}
+
+.grid-container2{
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
 }
 
 .grid-item{
@@ -60,6 +64,7 @@
     margin: auto;
     justify-content: center;
     align-items: center;
+    height: 250px;
 }
 
 .text-primary{

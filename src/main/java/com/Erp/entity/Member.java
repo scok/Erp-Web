@@ -33,9 +33,6 @@ public class Member extends BaseEntity {
     private String name;
 
     @Column(nullable = false)
-    private String password;    //password
-
-    @Column(nullable = false)
     private String birth; //생년월일
 
     @Column(nullable = false, unique = true)

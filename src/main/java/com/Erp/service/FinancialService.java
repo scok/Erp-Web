@@ -23,22 +23,28 @@ public class FinancialService {
 
     public Short addData(FinancialDto dto) {
 
-        for (int i = 1; i < 5; i++) {
-            Financial financial = new Financial(0L, dto.getYear(), i);
+        List<Financial> financials = financialRepository.findSearchList(dto.getYear());
 
-            financialRepository.save(financial);
+        if(financials.size() == 0){
+            for (int i = 1; i < 5; i++) {
+                Financial financial = new Financial(0L, dto.getYear(), i);
 
-            Income income = incomeRepository.findIncomeYearAndQuarter(dto.getYear(), i);
+                financialRepository.save(financial);
 
-            if(income != null){
-                financial.setIncomes(income);
-                saveData(financial);
-                income.setFinancial(financial);
-                incomeRepository.save(income);
+                Income income = incomeRepository.findIncomeYearAndQuarter(dto.getYear(), i);
+
+                if(income != null){
+                    financial.setIncomes(income);
+                    saveData(financial);
+                    income.setFinancial(financial);
+                    incomeRepository.save(income);
+                }
             }
-        }
 
-        return dto.getYear();
+            return dto.getYear();
+        }else {
+            return  -1;
+        }
     }
 
     public void saveData(Financial financial){
@@ -76,8 +82,6 @@ public class FinancialService {
         financial.setDynamicField(dto.getName(), value);
 
         saveData(financial);
-
-        financialRepository.save(financial);
 
         return financial.getId();
     }

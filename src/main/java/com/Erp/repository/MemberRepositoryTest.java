@@ -195,9 +195,9 @@ public class MemberRepositoryTest{
 
             memberPay.setId(Long.valueOf(i));
             memberPay.setMember(member);
-            memberPay.setSalary((long) (30000000 + ((i+1) * 1000000)));
-            memberPay.setBonus((long) (30000000 + ((i+1) * 1000000))/ 100);
-            memberPay.setNightPay((long) ((long) (30000000 + ((i+1) * 1000000)) * 0.03));
+            memberPay.setSalary((long) (3000000 + ((i+1) * 100000)));
+            memberPay.setBonus((long) (3000000 + ((i+1) * 100000))/ 100);
+            memberPay.setNightPay((long) ((long) (3000000 + ((i+1) * 100000)) * 0.03));
             memberPay.setFoodPay(150000L);
             memberPay.setCarPay(500000L);
             memberPay.setGoInsurance(50000L);
