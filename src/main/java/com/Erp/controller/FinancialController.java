@@ -3,6 +3,7 @@ package com.Erp.controller;
 import com.Erp.dto.FinancialData;
 import com.Erp.dto.FinancialDto;
 import com.Erp.dto.SaveDto;
+import com.Erp.dto.UserDto;
 import com.Erp.repository.FinancialRepository;
 import com.Erp.service.FinancialService;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
@@ -69,11 +72,18 @@ public class FinancialController {
     private final FinancialService financialService;
 
     @PostMapping("/financials/dataAdd")
-    public @ResponseBody ResponseEntity addData(@RequestBody FinancialDto dto){
+    public @ResponseBody ResponseEntity addData(@RequestBody FinancialDto dto, HttpServletRequest request){
 
         System.out.println("addData called");
 
-        Short year = financialService.addData(dto);
+        HttpSession session = request.getSession();
+        UserDto user = (UserDto) session.getAttribute("User");
+
+        Short year = 0;
+
+        if(user.getDepartment().equals("재무")){
+            year = financialService.addData(dto);
+        }
 
         return new ResponseEntity(year, HttpStatus.OK);
     }

@@ -56,6 +56,16 @@ $(document).ready(function(){
                         document.getElementById('duplicateModal').classList.add('show');
                     })
                     document.getElementById('modalBackdrop').style.display = 'block';
+                }else if(data == 0){
+                    document.getElementById('incomeModal').style.display = 'none';
+                    setTimeout(function(){
+                        document.getElementById('incomeModal').classList.remove('show');
+                    })
+                    document.getElementById('authModal').style.display = 'flex';
+                    setTimeout(function(){
+                        document.getElementById('authModal').classList.add('show');
+                    })
+                    document.getElementById('modalBackdrop').style.display = 'block';
                 }else{
                     year_select.add(option);
                     sortOptions(year_select);

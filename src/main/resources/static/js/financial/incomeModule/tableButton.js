@@ -251,4 +251,13 @@ $(document).ready(function(){
         })
         document.getElementById('modalBackdrop').style.display = 'none';
     });
+
+    $('#authCloseBtn').on('click', function(){
+
+        document.getElementById('authModal').style.display = 'none';
+        setTimeout(function(){
+            document.getElementById('authModal').classList.remove('show');
+        })
+        document.getElementById('modalBackdrop').style.display = 'none';
+    });
 });

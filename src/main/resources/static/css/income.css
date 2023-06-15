@@ -211,6 +211,11 @@ h6{
     font-size: 15px;
 }
 
+#authCloseBtn{
+    float:right;
+    font-size: 15px;
+}
+
 #yearSelect{
     height:50px;
     font-size:15px;

@@ -21,7 +21,7 @@ $(document).ready(function(){
     // 폼 추가
     $('#form_add_btn').on('click', function(){
 
-        let new_year = currentYear - 2;
+        let new_year = currentYear;
 
         var year_select = document.getElementById('year_select');
 
@@ -45,7 +45,6 @@ $(document).ready(function(){
             dataType:'json',
             cache:false,
             success:function(data){
-                console.log('데이터 추가 성공');
 
                 if(data == -1){
                     document.getElementById('financialModal').style.display = 'none';
@@ -57,7 +56,18 @@ $(document).ready(function(){
                         document.getElementById('duplicateModal').classList.add('show');
                     })
                     document.getElementById('modalBackdrop').style.display = 'block';
+                }else if(data == 0){
+                    document.getElementById('financialModal').style.display = 'none';
+                    setTimeout(function(){
+                        document.getElementById('financialModal').classList.remove('show');
+                    })
+                    document.getElementById('authModal').style.display = 'flex';
+                    setTimeout(function(){
+                        document.getElementById('authModal').classList.add('show');
+                    })
+                    document.getElementById('modalBackdrop').style.display = 'block';
                 }else{
+                    console.log('데이터 추가 성공');
                     year_select.add(option);
                     sortOptions(year_select);
                     year_select.value = new_year;
