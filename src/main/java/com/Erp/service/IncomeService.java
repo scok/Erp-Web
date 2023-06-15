@@ -80,14 +80,14 @@ public class IncomeService {
         income.setTransactions(transactions);
 
         Long sales_revenue = 0L;
-        Long salary = 0L;
-        Long bonus = 0L;
-        Long plusMoney = 0L;
-        Long minusMoney = 0L;
-        Long totalMoney = 0L;
+        long salary = 0L;
+        long bonus = 0L;
+        long plusMoney = 0L;
+        long minusMoney = 0L;
+        long totalMoney = 0L;
         long manage_expenses = 0L;
-        Long income_tax = 0L;
-        Long localTax = 0L;
+        long income_tax = 0L;
+        long localTax = 0L;
         Long raw_mat_cost = 0L;
         Long components_cost = 0L;
 
@@ -179,14 +179,14 @@ public class IncomeService {
         income.setTransactions(transactions);
 
         Long sales_revenue = 0L;
-        Long salary = 0L;
-        Long bonus = 0L;
-        Long plusMoney = 0L;
-        Long minusMoney = 0L;
-        Long totalMoney = 0L;
+        long salary = 0L;
+        long bonus = 0L;
+        long plusMoney = 0L;
+        long minusMoney = 0L;
+        long totalMoney = 0L;
         long manage_expenses = 0L;
-        Long income_tax = 0L;
-        Long localTax = 0L;
+        long income_tax = 0L;
+        long localTax = 0L;
         Long raw_mat_cost = 0L;
         Long components_cost = 0L;
 

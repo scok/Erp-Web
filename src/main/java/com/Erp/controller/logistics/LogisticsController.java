@@ -2,7 +2,10 @@ package com.Erp.controller.logistics;
 
 import com.Erp.dto.logistics.*;
 import com.Erp.dto.logistics.AccountFormDto;
+import com.Erp.entity.Financial;
 import com.Erp.entity.logistics.*;
+import com.Erp.repository.FinancialRepository;
+import com.Erp.service.FinancialService;
 import com.Erp.service.TransactionService;
 import com.Erp.service.logistics.*;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +32,8 @@ public class LogisticsController {
     private final SectionService sectionService;
     private final InventorService inventorService;
     private final TransactionService transactionService;
+    private final FinancialRepository financialRepository;
+    private final FinancialService financialService;
 
     //입하 관리 페이지 접속시 구매처 정보 바인딩
     @GetMapping(value = "/buyOrderSheet/list")
@@ -88,12 +93,31 @@ public class LogisticsController {
         for(OrderSheetDetail orderSheetDetail : orderSheet.getOrderSheetDetails()){
             if(data.get("divisionStatus").equals("입고")){
                 secTotalCount += orderSheetDetail.getOsQuantity();
+
                 if(section.getSecMaxCount() > secTotalCount){ //창고의 맥스 수량보다 많이 입고 시킬시 감지
                     WarehousingInAndOut warehousingInAndOut = WarehousingInAndOut.of(orderSheet,orderSheetDetail,section,data.get("SACategory"));
                     warehousingInAndOut = logisticsService.WarehousingSave(warehousingInAndOut);
 
                     //거래처 서비스로직 구현
                     transactionService.inAndOut(warehousingInAndOut);
+
+                    Long raw_mt = orderSheetDetail.getOsQuantity() * (orderSheetDetail.getOsSupplyValue() + orderSheetDetail.getOsTaxAmount());
+
+                    OrderSheet orderSheet1 = orderSheetDetail.getOrderSheet();
+
+                    Short year = (short) orderSheet1.getOsReceiptDate().getYear();
+                    int quarter = (orderSheet1.getOsReceiptDate().getMonthValue() - 1) / 3 + 1;
+
+                    for (int i = quarter; i < 5; i++) {
+                        Financial financial = financialRepository.findFinancialQuarter(year, i);
+
+                        if(financial != null){
+
+                            financial.setRaw_mt_inven(financial.getRaw_mt_inven() + raw_mt);
+
+                            financialService.saveData(financial);
+                        }
+                    }
 
                     Inventory inventory = inventorService.inventorService(section.getSecCode(),warehousingInAndOut.getStackAreaCategory(),orderSheetDetail.getProduct().getPrCode());
 
@@ -120,6 +144,24 @@ public class LogisticsController {
 
                     //거래처 서비스로직 구현
                     transactionService.inAndOut(warehousingInAndOut);
+
+                    Long raw_mt = orderSheetDetail.getOsQuantity() * (orderSheetDetail.getOsSupplyValue() + orderSheetDetail.getOsTaxAmount());
+
+                    OrderSheet orderSheet1 = orderSheetDetail.getOrderSheet();
+
+                    Short year = (short) orderSheet1.getOsReceiptDate().getYear();
+                    int quarter = (orderSheet1.getOsReceiptDate().getMonthValue() - 1) / 3 + 1;
+
+                    for (int i = quarter; i < 5; i++) {
+                        Financial financial = financialRepository.findFinancialQuarter(year, i);
+
+                        if(financial != null){
+
+                            financial.setRaw_mt_inven(financial.getRaw_mt_inven() - raw_mt);
+
+                            financialService.saveData(financial);
+                        }
+                    }
 
                     Inventory inventory = inventorService.inventorService(section.getSecCode(),warehousingInAndOut.getStackAreaCategory(),orderSheetDetail.getProduct().getPrCode());
 

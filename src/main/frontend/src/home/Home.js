@@ -107,40 +107,42 @@ function App() {
   return (
     <div>
         <div style={{float: 'right'}}>
-            <div className="container card shadow">
-              <div className="top-section" style={{backgroundColor:'#73685d'}}>
-                <div className="left-section">
-                    <div className="image-container">
-                        <img src={weatherImage}/>
+            <div className="card shadow">
+                <div className="left" style={{backgroundColor:'#73685d', padding:'10px'}}>
+                    <div className="left-left">
+                        <div className="img-container">
+                            <img src={weatherImage}/>
+                        </div>
                     </div>
-                </div>
-                <div className="right-section">
                     <div className="text-column" style={{color:'white'}}>
                         <p>{receivedWeather} °C</p>
                         <p>{weatherCity}</p>
                     </div>
                 </div>
-              </div>
-              <div className="bottom-section" style={{ display: 'flex', width: '100%', backgroundColor:'#f3f4ee'}}>
-                <table style={{ width: '100%', marginTop: '10px'}}>
-                    <tbody>
-                        <tr>
-                            <td style={{ width: '33.33%', textAlign: 'center' }}>
-                                <i className="wi wi-strong-wind wi-fw"></i>
-                                <p>{wind} m/s</p>
-                            </td>
-                            <td style={{ width: '33.33%', textAlign: 'center' }}>
-                                <i className="wi wi-humidity wi-fw"></i>
-                                <p>{humidity} %</p>
-                            </td>
-                            <td style={{ width: '33.33%', textAlign: 'center' }}>
-                                <i className="wi wi-cloud wi-fw"></i>
-                                <p>{cloud} %</p>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-              </div>
+                <div className="right">
+                    <div className="row">
+                        <div className="section" >
+                            <div className="content"><i className="wi wi-strong-wind wi-fw"></i></div>
+                        </div>
+                        <div className="section">
+                            <div className="content"><i className="wi wi-humidity wi-fw"></i></div>
+                        </div>
+                        <div className="section">
+                            <div className="content"><i className="wi wi-cloud wi-fw"></i></div>
+                        </div>
+                    </div>
+                    <div className="row">
+                        <div className="section">
+                            <div className="content">{wind} m/s</div>
+                        </div>
+                        <div className="section">
+                            <div className="content">{humidity} %</div>
+                        </div>
+                        <div className="section">
+                            <div className="content">{cloud} %</div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop:"20px"}}>

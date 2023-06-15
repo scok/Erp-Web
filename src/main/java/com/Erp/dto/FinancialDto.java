@@ -53,14 +53,13 @@ public class FinancialDto {
     public FinancialDto() {
     }
 
-    public FinancialDto(Financial financial, Long raw_mt, Long product_mt, Long fixture_mt, Long netIncome) {
+    public FinancialDto(Financial financial, Long fixture_mt, Long netIncome) {
         this.id = financial.getId();
         this.quarter = financial.getQuarter();
-
         this.cash = financial.getCash();
         this.cash_equivalents = financial.getCash_equivalents();
-        this.raw_mt = raw_mt;
-        this.product_mt = product_mt;
+        this.raw_mt = financial.getRaw_mt_inven();
+        this.product_mt = financial.getProduct_inven();
         this.fixture_mt = fixture_mt;
         this.real_estate = financial.getReal_estate();
         this.equipment = financial.getEquipment();

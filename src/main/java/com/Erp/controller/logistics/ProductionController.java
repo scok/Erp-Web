@@ -4,8 +4,11 @@ import com.Erp.constant.DivisionStatus;
 import com.Erp.dto.logistics.ProductFormDto;
 import com.Erp.dto.logistics.ProductionFormDto;
 import com.Erp.dto.logistics.SectionFormDto;
+import com.Erp.entity.Financial;
 import com.Erp.entity.Member;
 import com.Erp.entity.logistics.*;
+import com.Erp.repository.FinancialRepository;
+import com.Erp.service.FinancialService;
 import com.Erp.service.MemberService;
 import com.Erp.service.logistics.*;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +40,9 @@ public class ProductionController {
     private final InventorService inventorService;
 
     private final ProductionService productionService;
+
+    private final FinancialRepository financialRepository;
+    private final FinancialService financialService;
 
     //페이지 접속
     @GetMapping(value = "/list")
@@ -91,6 +97,21 @@ public class ProductionController {
             production = productionService.save(production);
 
             section.setSecTotalCount(secTotalCount + dto.getCount());
+
+            Long product_mt = dto.getCount() * product.getPrPrice();
+            Short year = (short) LocalDateTime.now().getYear();
+            int quarter = (LocalDateTime.now().getMonthValue() - 1) / 3 + 1;
+
+            for (int i = quarter; i < 5; i++) {
+
+                Financial financial = financialRepository.findFinancialQuarter(year, quarter);
+
+                if(financial != null){
+                    financial.setProduct_inven(product_mt);
+
+                    financialService.saveData(financial);
+                }
+            }
 
             WarehousingInAndOut warehousingInAndOut = new WarehousingInAndOut();
 

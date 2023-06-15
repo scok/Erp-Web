@@ -1,6 +1,14 @@
+#body-pd{
+    background: #F5F5F5;
+}
+
 .content{
     width:90%;
     margin:auto;
+}
+
+h2 {
+  text-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5);
 }
 
 #example{
@@ -33,7 +41,7 @@
 }
 
 .shadow{
-    box-shadow: 0 .15rem 1.75rem 0 rgba(58,59,69,.15)!important;
+    box-shadow: 2px 2px 4px 0 rgba(0, 0, 0, 0.5);
 }
 
 .data-table thead{

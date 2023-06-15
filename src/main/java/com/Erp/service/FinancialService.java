@@ -1,18 +1,24 @@
 package com.Erp.service;
 
+import com.Erp.constant.ProductDivisionCategory;
 import com.Erp.dto.FinancialDto;
 import com.Erp.dto.IncomeDto;
 import com.Erp.dto.SaveDto;
 import com.Erp.entity.Financial;
 import com.Erp.entity.Income;
+import com.Erp.entity.logistics.Inventory;
+import com.Erp.entity.logistics.Product;
 import com.Erp.repository.FinancialRepository;
 import com.Erp.repository.IncomeRepository;
+import com.Erp.repository.logistics.InventoryRepository;
+import com.Erp.repository.logistics.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +26,8 @@ public class FinancialService {
 
     private final FinancialRepository financialRepository;
     private final IncomeRepository incomeRepository;
+    private final InventoryRepository inventoryRepository;
+    private final ProductRepository productRepository;
 
     public Short addData(FinancialDto dto) {
 
@@ -50,6 +58,25 @@ public class FinancialService {
     public void saveData(Financial financial){
 
         Income income = financial.getIncomes();
+        List<Inventory> inventory = inventoryRepository.getInventoryAll();
+
+        long raw_mat_inven = 0L;
+        long product_inven = 0L;
+
+        if(inventory.size() != 0){
+            for (Inventory bean : inventory){
+
+                String id = bean.getProduct().getPrCode();
+
+                Product product = productRepository.getReferenceById(id);
+
+                if(product.getPrDivCategory() == ProductDivisionCategory.자재){
+                    raw_mat_inven += (bean.getInQuantity() * product.getPrPrice());
+                } else if (product.getPrDivCategory() == ProductDivisionCategory.제품) {
+                    product_inven += (bean.getInQuantity() * product.getPrPrice());
+                }
+            }
+        }
 
         long total_assets = 0L;
         long total_liabilities = 0L;
@@ -57,12 +84,14 @@ public class FinancialService {
         long total_capital = 0L;
         long totalLiabilitiesCapital = 0L;
 
-        total_assets = financial.getCash() + financial.getCash_equivalents() + income.getRaw_mat_cost() + income.getComponents_cost() + income.getFixtures() + financial.getReal_estate() + financial.getEquipment() + financial.getVehicles() + financial.getEquity_invest() + financial.getReal_estate_invest() + financial.getCorporate_invest() + financial.getTrademarks() + financial.getLicenses() + financial.getNotes_receivable() + financial.getDeposits() + financial.getPension_assets();
+        total_assets = financial.getCash() + financial.getCash_equivalents() + raw_mat_inven + product_inven + income.getFixtures() + financial.getReal_estate() + financial.getEquipment() + financial.getVehicles() + financial.getEquity_invest() + financial.getReal_estate_invest() + financial.getCorporate_invest() + financial.getTrademarks() + financial.getLicenses() + financial.getNotes_receivable() + financial.getDeposits() + financial.getPension_assets();
         total_liabilities = financial.getBank_loans() + financial.getTrade_credit() + financial.getAdvance_payments() + financial.getTax_liabilities() + financial.getBonds() + financial.getLt_borrow_pay() + financial.getLt_deposits();
         paid_capital = total_assets - total_liabilities;
         total_capital = paid_capital + income.getNetIncome();
         totalLiabilitiesCapital = total_liabilities + total_capital;
 
+        financial.setRaw_mt_inven(raw_mat_inven);
+        financial.setProduct_inven(product_inven);
         financial.setTotal_assets(total_assets);
         financial.setTotal_liabilities(total_liabilities);
         financial.setPaid_capital(paid_capital);
@@ -96,19 +125,15 @@ public class FinancialService {
 
             Income income = financial.getIncomes();
 
-            Long raw_mt = 0L;
-            Long product_mt = 0L;
             Long fixture_mt = 0L;
             Long netIncome = 0L;
 
             if(income != null){
-                raw_mt = income.getRaw_mat_cost();
-                product_mt = income.getComponents_cost();
                 fixture_mt = income.getFixtures();
                 netIncome = income.getNetIncome();
             }
 
-            FinancialDto financialDto = new FinancialDto(financial, raw_mt, product_mt, fixture_mt, netIncome);
+            FinancialDto financialDto = new FinancialDto(financial, fixture_mt, netIncome);
 
             financialDtos.add(financialDto);
         }
@@ -126,19 +151,15 @@ public class FinancialService {
 
             Income income = financial.getIncomes();
 
-            Long raw_mt = 0L;
-            Long product_mt = 0L;
             Long fixture_mt = 0L;
             Long netIncome = 0L;
 
             if(income != null){
-                raw_mt = income.getRaw_mat_cost();
-                product_mt = income.getComponents_cost();
                 fixture_mt = income.getFixtures();
                 netIncome = income.getNetIncome();
             }
 
-            FinancialDto financialDto = new FinancialDto(financial, raw_mt, product_mt, fixture_mt, netIncome);
+            FinancialDto financialDto = new FinancialDto(financial, fixture_mt, netIncome);
 
             financialDtos.add(financialDto);
         }

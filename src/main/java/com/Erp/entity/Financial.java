@@ -21,6 +21,8 @@ public class Financial {
     // 자산
     private Long cash; // 현금
     private Long cash_equivalents; // 현금성 예금
+    private Long raw_mt_inven; // 원자재 재고
+    private Long product_inven; // 제품 재고
     private Long real_estate; // 부동산
     private Long equipment; // 장비
     private Long vehicles; // 차량
@@ -72,6 +74,8 @@ public class Financial {
         this.quarter = quarter;
         this.cash = number;
         this.cash_equivalents = number;
+        this.raw_mt_inven = number;
+        this.product_inven = number;
         this.real_estate = number;
         this.equipment = number;
         this.vehicles = number;
@@ -103,6 +107,8 @@ public class Financial {
         this.quarter = financialDto.getQuarter();
         this.cash = financialDto.getCash();
         this.cash_equivalents = financialDto.getCash_equivalents();
+        this.raw_mt_inven = financialDto.getRaw_mt();
+        this.product_inven = financialDto.getProduct_mt();
         this.real_estate = financialDto.getReal_estate();
         this.equipment = financialDto.getEquipment();
         this.vehicles = financialDto.getVehicles();
@@ -136,6 +142,8 @@ public class Financial {
                 ", quarter=" + quarter +
                 ", cash=" + cash +
                 ", cash_equivalents=" + cash_equivalents +
+                ", raw_mt_inven=" + raw_mt_inven +
+                ", product_inven=" + product_inven +
                 ", real_estate=" + real_estate +
                 ", equipment=" + equipment +
                 ", vehicles=" + vehicles +
