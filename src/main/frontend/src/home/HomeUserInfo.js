@@ -26,11 +26,6 @@ function App() {
                 const response = await axios.get(url);
 
                 setReceivedData(response.data);
-
-                console.log('response.data');
-                console.log(response.data);
-
-
             }catch(err){
                 setError(err);
 

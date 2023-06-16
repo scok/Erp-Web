@@ -46,8 +46,4 @@ public class ProductionService {
     public List<ProductionChartDto> productionGetMonthChartData(LocalDateTime startDateTime,LocalDateTime endDateTime) {
         return productionRepository.productionsChartData(startDateTime,endDateTime);
     }
-
-    public List<ProductionChartDto> productionGetChartDataFilter(LocalDateTime startDate, LocalDateTime endDate) {
-        return productionRepository.productionsChartDataFilter(startDate,endDate);
-    }
 }

@@ -22,16 +22,18 @@ export default function DataTable(props) {
     /*컬럼 설정*/
     const columns = [
       { field: 'id', headerName: 'NO', width: 10 },
-      { field: 'productionLine', headerName: '조립 라인', width: 200 },
-      { field: 'prName', headerName: '제품 명', width: 200 },
+      { field: 'secName', headerName: '창고 명', width: 200 },
+      { field: 'stackAreaCategory', headerName: '구역 명', width: 200 },
+      { field: 'prName', headerName: '자재 명', width: 200 },
       { field: 'count', headerName: '수량', width: 200 }
     ];
 
     const rows = tableData.map((item,index) => ({
       id : index+1,
-      productionLine: item.productionLine,
+      secName: item.secName,
+      stackAreaCategory: item.stackAreaCategory,
       prName: item.prName,
-      count: item.totalCount,
+      count: item.arTotalCount,
     }));
 
     function CustomPagination() {

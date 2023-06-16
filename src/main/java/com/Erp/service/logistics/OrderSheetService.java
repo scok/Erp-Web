@@ -202,4 +202,8 @@ public class OrderSheetService {
 
         return orderSheetRepository.findByAll();
     }
+
+    public List<OrderSheet> orderSheetOsRecFilter(LocalDateTime startDateTime, LocalDateTime endDateTime) {
+        return orderSheetRepository.orderSheetOsRecFilter(startDateTime,endDateTime);
+    }
 }

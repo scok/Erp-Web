@@ -66,6 +66,8 @@ public class ProductionController {
     public @ResponseBody ResponseEntity addProduction(@RequestBody @Valid ProductionFormDto dto, BindingResult error, Principal principal) {
         String errorMessage = "";
 
+        System.out.println(dto.toString());
+
         StringBuilder erromessages = new StringBuilder();
         if (error.hasErrors()) {
             for (FieldError errorBean : error.getFieldErrors()) {
@@ -104,12 +106,13 @@ public class ProductionController {
             warehousingInAndOut = logisticsService.WarehousingSave(warehousingInAndOut);
 
             if (String.valueOf(warehousingInAndOut.getDivisionStatus()).equals("입고")) {
-                Inventory inventory = new Inventory();
-                inventory = inventorService.inventorService(section.getSecCode(), dto.getSACategory(), dto.getPrCode());
+                Inventory inventory = inventorService.inventorService(section.getSecCode(), dto.getSACategory(), dto.getPrCode());
 
                 if (inventory != null) {
                     inventorService.updateInQuantity(inventory, dto.getCount());
                 } else {
+                    //객체가 null 값이면 저장공간을 만들수 있도록 객체 생성을 해줘야 합니다.
+                    inventory = new Inventory();
                     inventory.setStackAreaCategory(dto.getSACategory());
                     inventory.setInQuantity(dto.getCount());
                     inventory.setInStandard(product.getPrStandard());

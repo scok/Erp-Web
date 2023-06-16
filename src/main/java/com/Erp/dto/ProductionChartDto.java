@@ -16,13 +16,16 @@ public class ProductionChartDto {
 
     private Long totalCount;
 
+    private String prCode;
+
     private String prName;
 
     @Enumerated(EnumType.STRING)
     private ProductionLine productionLine;
 
-    public ProductionChartDto(ProductionLine productionLine,String prName ,Long totalCount) {
+    public ProductionChartDto(ProductionLine productionLine,String prCode,String prName ,Long totalCount) {
         this.productionLine = productionLine;
+        this.prCode = prCode;
         this.prName = prName;
         this.totalCount = totalCount;
     }

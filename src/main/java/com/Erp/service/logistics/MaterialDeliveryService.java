@@ -24,7 +24,7 @@ public class MaterialDeliveryService {
     //재고 테이블에 자재 항목만 조회합니다.
     public List<InventoryDeliveryFormDto> getinventoryInFo() {
 
-        List<Inventory> inventoryList = inventoryRepository.getinventoryInFo();
+        List<Inventory> inventoryList = inventoryRepository.getMaterialInventory();
         List<InventoryDeliveryFormDto> inventoryFormDtoList = new ArrayList<InventoryDeliveryFormDto>();
 
         for(Inventory inventory : inventoryList){

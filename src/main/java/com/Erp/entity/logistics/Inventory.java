@@ -21,6 +21,7 @@ public class Inventory extends DistributionEntity {
 
     @Enumerated(EnumType.STRING)
     private StackAreaCategory stackAreaCategory;    //적재 구역(A구역, B구역, C구역...))
+
     private int inQuantity;                         //(재고 수량)
     private String inStandard;                      //규격
 
