@@ -14,24 +14,20 @@ import java.time.LocalDate;
 @ToString
 public class UserDto {  //세션영역에 바인딩할 로그인한 사람의 정보
 
-    private String id;
-
-    private String name;
-
-    private String birth; //생년월일
-
-    private String email; //이메일
-
-    private String phone; //핸드폰 번호
-
-    private LocalDate date; //입사년월
-
-    private String department; //부서
+    // Member (사원 정보)
+    private String id; // 사번
+    private String name; // 이름
+    private String birth; // 생년월일
+    private String email; // 이메일
+    private String phone; // 핸드폰 번호
+    private LocalDate date; // 입사 날짜
+    private String department; // 부서
 
     @Enumerated(EnumType.STRING)
-    private MemberRole role;//사용자&관리자
+    private MemberRole role; // 구분 (관리자, 사용자)
 
-    private String imageUrl ;
+    // MemberImage (이미지 정보)
+    private String imageUrl ; // 이미지 저장 주소
 
     public UserDto(String id, String name, String birth, String email, String phone, LocalDate date, String department, MemberRole role, String imageUrl) {
         this.id = id;

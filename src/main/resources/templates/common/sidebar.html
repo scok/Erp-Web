@@ -26,15 +26,16 @@ https://blog.naver.com/PostView.naver?blogId=maestrois&logNo=222188488158
                         <ion-icon name="menu-outline" class="nav__toggle" id="nav-toggle"></ion-icon>
                     </div>
                     <div class="nav__list">
-<!--                        유저 정보 표기란은 다른 클래스 이용필요. collapse 부트스트랩 사이트 cdn하면 충돌 일어남 사용 주의-->
+                        <!--유저 정보 표기란은 다른 클래스 이용필요. collapse 부트스트랩 사이트 cdn하면 충돌 일어남 사용 주의-->
                         <span class="nav__link" href="/product/ex01">
-                            <img th:src="@{/img/cat.png}" name="person-sharp" class="nav__big__icon"></img>
+                            <img th:if="${session.User != null and session.User.imageUrl != null}" th:src="${session.User.imageUrl}" name="person-sharp" class="nav__big__icon" />
+                            <img th:unless="${session.User != null and session.User.imageUrl != null}" th:src="@{/img/cat.png}" name="person-sharp" class="nav__big__icon" />
                             <span class="nav_name">
-                                <p th:text="${session.User.name}"></p>
-                                <p th:text="${session.User.role}"></p>
+                                <p th:text="${session.User != null ? session.User.name : 'null'}"></p>
+                                <p th:text="${session.User != null ? session.User.role : 'null'}"></p>
                             </span>
                         </span>
-<!--                        active-->
+                        <!--active-->
                         <a href="/" class="nav__link">
                             <ion-icon name="home-outline" class="nav__icon"></ion-icon>
                             <span class="nav_name">home</span>
@@ -47,16 +48,18 @@ https://blog.naver.com/PostView.naver?blogId=maestrois&logNo=222188488158
                             <ion-icon name="chevron-down-outline" class="collapse__link"></ion-icon>
 
                             <ul class="collapse__menu">
+                                <li class="nav-item" sec:authorize="isAuthenticated()">
+                                    <a th:href="@{/members/mypage/{id}(id=${session.User != null ? session.User.id : null})}" class="collapse__sublink akorea">마이페이지</a>
+                                </li>
                                 <li class="nav-item" sec:authorize="hasAnyAuthority('ROLE_ADMIN')">
                                     <a href="/members/admin/new" class="collapse__sublink akorea">직원 등록</a>
                                 </li>
                                 <li class="nav-item" sec:authorize="hasAnyAuthority('ROLE_ADMIN')">
-                                    <a href="/members/admin/list" class="collapse__sublink akorea">직원 리스트</a>
+                                    <a href="/members/list" class="collapse__sublink akorea">직원 리스트</a>
                                 </li>
                                 <li class="nav-item" sec:authorize="hasAnyAuthority('ROLE_ADMIN')">
-                                    <a href="#" class="collapse__sublink akorea">직원 급여 등록</a>
+                                    <a href="/members/admin/payList" class="collapse__sublink akorea">급여 리스트</a>
                                 </li>
-                                <a href="#" class="collapse__sublink akorea">마이페이지</a>
                             </ul>
                         </div>
 
@@ -70,20 +73,6 @@ https://blog.naver.com/PostView.naver?blogId=maestrois&logNo=222188488158
                                 <a href="#" class="collapse__sublink akorea">Data</a>
                                 <a href="#" class="collapse__sublink akorea">Group</a>
                                 <a href="#" class="collapse__sublink akorea">Members</a>
-                            </ul>
-                        </div>
-
-                        <div href="#" class="nav__link collapse">
-                            <ion-icon name="business-outline" class="nav__icon"></ion-icon>
-                            <span class="nav_name">재무/회계</span>
-
-                            <ion-icon name="chevron-down-outline" class="collapse__link"></ion-icon>
-
-                            <ul class="collapse__menu">
-                                <a href="/financials/financial" class="collapse__sublink akorea">재무회계표</a>
-                                <a href="/incomes/income" class="collapse__sublink akorea">손익계산서</a>
-                                <a href="/transaction/form" class="collapse__sublink akorea">거래명세표</a>
-                                <a href="/analyses/analysis" class="collapse__sublink akorea">데이터 분석</a>
                             </ul>
                         </div>
 

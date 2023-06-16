@@ -70,7 +70,7 @@
                     title: '등록 하시겠습니까?',
                     icon: 'question',
                     showCancelButton: true,
-                    confirmButtonColor: '#4e73df',
+                    confirmButtonColor: '#73685d',
                     cancelButtonColor: '#6e7881',
                     confirmButtonText: 'OK',
                     cancelButtonText: 'Cancel'
@@ -103,13 +103,13 @@
                                 title: 'Error',
                                 icon: 'error',
                                 html: errors[0],
-                                confirmButtonColor: '#4e73df'
+                                confirmButtonColor: '#73685d'
                             });
                         } else {
                             Swal.fire({
                                 title: 'Completed!',
                                 icon: 'success',
-                                confirmButtonColor: '#4e73df'
+                                confirmButtonColor: '#73685d'
                             }).then(() => {
                                 // 폼을 수동으로 제출
                                 event.target.form.submit();
@@ -221,11 +221,11 @@
 </head>
 
 <div class="content" layout:fragment="content">
-    <body class="bg-gradient-primary">
+    <body class="background-color-white">
     <div class="container">
         <div class="card o-hidden border-0 shadow-lg my-3">
             <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">Employee Registration</h6>
+                <h6 class="m-0 font-weight-bold text-brown">Employee Registration</h6>
             </div>
             <div class="card-body p-50">
                 <form action="" role="form" method="post" th:object="${memberInsertDto}" enctype="multipart/form-data">
@@ -358,7 +358,7 @@
                             </div>
                             <!-- Save changes button-->
                             <div class="button-container">
-                                <button type="submit" style="width:150px;" class="btn btn-primary btn-user btn-block" onclick="return sweetAlert(event);">
+                                <button type="submit" style="width:150px;" class="btn btn-background-brown btn-user btn-block" onclick="return sweetAlert(event);">
                                     Confirm
                                 </button>
                             </div>

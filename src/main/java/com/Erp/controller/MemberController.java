@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -41,6 +40,7 @@ public class MemberController {
         return "/member/memberLoginForm";
     }
 
+
     //form 태그와 SecurityConfig.java 파일에 정의 되어 있습니다.
     @GetMapping(value = "/login/error")
     public String loginError(Model model){
@@ -49,14 +49,16 @@ public class MemberController {
         return "/member/memberLoginForm";
     }
 
-    //회원등록 페이지로 가는 메소드
+
+    //멤버 등록 페이지로 가는 메소드
     @GetMapping(value = "/admin/new")
     public String memberInsertForm(Model model){
         model.addAttribute("memberInsertDto",new MemberInsertDto());
         return "/member/memberInsertForm";
     }
 
-    //회원 리스트 페이지로 가는 메소드
+
+    //멤버 리스트 페이지로 가는 메소드
     @GetMapping(value = {"/list",  "/list/{page}"})
     public String memberList(MemberSearchDto dto, @PathVariable("page") Optional<Integer> page, Model model){
         Pageable pageable = PageRequest.of(page.isPresent() ? page.get() : 0,3) ;
@@ -70,14 +72,18 @@ public class MemberController {
     }
 
 
-    //회원 상세 페이지로 가는 메소드
+    //멤버 상세 페이지로 가는 메소드
+    // (멤버 상세 페이지에 "멤버수정, 급여리스트, 급여등록, 급여상세, 급여수정 전부 다 매핑)
+    // (modal 사용으로 인해 memberDetail.html 에 모든 코드가 다 있음)
     @GetMapping(value = "/admin/detail/{id}")
     public String memberDetail(@PathVariable Long id, Model model){
         MemberDetailDto memberDetailDto = memberService.getMemberWithImage2(id);
         MemberUpdateDto memberUpdateDto = memberService.getMemberWithImage(id);
         MemberPayInsertDto memberPayInsertDto = memberPayService.getMemberPayMemberInfo(id);
         List<MemberPay> memberPayList = memberPayService.getMemberPayList(id);
+        MemberPayUpdateDto memberPayUpdateDto = memberPayService.getMemberPayMemberInfo2(id);
 
+        model.addAttribute("memberPayUpdateDto", memberPayUpdateDto);
         model.addAttribute("memberPayInsertDto", memberPayInsertDto);
         model.addAttribute("memberDetailDto", memberDetailDto);
         model.addAttribute("memberUpdateDto", memberUpdateDto);
@@ -86,18 +92,23 @@ public class MemberController {
         return "/member/memberDetail";
     }
 
-    // 급여 상세 정보 가져오는 Ajax 컨트롤러
-    @GetMapping("/admin/paydetail/{payId}")
-    public ResponseEntity<MemberPayDetailDto> getMemberPayById(@PathVariable Long payId) {
-        MemberPayDetailDto memberPay = memberPayService.getMemberPayInfo(payId);
-        if (memberPay != null) {
-            return ResponseEntity.ok(memberPay);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    //급여 리스트 페이지로 가는 메소드
+    @GetMapping(value = {"/admin/payList",  "/admin/payList/{page}"})
+    public String memberPayList(MemberPaySearchDto dto, @PathVariable("page") Optional<Integer> page, Model model){
+        Pageable pageable = PageRequest.of(page.isPresent() ? page.get() : 0,3) ;
+        Page<MemberPay> memberPays = memberPayService.getMemberPayListPage(dto, pageable) ;
+        MemberPayUpdateDto memberPayUpdateDto = new MemberPayUpdateDto();
+
+        model.addAttribute("memberPayUpdateDto", memberPayUpdateDto);
+        model.addAttribute("memberPays", memberPays);
+        model.addAttribute("searchDto", dto);
+        model.addAttribute("maxPage", 10);
+
+        return "/member/memberPayList";
     }
 
-    // 회원 급여 등록 모달 에서 저장을 눌렀을 때
+
+    // 멤버 급여 등록 모달에서 저장을 눌렀을 때
     @PostMapping(value = "/admin/payInsertNew/{id}")
     public String memberPayInsertFormNew(@PathVariable String id, MemberPayInsertDto memberPayInsertDto, Model model){
         System.out.println("급여등록 포스트 방식 요청 들어옴");
@@ -107,7 +118,6 @@ public class MemberController {
             MemberPay memberPay = MemberPay.insertPay(memberPayInsertDto, member);
             memberPayService.saveMemberPay(memberPay);
 
-
         }catch (Exception e){
             model.addAttribute("errorMessage",e.getMessage());
             return "/member/memberDetail";
@@ -116,13 +126,24 @@ public class MemberController {
     }
 
 
-    //마이 페이지로 가는 메소드
+    // 마이 페이지로 가는 메소드
     @GetMapping(value = "/mypage/{id}")
     public String memberMyPage(@PathVariable Long id, Model model, Principal principal) {
         String loggedInUserId = principal.getName(); // 로그인된 사용자의 ID를 가져옴
 
         if (id.equals(Long.parseLong(loggedInUserId))) {
             MemberDetailDto memberDetailDto = memberService.getMemberWithImage2(id);
+
+            MemberUpdateDto memberUpdateDto = memberService.getMemberWithImage(id);
+            MemberPayInsertDto memberPayInsertDto = memberPayService.getMemberPayMemberInfo(id);
+            List<MemberPay> memberPayList = memberPayService.getMemberPayList(id);
+            MemberPayUpdateDto memberPayUpdateDto = memberPayService.getMemberPayMemberInfo2(id);
+
+            model.addAttribute("memberPayUpdateDto", memberPayUpdateDto);
+            model.addAttribute("memberPayInsertDto", memberPayInsertDto);
+            model.addAttribute("memberUpdateDto", memberUpdateDto);
+            model.addAttribute("memberPayList", memberPayList);
+
             model.addAttribute("memberDetailDto", memberDetailDto);
             return "/member/memberMyPage";
         } else {
@@ -130,14 +151,8 @@ public class MemberController {
         }
     }
 
-    // 출결 페이지로 가는 메소드
-    @GetMapping(value = "/admin/attendanceCheck")
-    public String AttendanceCheck(){
-        return "/member/memberAttendanceCheck";
-    }
 
-
-    //회원가입을 눌렀을때. @Valid가 유효성 검사후 bindingResult에 에러가 존재하면 값을 넘겨줍니다.
+    // 멤버 등록을 눌렀을때. @Valid가 유효성 검사후 bindingResult에 에러가 존재하면 값을 넘겨줍니다.
     @PostMapping(value = "/admin/new")
     public ModelAndView newMember(MemberInsertDto memberInsertDto, Model model, MemberImage memberImage, @RequestParam("memberImage")MultipartFile uploadedFile){
 
@@ -168,7 +183,7 @@ public class MemberController {
     }
 
 
-    //회원정보 수정을 눌렀을때. @Valid가 유효성 검사후 bindingResult에 에러가 존재하면 값을 넘겨줍니다.
+    // 멤버 수정을 눌렀을때. @Valid가 유효성 검사후 bindingResult에 에러가 존재하면 값을 넘겨줍니다.
     @PostMapping(value = "/admin/detail/{id}")
     public String updateMember(@PathVariable String id, MemberUpdateDto memberUpdateDto, Model model, MemberImage memberImage, @RequestParam("memberImage")MultipartFile uploadedFile){
 
@@ -185,5 +200,41 @@ public class MemberController {
             return "/member/memberDetail";
         }
         return "redirect:/members/admin/detail/" + id;
+    }
+
+
+    // 급여 수정 모달 에서 저장을 눌렀을 때
+    @PostMapping(value = "/admin/payUpdateNew/{id}/{payId}")
+    public String memberPayUpdateFormNew(@PathVariable String id, @PathVariable String payId, MemberPayUpdateDto memberPayUpdateDto, Model model){
+        System.out.println("급여 수정 포스트 방식 요청 들어옴");
+        Member member = memberService.getMemberById(Long.valueOf(id));
+
+        try {
+            MemberPay memberPay = MemberPay.updatePay(memberPayUpdateDto, member, payId);
+            memberPayService.updateMemberPay(memberPay);
+
+
+        }catch (Exception e){
+            model.addAttribute("errorMessage",e.getMessage());
+            return "/member/memberDetail";
+        }
+        return "redirect:/members/admin/detail/" + id;
+    }
+
+    @PostMapping(value = "/admin/payUpdateNew2/{id}/{payId}")
+    public String memberPayUpdateFormNew2(@PathVariable String id, @PathVariable String payId, MemberPayUpdateDto memberPayUpdateDto, Model model){
+        System.out.println("급여 수정 포스트 방식 요청 들어옴");
+        Member member = memberService.getMemberById(Long.valueOf(id));
+
+        try {
+            MemberPay memberPay = MemberPay.updatePay(memberPayUpdateDto, member, payId);
+            memberPayService.updateMemberPay(memberPay);
+
+
+        }catch (Exception e){
+            model.addAttribute("errorMessage",e.getMessage());
+            return "redirect:/members/admin/payList";
+        }
+        return "redirect:/members/admin/payList";
     }
 }

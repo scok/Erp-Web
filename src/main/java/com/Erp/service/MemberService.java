@@ -17,19 +17,20 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-@Service//for 비즈니스 로직 담당자
-@RequiredArgsConstructor//final 이나 NotNull이 붙어 있는 변수에 생성자를 자동으로 만들어 줍니다.
+@Service // for 비즈니스 로직 담당자
+@RequiredArgsConstructor // final 이나 NotNull이 붙어 있는 변수에 생성자를 자동으로 만들어 줍니다.
 public class MemberService implements UserDetailsService {
+
     private final MemberRepository memberRepository;
     private final MemberImageRepository memberImageRepository;
 
-    //implements UserDetailsService
-    //.usernameParameter("Id") 시큐리티 설정 class에 usernameParameter확인 필요.
+    // implements UserDetailsService
+    // .usernameParameter("Id") 시큐리티 설정 class에 usernameParameter확인 필요.
     @Override
     public UserDetails loadUserByUsername(String id) throws UsernameNotFoundException {
 
         Member member = memberRepository.findMemberById(id);
-        if(member == null){//회원이 존재하지 않는 경우
+        if(member == null){ // 회원이 존재하지 않는 경우
             throw new UsernameNotFoundException(id);
         }
 
@@ -41,12 +42,15 @@ public class MemberService implements UserDetailsService {
     }
 
 
+    // 중복 유효성 검사 후 멤버 저장 save
     public Member saveMember(Member member){
 
         validateDuplicateMember(member);
         return memberRepository.save(member);
     }
 
+
+    // unique 값 유효성 검사를 위한 메소드
     private void validateDuplicateMember(Member member){
 
         Member findId = memberRepository.findMemberById(member.getId());
@@ -58,14 +62,20 @@ public class MemberService implements UserDetailsService {
         }
     }
 
+
+    // 페이징 처리, 검색엔진을 위한 메소드
     public Page<Member> getMemberListPage(MemberSearchDto dto, Pageable pageable){
         return memberRepository.getMemberListPage(dto, pageable);
     }
 
+
+    // 사번으로 멤버 조회
     public Member getMemberById(Long id) {
         return memberRepository.findById(String.valueOf(id)).orElseThrow(() -> new IllegalArgumentException("유효하지 않은 ID 입니다."));
     }
 
+
+    // 멤버 수정을 위한 메소드 (이미지도 같이 수정)
     public MemberUpdateDto getMemberWithImage(Long id) {
         Member member = memberRepository.findById(String.valueOf(id)).orElseThrow(() -> new IllegalArgumentException("유효하지 않은 ID 입니다."));
 
@@ -90,6 +100,8 @@ public class MemberService implements UserDetailsService {
         return dto;
     }
 
+
+    // 멤버 상세를 위한 메소드 (이미지도 같이 조회)
     public MemberDetailDto getMemberWithImage2(Long id) {
         Member member = memberRepository.findById(String.valueOf(id)).orElseThrow(() -> new IllegalArgumentException("유효하지 않은 ID 입니다."));
 
@@ -114,18 +126,8 @@ public class MemberService implements UserDetailsService {
         return dto;
     }
 
-    public MemberPayInsertDto getMemberPay(Long id) {
-        Member member = memberRepository.findById(String.valueOf(id)).orElseThrow(() -> new IllegalArgumentException("유효하지 않은 ID 입니다."));
 
-        MemberPayInsertDto dto = new MemberPayInsertDto();
-
-        dto.setId(member.getId());
-        dto.setName(member.getName());
-        dto.setPosition(member.getPosition());
-        dto.setDepartment(member.getDepartment());
-        return dto;
-    }
-
+    // 멤버 수정 save
     public void updateMember(Member member) {
         memberRepository.save(member);
     }

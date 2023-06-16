@@ -11,6 +11,7 @@ import java.util.UUID;
 @Log
 public class FileService {
 
+    // 이미지 저장을 위한 메소드
     public String uploadFile(String upLoadPath, String originalFileName,byte[] fileData) throws Exception{
         UUID uuid = UUID.randomUUID();
         String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
@@ -25,15 +26,5 @@ public class FileService {
         fos.close();
 
         return savedFileName;
-    }
-
-    public void deleteFile(String filePath) throws Exception{
-        File delete = new File(filePath);
-        if (delete.canExecute()){
-            delete.delete();
-            log.info("파일을 삭제하였습니다.");
-        }else {
-            log.info("해당 파일이 존재하지 않습니다.");
-        }
     }
 }

@@ -76,7 +76,7 @@
                     title: '등록 하시겠습니까?',
                     icon: 'question',
                     showCancelButton: true,
-                    confirmButtonColor: '#4e73df',
+                    confirmButtonColor: '#73685d',
                     cancelButtonColor: '#6e7881',
                     confirmButtonText: 'OK',
                     cancelButtonText: 'Cancel'
@@ -116,13 +116,13 @@
                                 title: 'Error',
                                 icon: 'error',
                                 html: errors[0],
-                                confirmButtonColor: '#4e73df'
+                                confirmButtonColor: '#73685d'
                             });
                         } else {
                             Swal.fire({
                                 title: 'Completed!',
                                 icon: 'success',
-                                confirmButtonColor: '#4e73df'
+                                confirmButtonColor: '#73685d'
                             }).then(() => {
                                 // 폼을 수동으로 제출
                                 event.target.form.submit();
@@ -213,11 +213,11 @@
 </head>
 
 <div class="content" layout:fragment="content">
-  <body class="bg-gradient-primary">
+  <body class="background-color-white">
   <div class="container">
     <div class="card o-hidden border-0 shadow-lg my-2">
       <div class="card-header py-3">
-        <h4 class="m-0 font-weight-bold text-primary" style="text-align: center;">급여명세서</h4>
+        <h4 class="m-0 font-weight-bold text-brown" style="text-align: center;">급여명세서</h4>
       </div>
       <div class="row">
         <div class="col-lg-6 d-none d-lg-block">
@@ -226,19 +226,19 @@
               <table class="table-bordered dataTable" cellspacing="0" role="grid"  style="width: 300px;">
                 <tbody>
                 <tr>
-                  <td class="text-primary font-weight-bold" style="vertical-align: middle; width:70px;">부서</td>
+                  <td class="text-brown font-weight-bold" style="vertical-align: middle; width:70px;">부서</td>
                   <td style="text-align:left;"><label th:text="*{department}"></label></td>
                 </tr>
                 <tr>
-                  <td class="text-primary font-weight-bold" style="vertical-align: middle; width:70px;">사번</td>
+                  <td class="text-brown font-weight-bold" style="vertical-align: middle; width:70px;">사번</td>
                   <td style="text-align:left;"><label th:text="*{id}"></label></td>
                 </tr>
                 <tr>
-                  <td class="text-primary font-weight-bold" style="vertical-align: middle; width:70px;">이름</td>
+                  <td class="text-brown font-weight-bold" style="vertical-align: middle; width:70px;">이름</td>
                   <td style="text-align:left;"><label th:text="*{name}"></label></td>
                 </tr>
                 <tr>
-                  <td class="text-primary font-weight-bold" style="vertical-align: middle; width:70px;">직위</td>
+                  <td class="text-brown font-weight-bold" style="vertical-align: middle; width:70px;">직위</td>
                   <td style="text-align:left;"><label th:text="*{position}"></label></td>
                 </tr>
                 </tbody>
@@ -265,7 +265,7 @@
                 <table class="table table-bordered dataTable" id="dataTable1" width="100%" cellspacing="0" role="grid" aria-describedby="dataTable_info" style="width: 100%;">
                   <thead>
                   <tr>
-                    <td class="font-weight-bold" colspan="2" style="text-align: center;">
+                    <td class="text-brown font-weight-bold background-color-white" colspan="2" style="text-align: center;">
                       지급 항목
                     </td>
                   </tr>
@@ -273,23 +273,23 @@
 
                   <tbody>
                   <tr>
-                    <td class="text-primary font-weight-bold" style="vertical-align: middle;">기본급</td>
+                    <td class="text-brown font-weight-bold" style="vertical-align: middle;">기본급</td>
                     <td><input oninput="calculateTotal()" onchange="this.value=formatNumber(this.value)" th:field="*{salary}" style="text-align:right;" type="text" class="form-control" placeholder="기본급을(를) 입력해주세요."></td>
                   </tr>
                   <tr>
-                    <td class="text-primary font-weight-bold" style="vertical-align: middle;">상여금</td>
+                    <td class="text-brown font-weight-bold" style="vertical-align: middle;">상여금</td>
                     <td><input oninput="calculateTotal()" onchange="this.value=formatNumber(this.value)" th:field="*{bonus}" style="text-align:right;" type="text" class="form-control" placeholder="상여금을(를) 입력해주세요."></td>
                   </tr>
                   <tr>
-                    <td class="text-primary font-weight-bold" style="vertical-align: middle;">야근수당</td>
+                    <td class="text-brown font-weight-bold" style="vertical-align: middle;">야근수당</td>
                     <td><input oninput="calculateTotal()" onchange="this.value=formatNumber(this.value)" th:field="*{nightPay}" style="text-align:right;" type="text" class="form-control" placeholder="야근수당을(를) 입력해주세요."></td>
                   </tr>
                   <tr>
-                    <td class="text-primary font-weight-bold" style="vertical-align: middle;">식비</td>
+                    <td class="text-brown font-weight-bold" style="vertical-align: middle;">식비</td>
                     <td><input oninput="calculateTotal()" onchange="this.value=formatNumber(this.value)" th:field="*{foodPay}" style="text-align:right;" type="text" class="form-control" placeholder="식비을(를) 입력해주세요."></td>
                   </tr>
                   <tr>
-                    <td class="text-primary font-weight-bold" style="vertical-align: middle;">차량지원금</td>
+                    <td class="text-brown font-weight-bold" style="vertical-align: middle;">차량지원금</td>
                     <td><input oninput="calculateTotal()" onchange="this.value=formatNumber(this.value)" th:field="*{carPay}" style="text-align:right;" type="text" class="form-control" placeholder="차량지원금을(를) 입력해주세요."></td>
                   </tr>
                   <tr>
@@ -307,7 +307,7 @@
                 <table class="table table-bordered dataTable" id="dataTable2" width="100%" cellspacing="0" role="grid" aria-describedby="dataTable_info" style="width: 100%;">
                   <thead>
                   <tr>
-                    <td class="font-weight-bold" colspan="2" style="text-align: center;">
+                    <td class="text-brown font-weight-bold background-color-white" colspan="2" style="text-align: center;">
                       공제 항목
                     </td>
                   </tr>
@@ -315,27 +315,27 @@
 
                   <tbody>
                   <tr>
-                    <td class="text-primary font-weight-bold" style="vertical-align: middle;">고용보험</td>
+                    <td class="text-brown font-weight-bold" style="vertical-align: middle;">고용보험</td>
                     <td><input oninput="calculateTotal2()" onchange="this.value=formatNumber2(this.value)" th:field="*{goInsurance}" style="text-align: right;" type="text" class="form-control" placeholder="고용보험을(를) 입력해주세요."></td>
                   </tr>
                   <tr>
-                    <td class="text-primary font-weight-bold" style="vertical-align: middle;">건강보험</td>
+                    <td class="text-brown font-weight-bold" style="vertical-align: middle;">건강보험</td>
                     <td><input oninput="calculateTotal2()" onchange="this.value=formatNumber2(this.value)" th:field="*{gunInsurance}" style="text-align: right;" type="text" class="form-control" placeholder="건강보험을(를) 입력해주세요."></td>
                   </tr>
                   <tr>
-                    <td class="text-primary font-weight-bold" style="vertical-align: middle;">산재보험</td>
+                    <td class="text-brown font-weight-bold" style="vertical-align: middle;">산재보험</td>
                     <td><input oninput="calculateTotal2()" onchange="this.value=formatNumber2(this.value)" th:field="*{sanInsurance}" style="text-align: right;" type="text" class="form-control" placeholder="기건강보험을(를) 입력해주세요."></td>
                   </tr>
                   <tr>
-                    <td class="text-primary font-weight-bold" style="vertical-align: middle;">국민연금</td>
+                    <td class="text-brown font-weight-bold" style="vertical-align: middle;">국민연금</td>
                     <td><input oninput="calculateTotal2()" onchange="this.value=formatNumber2(this.value)" th:field="*{kukInsurance}" style="text-align: right;" type="text" class="form-control" placeholder="국민연금을(를) 입력해주세요."></td>
                   </tr>
                   <tr>
-                    <td class="text-primary font-weight-bold" style="vertical-align: middle;">소득세</td>
+                    <td class="text-brown font-weight-bold" style="vertical-align: middle;">소득세</td>
                     <td><input oninput="calculateTotal2()" onchange="this.value=formatNumber2(this.value)" th:field="*{incomeTax}" style="text-align: right;" type="text" class="form-control" placeholder="소득세세을(를) 입력해주세요."></td>
                   </tr>
                   <tr>
-                    <td class="text-primary font-weight-bold" style="vertical-align: middle;">지방소득세</td>
+                    <td class="text-brown font-weight-bold" style="vertical-align: middle;">지방소득세</td>
                     <td><input oninput="calculateTotal2()" onchange="this.value=formatNumber2(this.value)" th:field="*{localTax}" style="text-align: right;" type="text" class="form-control" placeholder="지방소득세을(를) 입력해주세요."></td>
                   </tr>
                   <tr>
@@ -348,7 +348,7 @@
                   </tr>
                   </tbody>
                 </table>
-                <button type="submit" class="btn btn-primary btn-user btn-block" onclick="return sweetAlert(event);">
+                <button type="submit" class="btn btn-background-brown btn-user btn-block" onclick="return sweetAlert(event);">
                   저장
                 </button>
                 <!--            보안 관련 인증 토큰을 히든 파라미터로 보내줍니다-->

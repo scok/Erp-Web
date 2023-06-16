@@ -7,109 +7,766 @@
 <head>
     <meta charset="utf-8">
     <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
+    <link th:href="@{/css/table.css}" rel="stylesheet">
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.10/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.10/dist/sweetalert2.min.js"></script>
+    <script src="https://kit.fontawesome.com/549ed26fed.js" crossorigin="anonymous"></script>
+
+
+    <script th:inline="javascript">
+
+        $(document).ready(function(){
+            var errorMessage = [[${errorMessage}]];
+            if(errorMessage != null){
+                alert(errorMessage);
+            }
+            bindDomEvent();
+
+        });
+
+        function bindDomEvent() {
+          $(".memberImage").on("change", function() {
+            var fileName = $(this).val().split("\\").pop();  // 이미지 파일명
+            var fileExt = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase(); // 확장자 추출
+
+            if (fileExt != "jpg" && fileExt != "jpeg" && fileExt != "gif" && fileExt != "png" && fileExt != "bmp") {
+              Swal.fire({
+                icon: 'error',
+                title: 'ERROR',
+                text: '이미지 파일만 등록이 가능합니다.'
+              });
+              return;
+            }
+
+            $(this).siblings(".memberImage").html(fileName);
+          });
+        }
+
+        function readImage(input) {
+            if(input.files && input.files[0]) {
+                const reader = new FileReader()
+
+                reader.onload = e => {
+                const previewImage = document.getElementById("preview-image")
+                previewImage.src = e.target.result }
+
+                reader.readAsDataURL(input.files[0])
+            }
+        }
+
+        window.onload = function() {
+            const inputImage = document.getElementById("memberImage")
+            inputImage.addEventListener("change", e => {
+            readImage(e.target)
+            })
+        };
+
+    </script>
+
+    <script>
+    // 소트후 효과
+        function handleClickEvent() {
+          var isMouseDown = false;
+
+          // 마우스를 올렸을 때
+          $('table tr.odd').mouseover(function() {
+            if (isMouseDown) {
+              $(this).addClass('clicked');
+            } else {
+              $(this).addClass('highlight');
+            }
+          });
+
+          // 마우스를 떼었을 때
+          $('table tr.odd').mouseout(function() {
+            if (!$(this).hasClass('clicked')) {
+              $(this).removeClass('highlight');
+            }
+          });
+
+          // 마우스를 누르고 있을 때
+          $('table tr.odd').mousedown(function() {
+            isMouseDown = true;
+            $('table tr.odd').removeClass('clicked');
+            $(this).addClass('clicked');
+          });
+
+          // 마우스를 떼었을 때
+          $('table tr.odd').mouseup(function() {
+            isMouseDown = false;
+            $(this).removeClass('clicked');
+          });
+
+          // tr.odd 범위를 벗어났을 때
+          $(document).mouseup(function() {
+            isMouseDown = false;
+            $('table tr.odd').removeClass('clicked');
+            $('table tr.odd').removeClass('highlight');
+          });
+        }
+    // 화살표 소트
+        $(document).ready(function() {
+          $('thead th').click(function() {
+            var $th = $(this);
+            var $table = $th.closest('table');
+
+            if ($th.hasClass('sorting_asc')) {
+              $th.removeClass('sorting_asc').addClass('sorting_desc');
+              sortColumn($table, $th.index(), 'desc');
+            } else if ($th.hasClass('sorting_desc')) {
+              $th.removeClass('sorting_desc').addClass('sorting_asc');
+              sortColumn($table, $th.index(), 'asc');
+            } else {
+              $table.find('thead th').removeClass('sorting_asc sorting_desc');
+              $th.addClass('sorting_asc');
+              sortColumn($table, $th.index(), 'asc');
+            }
+            handleClickEvent();
+          });
+
+          function sortColumn($table, columnIndex, sortDirection) {
+            var $tbody = $table.find('tbody');
+            var rows = $tbody.find('tr').get();
+
+            rows.sort(function(a, b) {
+              var aValue = $(a).find('td').eq(columnIndex).text().toUpperCase();
+              var bValue = $(b).find('td').eq(columnIndex).text().toUpperCase();
+
+              if (sortDirection === 'asc') {
+                if ($.isNumeric(aValue) && $.isNumeric(bValue)) {
+                  return parseFloat(aValue) - parseFloat(bValue);
+                } else {
+                  return aValue.localeCompare(bValue);
+                }
+              } else {
+                if ($.isNumeric(aValue) && $.isNumeric(bValue)) {
+                  return parseFloat(bValue) - parseFloat(aValue);
+                } else {
+                  return bValue.localeCompare(aValue);
+                }
+              }
+            });
+
+            $tbody.empty();
+
+            $.each(rows, function(index, row) {
+              $tbody.append(row);
+            });
+          }
+        });
+    </script>
+
+    <script>
+          // 모달 열기
+          function openModal() {
+            document.getElementById("myModal").style.display = "block";
+            document.addEventListener("keydown", closeModalOnEscape);
+            document.addEventListener("click", closeModalOnClickOutside);
+          }
+
+          // 모달 닫기
+          function closeModal() {
+            document.getElementById("myModal").style.display = "none";
+            document.removeEventListener("keydown", closeModalOnEscape);
+            document.removeEventListener("click", closeModalOnClickOutside);
+          }
+
+          // ESC 키를 누를 때 모달 닫기
+          function closeModalOnEscape(event) {
+            if (event.key === "Escape") {
+              closeModal();
+            }
+          }
+
+          // 모달 바깥 영역을 클릭할 때 모달 닫기
+          function closeModalOnClickOutside(event) {
+            if (event.target === document.getElementById("myModal")) {
+              closeModal();
+            }
+          }
+
+
+
+    </script>
+
+    <script>
+          // 모달 열기
+          function openModal2() {
+            document.getElementById("myModal2").style.display = "block";
+            document.addEventListener("keydown", closeModalOnEscape2);
+            document.addEventListener("click", closeModalOnClickOutside2);
+          }
+
+          // 모달 닫기
+          function closeModal2() {
+            document.getElementById("myModal2").style.display = "none";
+            document.removeEventListener("keydown", closeModalOnEscape2);
+            document.removeEventListener("click", closeModalOnClickOutside2);
+          }
+
+          // ESC 키를 누를 때 모달 닫기
+          function closeModalOnEscape2(event) {
+            if (event.key === "Escape") {
+              closeModal2();
+            }
+          }
+
+          // 모달 바깥 영역을 클릭할 때 모달 닫기
+          function closeModalOnClickOutside2(event) {
+            if (event.target === document.getElementById("myModal2")) {
+              closeModal2();
+            }
+          }
+
+    </script>
+
+    <script>
+        //급여수정
+
+          // 모달 열기
+          function openModal4() {
+            document.getElementById("myModal4").style.display = "block";
+            document.addEventListener("keydown", closeModalOnEscape4);
+            document.addEventListener("click", closeModalOnClickOutside4);
+          }
+
+          // 모달 닫기
+          function closeModal4() {
+            document.getElementById("myModal4").style.display = "none";
+            document.removeEventListener("keydown", closeModalOnEscape4);
+            document.removeEventListener("click", closeModalOnClickOutside4);
+          }
+
+          // ESC 키를 누를 때 모달 닫기
+          function closeModalOnEscape4(event) {
+            if (event.key === "Escape") {
+              closeModal4();
+            }
+          }
+
+          // 모달 바깥 영역을 클릭할 때 모달 닫기
+          function closeModalOnClickOutside4(event) {
+            if (event.target === document.getElementById("myModal4")) {
+              closeModal4();
+            }
+          }
+    </script>
+
+    <script>
+      $(document).ready(function() {
+        var isMouseDown = false;
+
+        // 마우스를 올렸을 때
+        $('table tr.odd').mouseover(function() {
+          if (isMouseDown) {
+            $(this).addClass('clicked');
+          } else {
+            $(this).addClass('highlight');
+          }
+        });
+
+        // 마우스를 떼었을 때
+        $('table tr.odd').mouseout(function() {
+          if (!$(this).hasClass('clicked')) {
+            $(this).removeClass('highlight');
+          }
+        });
+
+        // 마우스를 누르고 있을 때
+        $('table tr.odd').mousedown(function() {
+          isMouseDown = true;
+          $('table tr.odd').removeClass('clicked');
+          $(this).addClass('clicked');
+        });
+
+        // 마우스를 떼었을 때
+        $('table tr.odd').mouseup(function() {
+          isMouseDown = false;
+          $(this).removeClass('clicked');
+        });
+
+        // tr.odd 범위를 벗어났을 때
+        $(document).mouseup(function() {
+          isMouseDown = false;
+          $('table tr.odd').removeClass('clicked');
+          $('table tr.odd').removeClass('highlight');
+        });
+      });
+    </script>
+
+    <script>
+        // 급여디테일 값 표기
+        function handleRowClick(row) {
+            var tdRegDate = row.getElementsByTagName("td")[0].innerText;
+
+            var tdPlusMoney = row.getElementsByTagName("td")[1].innerText;
+            var tdMinusMoney = row.getElementsByTagName("td")[2].innerText;
+            var tdTotalMoney = row.getElementsByTagName("td")[3].innerText;
+
+
+            var tdsalary = row.getElementsByTagName("td")[5].innerText;
+            var tdBonus = row.getElementsByTagName("td")[6].innerText;
+            var tdNightPay = row.getElementsByTagName("td")[7].innerText;
+            var tdFoodPay = row.getElementsByTagName("td")[8].innerText;
+            var tdCarPay = row.getElementsByTagName("td")[9].innerText;
+            var tdGoInsurance = row.getElementsByTagName("td")[10].innerText;
+            var tdGunInsurance = row.getElementsByTagName("td")[11].innerText;
+            var tdSanInsurance = row.getElementsByTagName("td")[12].innerText;
+            var tdKukInsurance = row.getElementsByTagName("td")[13].innerText;
+            var tdIncomeTax = row.getElementsByTagName("td")[14].innerText;
+            var tdLocalTax = row.getElementsByTagName("td")[15].innerText;
+
+
+            //00년 00월 급여명세서 (급여 디테일)
+            document.getElementById("detailRegDate").innerText = tdRegDate + " 급여명세서";
+
+
+            document.getElementById("detailPlusMoney").innerText = tdPlusMoney;
+            document.getElementById("detailMinusMoney").innerText = tdMinusMoney;
+            document.getElementById("detailTotalMoney").innerText = tdTotalMoney;
+
+            document.getElementById("detailSalary").innerText = formatNumber(tdsalary) + "원";
+            document.getElementById("detailBonus").innerText = formatNumber(tdBonus) + "원";
+            document.getElementById("detailNightPay").innerText = formatNumber(tdNightPay) + "원";
+            document.getElementById("detailFoodPay").innerText = formatNumber(tdFoodPay) + "원";
+            document.getElementById("detailCarPay").innerText = formatNumber(tdCarPay) + "원";
+            document.getElementById("detailGoInsurance").innerText = formatNumber(tdGoInsurance) + "원";
+            document.getElementById("detailGunInsurance").innerText = formatNumber(tdGunInsurance) + "원";
+            document.getElementById("detailSanInsurance").innerText = formatNumber(tdSanInsurance) + "원";
+            document.getElementById("detailKukInsurance").innerText = formatNumber(tdKukInsurance) + "원";
+            document.getElementById("detailIncomeTax").innerText = formatNumber(tdIncomeTax) + "원";
+            document.getElementById("detailLocalTax").innerText = formatNumber(tdLocalTax) + "원";
+
+
+
+            openModal3(); // 페이지 이동 후 모달 열기 함수를 호출합니다.
+
+            // 급여 수정 값 넣어주기
+
+            var salaryUpdate = row.getElementsByTagName("td")[5].innerText;
+            var bonusUpdate = row.getElementsByTagName("td")[6].innerText;
+            var nightPayUpdate = row.getElementsByTagName("td")[7].innerText;
+            var foodPayUpdate = row.getElementsByTagName("td")[8].innerText;
+            var carPayUpdate = row.getElementsByTagName("td")[9].innerText;
+
+            document.getElementById("salaryUpdate").value = formatNumber(salaryUpdate);
+            document.getElementById("bonusUpdate").value = formatNumber(bonusUpdate);
+            document.getElementById("nightPayUpdate").value = formatNumber(nightPayUpdate);
+            document.getElementById("foodPayUpdate").value = formatNumber(foodPayUpdate);
+            document.getElementById("carPayUpdate").value = formatNumber(carPayUpdate);
+
+        }; //급여디테일 값 표기 닫는 태그
+
+
+        // 모달 열기
+        function openModal3() {
+            document.getElementById("myModal3").style.display = "block";
+            document.addEventListener("keydown", closeModalOnEscape3);
+            document.addEventListener("click", closeModalOnClickOutside3);
+        }
+
+        // 모달 닫기
+        function closeModal3() {
+            document.getElementById("myModal3").style.display = "none";
+            document.removeEventListener("keydown", closeModalOnEscape3);
+            document.removeEventListener("click", closeModalOnClickOutside3);
+        }
+
+        // ESC 키를 누를 때 모달 닫기
+        function closeModalOnEscape3(event) {
+            if (event.key === "Escape") {
+                closeModal3();
+            }
+        }
+
+
+        // 모달 바깥 영역을 클릭할 때 모달 닫기
+        function closeModalOnClickOutside3(event) {
+            if (event.target === document.getElementById("myModal3")) {
+                closeModal3();
+            }
+        }
+    </script>
+
+
+    <script th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', function() {
+        var now = new Date();
+        var year = now.getFullYear().toString().substring(2); // 뒤의 두 자리만 추출
+        var month = (now.getMonth() + 1).toString().padStart(2, '0'); // 1월은 0으로 시작하므로 +1, 한 자리인 경우 앞에 0 추가
+        var title = document.getElementById('datetitle'); // 요소 찾기
+        title.innerText = year + '년 ' + month + '월 급여명세서'; // 내용 변경
+        });
+    </script>
+
+    <script>
+    // 급여리스트에 ,를 붙여주는 함수
+        $(document).ready(function() {
+         $(".pp").each(function() {
+            var plusMoney = $(this).text();
+            var formattedPlusMoney = formatNumber(plusMoney) + "원";
+         $(this).text(formattedPlusMoney);
+        });
+
+        $(".mm").each(function() {
+        var minusMoney = $(this).text();
+        var formattedMinusMoney = formatNumber(minusMoney) + "원";
+        $(this).text(formattedMinusMoney);
+        });
+
+        $(".tt").each(function() {
+        var totalMoney = $(this).text();
+        var formattedTotalMoney = formatNumber(totalMoney) + "원";
+        $(this).text(formattedTotalMoney);
+        });
+        });
+
+        function formatNumber(number) {
+            return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+    // 급여리스트에 ,를 붙여주는 함수 끝
+
+    </script>
+
 </head>
 
 <div class="content" layout:fragment="content">
-    <body class="bg-gradient-primary">
-    <div class="container">
-        <div class="card o-hidden border-0 shadow-lg my-3">
-            <div class="card-body p-50">
-                <!-- Nested Row within Card Body -->
-                <form action="" role="form" method="post" th:object="${memberDetailDto}" enctype="multipart/form-data">
-                    <!-- DataTales Example -->
-                    <div class="card shadow mb-4">
-                        <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">Employee Details</h6>
-                        </div>
-                        <div class="card-body3">
+    <body class="background-color-white">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-5">
+                <div class="card-body p-51">
 
-                            <div class="row gx-3 mb-3">
-                                <div class="col-md-6" style="text-align: center;">
-                                    <div class="image-container">
-                                        <img style="width: 250px;border: 1px solid #d1d3e2; border-radius: 1.5rem;" id="preview-image"
-                                             th:src="${memberDetailDto.imageUrl}">
+                    <!-- Nested Row within Card Body -->
+                    <form action="" role="form" method="post" th:object="${memberDetailDto}" id="myFormId" enctype="multipart/form-data">
+                        <!-- DataTales Example -->
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-brown">Employee Details</h6>
+                            </div>
+                            <div class="card-body3">
+
+                                <div class="row gx-3 mb-3">
+                                    <div class="col-md-6" style="text-align: center;">
+                                        <div class="image-container">
+                                            <img style="width: 250px;border: 1px solid #d1d3e2; border-radius: 1.5rem;"
+                                                 th:src="${memberDetailDto.imageUrl}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="small mb-1">Name</label>
+                                        <br/>
+                                        <span th:text="*{name}"/>
+                                        <hr class="mt-2 mb-2">
+                                        <label class="small mb-1">Birth</label>
+                                        <br/>
+                                        <span th:text="|${#strings.substring(memberDetailDto.birth, 0, 4)}년${#strings.substring(memberDetailDto.birth, 4, 6)}월${#strings.substring(memberDetailDto.birth, 6, 8)}일|"/>
+                                        <hr class="mt-2 mb-2">
+                                        <label class="small mb-1">Phone number</label>
+                                        <br/>
+                                        <span th:text="|${#strings.substring(memberDetailDto.phone, 0, 3)}-${#strings.substring(memberDetailDto.phone, 3, 7)}-${#strings.substring(memberDetailDto.phone, 7, 11)}|"/>
+                                        <hr class="mt-2 mb-2">
+                                        <label class="small mb-1">Email</label>
+                                        <br/>
+                                        <span th:text="*{email}"/>
+                                        <hr class="mt-2 mb-2">
                                     </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <label class="small mb-1">Name</label>
-                                    <br/>
-                                    <span th:text="*{name}"/>
-                                    <hr class="mt-2 mb-2">
-                                    <label class="small mb-1">Birth</label>
-                                    <br/>
-                                    <span th:text="|${#strings.substring(memberDetailDto.birth, 0, 4)}년${#strings.substring(memberDetailDto.birth, 4, 6)}월${#strings.substring(memberDetailDto.birth, 6, 8)}일|"/>
-                                    <hr class="mt-2 mb-2">
-                                    <label class="small mb-1">Phone number</label>
-                                    <br/>
-                                    <span th:text="|${#strings.substring(memberDetailDto.phone, 0, 3)}-${#strings.substring(memberDetailDto.phone, 3, 7)}-${#strings.substring(memberDetailDto.phone, 7, 11)}|"/>
-                                    <hr class="mt-2 mb-2">
-                                    <label class="small mb-1">Email</label>
-                                    <br/>
-                                    <span th:text="*{email}"/>
-                                    <hr class="mt-2 mb-2">
-                                </div>
-                            </div>
 
-                            <div class="row gx-3 mb-3">
-                                <div class="col-md-6">
-                                    <label class="small mb-1">address</label>
-                                    <br/>
-                                    <span th:text="*{address}"/>
-                                    <hr class="mt-2 mb-2">
+                                <div class="row gx-3 mb-3">
+                                    <div class="col-md-6">
+                                        <label class="small mb-1">address</label>
+                                        <br/>
+                                        <span th:text="*{address}"/>
+                                        <hr class="mt-2 mb-2">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="small mb-1">Bank account</label>
+                                        <br/>
+                                        <span th:text="*{bank}"/>
+                                        <hr class="mt-2 mb-2">
+                                    </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <label class="small mb-1">Bank account</label>
-                                    <br/>
-                                    <span th:text="*{bank}"/>
-                                    <hr class="mt-2 mb-2">
-                                </div>
-                            </div>
 
-                            <div class="row gx-3 mb-3">
-                                <div class="col-md-4">
-                                    <label class="small mb-1">Department</label>
-                                    <br/>
-                                    <span th:text="*{department}"/>
-                                    <hr class="mt-2 mb-2">
+                                <div class="row gx-3 mb-3">
+                                    <div class="col-md-4">
+                                        <label class="small mb-1">Department</label>
+                                        <br/>
+                                        <span th:text="*{department}"/>
+                                        <hr class="mt-2 mb-2">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="small mb-1">Spot</label>
+                                        <br/>
+                                        <span th:text="*{position}"/>
+                                        <hr class="mt-2 mb-2">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="small mb-1">Rank</label>
+                                        <br/>
+                                        <span th:text="*{hobong}"/>
+                                        <hr class="mt-2 mb-2">
+                                    </div>
                                 </div>
-                                <div class="col-md-4">
-                                    <label class="small mb-1">Spot</label>
-                                    <br/>
-                                    <span th:text="*{position}"/>
-                                    <hr class="mt-2 mb-2">
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="small mb-1">Rank</label>
-                                    <br/>
-                                    <span th:text="*{hobong}"/>
-                                    <hr class="mt-2 mb-2">
-                                </div>
-                            </div>
 
-                            <div class="row gx-3 mb-3">
-                                <div class="col-md-4">
-                                    <label class="small mb-1">Joining date</label>
-                                    <br/>
-                                    <span th:text="${#dates.format(#dates.createNow(), 'yyyy년MM월dd일')}"/>
-                                    <hr class="mt-2 mb-2">
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="small mb-1">Employment status</label>
-                                    <br/>
-                                    <span th:text="*{status}"/>
-                                    <hr class="mt-2 mb-2">
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="small mb-1">Role</label>
-                                    <br/>
-                                    <span th:text="*{role}"/>
-                                    <hr class="mt-2 mb-2">
+                                <div class="row gx-3 mb-3">
+                                    <div class="col-md-4">
+                                        <label class="small mb-1">Joining date</label>
+                                        <br/>
+                                        <span th:text="${#temporals.format(memberDetailDto.date, 'yyyy년MM월dd일')}"/>
+                                        <hr class="mt-2 mb-2">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="small mb-1">Employment status</label>
+                                        <br/>
+                                        <span th:text="*{status == T(com.Erp.constant.MemberStatus).WORKING ? '재직중' : '퇴사'}"/>
+                                        <hr class="mt-2 mb-2">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="small mb-1">Role</label>
+                                        <br/>
+                                        <span th:text="*{role == T(com.Erp.constant.MemberRole).ADMIN ? '관리자' : '사용자'}"/>
+                                        <hr class="mt-2 mb-2">
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                    </form>
+
+                </div>
+            </div>
+            <!-- 급여 리스트 폼-->
+            <div class="col-lg-7">
+                <div class="card-body p-51">
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-brown">Pay List</h6>
+                        </div>
+                        <div class="card-body5">
+                            <form th:action="@{'/members/admin/detail/' + ${memberDetailDto.id}}" role="form" method="get" th:object="${memberPayList}">
+                                <div class="scrollBar2">
+                                    <table class="table table-bordered dataTable" id="dataTable" cellspacing="0" role="grid" aria-describedby="dataTable_info" style="width: 100%; text-align: right;">
+
+                                        <thead id="scroll-sticky">
+                                        <tr role="row">
+                                            <th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Id: activate to sort column ascending" style="width: 15%;" aria-sort="descending">
+                                                지급연월
+                                            </th>
+                                            <th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Name: activate to sort column ascending" style="width: 23%;">
+                                                지급총액
+                                            </th>
+                                            <th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Name: activate to sort column ascending" style="width: 23%;">
+                                                공제총액
+                                            </th>
+                                            <th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Name: activate to sort column ascending" style="width: 24%;">
+                                                차감지급액
+                                            </th>
+
+                                        </tr>
+                                        </thead>
+
+                                        <tbody>
+                                        <tr class="odd" th:each="bean, status: ${memberPayList}" onclick="handleRowClick(this)">
+                                            <td id="xxx" class="sorting_1" th:text="|${bean.regDate.getYear() % 100}년 ${#numbers.formatInteger(bean.regDate.getMonthValue(), '02')}월|"></td>
+                                            <td class="pp" th:text="${bean.plusMoney}"></td>
+                                            <td class="mm" th:text="${bean.minusMoney}"></td>
+                                            <td class="tt" th:text="${bean.TotalMoney}"></td>
+                                            <td id="payId" style="display: none;" th:text="${bean.id}"></td>
+
+                                            <td style="display: none;" th:text="${bean.salary}"></td>
+                                            <td style="display: none;" th:text="${bean.bonus}"></td>
+                                            <td style="display: none;" th:text="${bean.nightPay}"></td>
+                                            <td style="display: none;" th:text="${bean.foodPay}"></td>
+                                            <td style="display: none;" th:text="${bean.carPay}"></td>
+                                            <td style="display: none;" th:text="${bean.goInsurance}"></td>
+                                            <td style="display: none;" th:text="${bean.gunInsurance}"></td>
+                                            <td style="display: none;" th:text="${bean.sanInsurance}"></td>
+                                            <td style="display: none;" th:text="${bean.kukInsurance}"></td>
+                                            <td style="display: none;" th:text="${bean.incomeTax}"></td>
+                                            <td style="display: none;" th:text="${bean.localTax}"></td>
+                                            <td style="display: none;" th:text="${bean.member.id}"></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                            </form>
+                        </div>
                     </div>
-                </form>
+
+                    <!-- 급여 디테일 폼 -->
+                    <div id="myModal3" class="modal3">
+                        <div class="modal-content3">
+
+                            <div class="card o-hidden border-0 shadow-lg my-2">
+                                <div class="close-button" onclick="closeModal3()"><i class="fa-solid fa-xmark"></i></div>
+                                <div class="card-header py-3">
+                                    <h4 id="detailRegDate" class="m-0 font-weight-bold text-brown" style="text-align: center;"></h4>
+                                </div>
+                                <div class="card-body3">
+                                    <form action="" role="form" method="post" th:object="${memberDetailDto}" enctype="multipart/form-data">
+
+                                        <div class="row">
+
+                                            <div class="col-lg-6 d-none d-lg-block">
+                                                <div class="p-52" style="text-align:right;">
+                                                    <table class="table-bordered dataTable" cellspacing="0" role="grid"  style="text-align:center; width: 515px;">
+                                                        <tbody>
+                                                        <tr>
+                                                            <td class="text-brown font-weight-bold background-color-white" style="width:150px;">사번</td>
+                                                            <td style="text-align:center;"><label th:text="*{id}"></label></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="text-brown font-weight-bold background-color-white" style="width:150px;">이름</td>
+                                                            <td style="text-align:center;"><label th:text="*{name}"></label></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="text-brown font-weight-bold background-color-white" style="width:150px;">생년월일</td>
+                                                            <td style="text-align:center;"><label th:text="*{birth}"></label></td>
+                                                        </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-lg-6">
+                                                <div class="p-52" style="text-align:right;">
+                                                    <table class="table-bordered dataTable" cellspacing="0" role="grid"  style="text-align:center; width: 515px;">
+                                                        <tbody>
+                                                        <tr>
+                                                            <td class="text-brown font-weight-bold background-color-white" style="width:150px;">부서</td>
+                                                            <td style="text-align:center;"><label th:text="*{department}"></label></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="text-brown font-weight-bold background-color-white" style="width:150px;">직위</td>
+                                                            <td style="text-align:center;"><label th:text="*{position}"></label></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="text-brown font-weight-bold background-color-white" style="width:150px;">계좌번호</td>
+                                                            <td style="text-align:center;"><label th:text="*{bank}"></label></td>
+                                                        </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+
+
+                                    <div class="card-body p-0612-1">
+                                        <!-- Nested Row within Card Body -->
+                                        <div class="row">
+                                            <div class="col-lg-6 d-none d-lg-block">
+                                                <div class="p-52">
+                                                    <table class="table table-bordered dataTable" width="100%" cellspacing="0" role="grid" aria-describedby="dataTable_info" style="width: 100%;">
+                                                        <thead>
+                                                        <tr>
+                                                            <td class="text-brown font-weight-bold background-color-white" colspan="2" style="text-align: center;">
+                                                                지급 항목
+                                                            </td>
+                                                        </tr>
+                                                        </thead>
+
+                                                        <tbody>
+                                                        <tr>
+                                                            <td class="text-brown font-weight-bold background-color-white" style="vertical-align: middle; text-align:left; width:128px; height:39px;">기본급</td>
+                                                            <td style="text-align:right;"><span id="detailSalary"></span></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="text-brown font-weight-bold background-color-white" style="vertical-align: middle; text-align:left; height:39px;">상여금</td>
+                                                            <td style="text-align:right;"><span id="detailBonus"></span></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="text-brown font-weight-bold background-color-white" style="vertical-align: middle; text-align:left; height:39px;">야근수당</td>
+                                                            <td style="text-align:right;"><span id="detailNightPay"></span></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="text-brown font-weight-bold background-color-white" style="vertical-align: middle; text-align:left; height:39px;">식비</td>
+                                                            <td style="text-align:right;"><span id="detailFoodPay"></span></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="text-brown font-weight-bold background-color-white" style="vertical-align: middle; text-align:left; height:39px;">차량지원금</td>
+                                                            <td style="text-align:right;"><span id="detailCarPay"></span></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="font-weight-bold background-color-white" style="vertical-align: middle; text-align:left; height:39px;"></td>
+                                                            <td></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="font-weight-bold background-color-white" style="vertical-align: middle; text-align:left; height:39px;"></td>
+                                                            <td></td>
+                                                        </tr>
+                                                        <tr style="height:64px;">
+                                                            <td class="font-weight-bold background-color-white" style="vertical-align: middle; text-align:left; height:39px;">지급총액</td>
+                                                            <td class="font-weight-bold background-color-white" style="text-align:right;"><span id="detailPlusMoney"></span></td>
+                                                        </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+
+
+                                            <div class="col-lg-6" >
+                                                <div class="p-52">
+                                                    <table class="table table-bordered dataTable"  width="100%" cellspacing="0" role="grid" aria-describedby="dataTable_info" style="width: 100%;">
+                                                        <thead>
+                                                        <tr>
+                                                            <td class="text-brown font-weight-bold background-color-white" colspan="2" style="text-align: center;">
+                                                                공제 항목
+                                                            </td>
+                                                        </tr>
+                                                        </thead>
+
+                                                        <tbody>
+                                                        <tr>
+                                                            <td class="text-brown font-weight-bold background-color-white" style="vertical-align: middle; text-align:left; width:128px; height:39px;">고용보험</td>
+                                                            <td style="text-align:right;"><span id="detailGoInsurance"></span></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="text-brown font-weight-bold background-color-white" style="vertical-align: middle; text-align:left; height:39px;">건강보험</td>
+                                                            <td style="text-align:right;"><span id="detailGunInsurance"></span></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="text-brown font-weight-bold background-color-white" style="vertical-align: middle; text-align:left; height:39px;">산재보험</td>
+                                                            <td style="text-align:right;"><span id="detailSanInsurance"></span></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="text-brown font-weight-bold background-color-white" style="vertical-align: middle; text-align:left; height:39px;">국민연금</td>
+                                                            <td style="text-align:right;"><span id="detailKukInsurance"></span></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="text-brown font-weight-bold background-color-white" style="vertical-align: middle; text-align:left; height:39px;">소득세</td>
+                                                            <td style="text-align:right;"><span id="detailIncomeTax"></span></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="text-brown font-weight-bold background-color-white" style="vertical-align: middle; text-align:left; height:39px;">지방소득세</td>
+                                                            <td style="text-align:right;"><span id="detailLocalTax"></span></td>
+                                                        </tr>
+                                                        <tr style="height:64px;">
+                                                            <td class="font-weight-bold background-color-white" style="vertical-align: middle; text-align:left; height:39px;">공제총액</td>
+                                                            <td class="font-weight-bold background-color-white" style="text-align:right;"><span id="detailMinusMoney"></span></td>
+                                                        </tr>
+                                                        <tr style="height:64px;">
+                                                            <td class="font-weight-bold background-color-white" style="vertical-align: middle; text-align:left; height:39px;">차감지급액</td>
+                                                            <td class="font-weight-bold background-color-white" style="text-align:right;"><span id="detailTotalMoney"></span></td>
+                                                        </tr>
+                                                        </tbody>
+                                                    </table>
+                                                    <!--            보안 관련 인증 토큰을 히든 파라미터로 보내줍니다-->
+                                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
             </div>
         </div>
     </div>
