@@ -1,24 +1,11 @@
-import PrTable from "./content/ProductionTable";
-import PrChart from "./content/ProductionChart";
-import Checkbox from "./content/ChartCheck";
-import DateSetting from "./content/ChartDate";
-
 import {useState} from 'react';
 import {useEffect} from 'react';
 import axios from 'axios';
 
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-
 import * as React from 'react';
-import Card from '@mui/material/Card';
-import BarChartIcon from '@mui/icons-material/BarChart';
-import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
-import CardHeader from '@mui/material/CardHeader';
-import Button from '@mui/material/Button';
+import Tabs from './tabs/HomeTabs';
 import Typography from '@mui/material/Typography';
+import Grid from '@mui/material/Grid';
 
 function App() {
 
@@ -61,44 +48,56 @@ function App() {
 
   return (
     <>
-        <div style={{float: 'right'}}>
-            <div className="card shadow">
-                <div className="left" style={{backgroundColor:'#73685d', padding:'10px'}}>
-                    <div className="left-left">
-                        <div className="img-container">
-                            <img src={weatherImage}/>
+        <div style={{ width:'100%',paddingRight:'10px'}} >
+            <Grid container spacing={1}>
+                <Grid item xs={12} style={{textAlign: 'center' , paddingLeft:"70px"}}>
+                    <div className="container">
+                        <div className="centered">
+                            <img alt="logo" src="sidebarImg/logo.png" style={{ width: '100px', height: '100px' }} />
+                        </div>
+                        <div className="card shadow right">
+                              <div className="left" style={{backgroundColor:'#73685d', padding:'10px'}}>
+                                  <div className="left-left">
+                                      <div className="img-container">
+                                          <img src={weatherImage}/>
+                                      </div>
+                                  </div>
+                                  <div className="text-column" style={{color:'white'}}>
+                                      <p>{receivedWeather} °C</p>
+                                      <p>{weatherCity}</p>
+                                  </div>
+                              </div>
+                              <div className="right">
+                                  <div className="row">
+                                      <div className="section" >
+                                          <div className="content"><i className="wi wi-strong-wind wi-fw"></i></div>
+                                      </div>
+                                      <div className="section">
+                                          <div className="content"><i className="wi wi-humidity wi-fw"></i></div>
+                                      </div>
+                                      <div className="section">
+                                          <div className="content"><i className="wi wi-cloud wi-fw"></i></div>
+                                      </div>
+                                  </div>
+                                  <div className="row">
+                                      <div className="section">
+                                          <div className="content">{wind} m/s</div>
+                                      </div>
+                                      <div className="section">
+                                          <div className="content">{humidity} %</div>
+                                      </div>
+                                      <div className="section">
+                                          <div className="content">{cloud} %</div>
+                                      </div>
+                                  </div>
+                              </div>
                         </div>
                     </div>
-                    <div className="text-column" style={{color:'white'}}>
-                        <p>{receivedWeather} °C</p>
-                        <p>{weatherCity}</p>
-                    </div>
-                </div>
-                <div className="right">
-                    <div className="row">
-                        <div className="section" >
-                            <div className="content"><i className="wi wi-strong-wind wi-fw"></i></div>
-                        </div>
-                        <div className="section">
-                            <div className="content"><i className="wi wi-humidity wi-fw"></i></div>
-                        </div>
-                        <div className="section">
-                            <div className="content"><i className="wi wi-cloud wi-fw"></i></div>
-                        </div>
-                    </div>
-                    <div className="row">
-                        <div className="section">
-                            <div className="content">{wind} m/s</div>
-                        </div>
-                        <div className="section">
-                            <div className="content">{humidity} %</div>
-                        </div>
-                        <div className="section">
-                            <div className="content">{cloud} %</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+                </Grid>
+            </Grid>
+        </div>
+        <div style={{ width:'100%', height: '100vh',paddingRight:'10px'}}>
+            <Tabs/>
         </div>
     </>
   );

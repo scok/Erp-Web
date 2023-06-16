@@ -4,8 +4,11 @@ import com.Erp.constant.DivisionStatus;
 import com.Erp.dto.logistics.ProductFormDto;
 import com.Erp.dto.logistics.ProductionFormDto;
 import com.Erp.dto.logistics.SectionFormDto;
+import com.Erp.entity.Financial;
 import com.Erp.entity.Member;
 import com.Erp.entity.logistics.*;
+import com.Erp.repository.FinancialRepository;
+import com.Erp.service.FinancialService;
 import com.Erp.service.MemberService;
 import com.Erp.service.logistics.*;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +39,8 @@ public class ProductionController {
     private final LogisticsService logisticsService;
     private final InventorService inventorService;
 
+    private final FinancialRepository financialRepository;
+    private final FinancialService financialService;
     private final ProductionService productionService;
 
     //페이지 접속
