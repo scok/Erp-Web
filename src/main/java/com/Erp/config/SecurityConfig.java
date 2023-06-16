@@ -12,6 +12,11 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.reactive.CorsConfigurationSource;
+import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
 
 @Configuration//이 클래스를 설정 파일로 사용할게요.
 @EnableWebSecurity//스프링 시큐리티를 사용할게요.
@@ -19,8 +24,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        //cors 보안기능 중 csrf 를 해제한 코드 입니다.
+        http.cors().and().csrf().ignoringAntMatchers("/react/**");
+
         http.authorizeRequests()
-                .antMatchers("/members/login","/members/login/error").permitAll()    // 모든 사용자가 접속할 수 있는 영역.
+                .antMatchers("/members/login","/members/login/error","/react/**","/userInfo").permitAll()    // 모든 사용자가 접속할 수 있는 영역.
                 .mvcMatchers("/members/admin/**").hasRole("ADMIN") //권한이 부여된 사용자 외 접근 불가능하게 하는 설정.
                 .anyRequest().authenticated()//그 외엔 모든 사용자가 인증 절차를 가져야 함을 설정
                 .and()
@@ -58,4 +66,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
+
 }

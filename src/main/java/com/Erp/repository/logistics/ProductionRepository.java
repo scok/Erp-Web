@@ -16,17 +16,10 @@ import java.util.List;
 @Repository
 public interface ProductionRepository extends JpaRepository<Production, Long> {
 
-    @Query("select NEW com.Erp.dto.ProductionChartDto(p.productionLine,p.product.prName, sum(p.count))" +
+    @Query("select NEW com.Erp.dto.ProductionChartDto(p.productionLine,p.product.prCode,p.product.prName, sum(p.count))" +
             "from Production p " +
             "where p.regDate Between :startDateTime and :endDateTime "+
-            "group by p.productionLine, p.product.prName " +
+            "group by p.productionLine, p.product.prCode " +
             "order by p.productionLine")
     List<ProductionChartDto> productionsChartData(@Param("startDateTime")LocalDateTime startDateTime, @Param("endDateTime") LocalDateTime endDateTime);
-
-    @Query("select NEW com.Erp.dto.ProductionChartDto(p.productionLine,p.product.prName, sum(p.count))" +
-            "from Production p " +
-            "where p.regDate Between :startDate and :endDate " +
-            "group by p.productionLine, p.product.prName " +
-            "order by p.productionLine")
-    List<ProductionChartDto> productionsChartDataFilter(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
 }

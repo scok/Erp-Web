@@ -26,6 +26,5 @@ public class MaterialDeliveryAddDto {
     private ProductionLine productionLine; // 자재를 불출받을 공장라인
 
     @JsonProperty("maDeliveryCount")
-    @Min(value = 0,message = "0이상 입력해주세요.")
     private int maDeliveryCount; // 불출수량
 }

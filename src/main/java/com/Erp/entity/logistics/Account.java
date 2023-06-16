@@ -4,6 +4,7 @@ import com.Erp.constant.AccountCategory;
 import com.Erp.dto.logistics.AccountAddDto;
 import com.Erp.entity.logistics.DistributionEntity;
 import com.Erp.entity.logistics.OrderSheet;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.Setter;
@@ -53,7 +54,7 @@ public class Account extends DistributionEntity {
     @Enumerated(EnumType.STRING)
     private AccountCategory acCategory; //거래 구분
 
-    @JsonManagedReference
+    @JsonIgnoreProperties({"hibernateLazyInitializer"})
     @OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     @JoinColumn(name = "acCode")
     private OrderSheet orderSheet;

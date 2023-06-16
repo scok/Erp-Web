@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -30,4 +31,10 @@ public interface OrderSheetRepository extends JpaRepository<OrderSheet, String> 
 
     @Query(" select o from OrderSheet o where o.pageYandN = 'Y' and o.acCategory = :acCategory and o.divisionStatus = :filter")
     List<OrderSheet> findBuyOrderSheetFilter(@Param("acCategory") AccountCategory acCategory, @Param("filter") DivisionStatus filter);
+
+    @Query(" select o from OrderSheet o where o.pageYandN = 'Y' ")
+    List<OrderSheet> findByAll();
+
+    @Query(" select o from OrderSheet o where o.pageYandN = 'Y' and o.osReceiptDate Between :startDateTime and :endDateTime ")
+    List<OrderSheet> orderSheetOsRecFilter(@Param("startDateTime") LocalDateTime startDateTime,@Param("endDateTime") LocalDateTime endDateTime);
 }

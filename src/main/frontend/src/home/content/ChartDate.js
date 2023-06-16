@@ -12,11 +12,6 @@ import SendIcon from '@mui/icons-material/Send';
 import Button from '@mui/material/Button';
 import axios from 'axios';
 
-import Alert from '@mui/material/Alert';
-import CheckIcon from '@mui/icons-material/Check';
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-import Stack from '@mui/material/Stack';
-
 export default function CommonlyUsedComponents(props) {
 
     const [startDate, setStartDate] = useState(null);
@@ -37,23 +32,12 @@ export default function CommonlyUsedComponents(props) {
               },
         })
         .then(response => {
-        console.log('POST success:', response.data);
+        console.log('POST success');
         props.filterData(response.data);    //콜백 함수에 값을 던져 줍니다.
-        <Stack sx={{ width: '100%' }} spacing={1}>
-                        <Alert icon={<CheckIcon fontSize="inherit" />} severity="success">
-                        This is a success alert — check it out!
-                        </Alert>
-                    </Stack>
         })
         .catch(error => {
         console.error('POST error:', error.response.data);
-            <Stack sx={{ width: '100%' }} spacing={1}>
-                <Alert icon={<CheckIcon fontSize="inherit" />} severity="success">
-                This is a success alert — check it out!
-                </Alert>
-            </Stack>
         });
-
     };
 
   return (

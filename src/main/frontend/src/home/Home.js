@@ -59,53 +59,8 @@ function App() {
         });
     }, []);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try{
-                /*State 초기화*/
-                setReceivedData(null);
-                setError(null);
-                setLoading(true);
-
-                const url = '/react/productionForm';
-
-                const response = await axios.get(url);
-
-                setReceivedData(response.data);
-
-                console.log('response.data');
-                console.log(response.data);
-            }catch(err){
-                setError(err);
-
-            }/*end try...catch*/
-
-            setLoading(false);
-
-        };/*end fetchData*/
-
-        fetchData();/*called fetchData function*/
-
-        /*command가 변경 되면, 화면을 다시 그려 주도록 합니다*/
-    },[]);/*end useEffect*/
-
-    if(loading == true){
-        return <div>데이터 로딩 중입니다.</div>;
-    }
-    if(error == true){
-        return <div>오류가 발생했습니다.</div>;
-    }
-    if(!receivedData){
-        return null;
-    }
-
-    //버튼의 콜백 함수. 기존 데이터를 업데이트 해줍니다.
-    const onClickButton = (data) => {
-        setReceivedData(data);
-    };
-
   return (
-    <div>
+    <>
         <div style={{float: 'right'}}>
             <div className="card shadow">
                 <div className="left" style={{backgroundColor:'#73685d', padding:'10px'}}>
@@ -145,30 +100,7 @@ function App() {
                 </div>
             </div>
         </div>
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop:"20px"}}>
-
-            <Card sx={{ width: '85%' , height: '100%' }}>
-             <CardHeader
-                    avatar={
-                      <BarChartIcon  sx={{fontSize: 50}}/>
-                    }
-                    title="월간 생산 현황"
-                    titleTypographyProps={{
-                        fontWeight: 1000,
-                        sx: {
-                          fontSize: "h4.fontSize",
-                          width:"250px"
-                        },
-                    }}
-                  />
-            <CardContent>
-                <DateSetting filterData={onClickButton} />
-                <PrChart content={receivedData}/>
-                <PrTable content={receivedData}/>
-            </CardContent>
-            </Card>
-        </div>
-    </div>
+    </>
   );
 }
 export default App;

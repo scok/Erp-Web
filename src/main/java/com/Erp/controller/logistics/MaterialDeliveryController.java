@@ -1,12 +1,17 @@
 package com.Erp.controller.logistics;
 
+import com.Erp.constant.DivisionStatus;
 import com.Erp.dto.logistics.InventoryDeliveryFormDto;
 import com.Erp.dto.logistics.MaterialDeliveryAddDto;
 import com.Erp.dto.logistics.MaterialDeliveryFormDto;
+import com.Erp.entity.Member;
 import com.Erp.entity.logistics.Inventory;
 import com.Erp.entity.logistics.MaterialDelivery;
 import com.Erp.entity.logistics.Section;
+import com.Erp.entity.logistics.WarehousingInAndOut;
+import com.Erp.service.MemberService;
 import com.Erp.service.logistics.InventorService;
+import com.Erp.service.logistics.LogisticsService;
 import com.Erp.service.logistics.MaterialDeliveryService;
 import com.Erp.service.logistics.SectionService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -20,6 +25,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.security.Principal;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,9 +36,11 @@ import java.util.Map;
 @RequestMapping(value = "/materialDelivery")
 public class MaterialDeliveryController {
 
+    private final MemberService memberService;
     private final MaterialDeliveryService maDeliveryService;
     private final InventorService inventorService;
     private final SectionService sectionService;
+    private final LogisticsService logisticsService;
     
     // 리스트 불러오기
     @GetMapping(value = "/list")
@@ -57,19 +66,35 @@ public class MaterialDeliveryController {
     // 등록하기
     @PostMapping(value = "/addMaterialDelivery")
     @Transactional
-    public @ResponseBody ResponseEntity addMaDelivery(@RequestBody @Valid MaterialDeliveryAddDto maDeliveryAddDto, BindingResult bindingResult) throws JsonProcessingException {
+    public @ResponseBody ResponseEntity addMaDelivery(@RequestBody MaterialDeliveryAddDto maDeliveryAddDto, BindingResult bindingResult, Principal principal) throws JsonProcessingException {
 
         Section section = sectionService.findBySecCode(maDeliveryAddDto.getSecCode());
         Inventory inventory = inventorService.findByInId(maDeliveryAddDto.getInId());
+        Member member = memberService.getMemberName(principal.getName());
 
-        int resultCount = inventory.getInQuantity() - maDeliveryAddDto.getMaDeliveryCount();
-        inventory.setInQuantity(resultCount);
+        if(inventory.getInQuantity() >= maDeliveryAddDto.getMaDeliveryCount()) {
+            int resultCount = inventory.getInQuantity() - maDeliveryAddDto.getMaDeliveryCount();
+            inventory.setInQuantity(resultCount);
 
-        section.setSecTotalCount(section.getSecTotalCount() - maDeliveryAddDto.getMaDeliveryCount());
+            section.setSecTotalCount(section.getSecTotalCount() - maDeliveryAddDto.getMaDeliveryCount());
 
-        MaterialDelivery maDelivery = MaterialDelivery.createMaDelivery(maDeliveryAddDto,section,inventory);
-        maDeliveryService.saveMaDelivery(maDelivery);
+            MaterialDelivery maDelivery = MaterialDelivery.createMaDelivery(maDeliveryAddDto, section, inventory, member.getName());
+            MaterialDelivery  materialDelivery = maDeliveryService.saveMaDelivery(maDelivery);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+            WarehousingInAndOut warehousingInAndOut = new WarehousingInAndOut();
+
+            warehousingInAndOut.setInAndOutDate(LocalDateTime.now());
+            warehousingInAndOut.setDivisionStatus(DivisionStatus.출고);
+            warehousingInAndOut.setPageYandN("Y");
+            warehousingInAndOut.setSection(section);
+            warehousingInAndOut.setStackAreaCategory(maDeliveryAddDto.getStackAreaCategory());
+            warehousingInAndOut.setMaterialDelivery(materialDelivery);
+
+            logisticsService.WarehousingSave(warehousingInAndOut);
+
+            return new ResponseEntity<>(HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>("재고를 확인해주세요.",HttpStatus.BAD_REQUEST);
+        }
     }
 }

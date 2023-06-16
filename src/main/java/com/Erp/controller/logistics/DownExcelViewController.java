@@ -1,11 +1,11 @@
 package com.Erp.controller.logistics;
 
-import com.Erp.entity.logistics.Account;
-import com.Erp.entity.logistics.Estimate;
-import com.Erp.entity.logistics.Product;
-import com.Erp.service.logistics.AccountService;
-import com.Erp.service.logistics.EstimateService;
-import com.Erp.service.logistics.ProductService;
+import com.Erp.dto.logistics.InventoryFormDto;
+import com.Erp.dto.logistics.MaterialDeliveryFormDto;
+import com.Erp.dto.logistics.ProductionFormDto;
+import com.Erp.dto.logistics.WarehousingInAndOutFormDto;
+import com.Erp.entity.logistics.*;
+import com.Erp.service.logistics.*;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
@@ -25,7 +25,9 @@ public class DownExcelViewController{
 
     private final AccountService accountService;
     private final ProductService productService;
-    private final EstimateService estimateService;
+    private final MaterialDeliveryService materialDeliveryService;
+    private final ProductionService productionService;
+    private final LogisticsService logisticsService;
 
     @PostMapping(value = "/excel/download")
     public void toExcel(@RequestBody Map<String,Object> data, HttpServletResponse res) throws Exception {
@@ -70,6 +72,14 @@ public class DownExcelViewController{
             AccountExcel(values,sheet,headerXssfCellStyle,bodyXssfCellStyle);
         }else if(mode.equals("product")){
             ProductExcel(values,sheet,headerXssfCellStyle,bodyXssfCellStyle);
+        }else if(mode.equals("materialDelivery")){
+            MaterialDeliveryExcel(values,sheet,headerXssfCellStyle,bodyXssfCellStyle);
+        }else if(mode.equals("production")){
+            ProductionExcel(values,sheet,headerXssfCellStyle,bodyXssfCellStyle);
+        }else if(mode.equals("warehousing")){
+            WarehousingExcel(values,sheet,headerXssfCellStyle,bodyXssfCellStyle);
+        }else if(mode.equals("inventory")){
+            InventoryExcel(values,sheet,headerXssfCellStyle,bodyXssfCellStyle);
         }
 
         /* download*/
@@ -119,7 +129,6 @@ public class DownExcelViewController{
                 field.setAccessible(true); // 접근 가능하도록 설정
                 Object value = field.get(items); // 필드 값 가져오기
                 String stringValue = String.valueOf(value); // String으로 변환
-                System.out.println(field.getName() + ": " + stringValue);
 
                 bodyCell = bodyRow.createCell(i);
                 bodyCell.setCellValue(stringValue); // 데이터 추가
@@ -138,7 +147,6 @@ public class DownExcelViewController{
 
         String filter = values.substring(1,values.length()-1);
         for (String keyWord  : filter.split(",")){
-            System.out.println(keyWord.trim());
             productList.add(productService.findByCode(keyWord.trim()));
         }
 
@@ -169,12 +177,208 @@ public class DownExcelViewController{
                 field.setAccessible(true); // 접근 가능하도록 설정
                 Object value = field.get(items); // 필드 값 가져오기
                 String stringValue = String.valueOf(value); // String으로 변환
-                System.out.println(field.getName() + ": " + stringValue);
 
                 bodyCell = bodyRow.createCell(i);
                 bodyCell.setCellValue(stringValue); // 데이터 추가
                 bodyCell.setCellStyle(bodyXssfCellStyle); // 스타일 추가
                 if(i == 5){
+                    break;
+                }
+                i++;
+            }
+        }
+    }
+
+    public void MaterialDeliveryExcel(String values,Sheet sheet,XSSFCellStyle headerXssfCellStyle,XSSFCellStyle bodyXssfCellStyle) throws IllegalAccessException {
+        List<MaterialDeliveryFormDto> materialDeliveries = new ArrayList<MaterialDeliveryFormDto>();
+
+        String filter = values.substring(1,values.length()-1);
+        for (String keyWord  : filter.split(",")){
+
+            MaterialDeliveryFormDto materialDeliveryFormDto = MaterialDeliveryFormDto.of(materialDeliveryService.findById(keyWord.trim()));
+
+            materialDeliveries.add(materialDeliveryFormDto);
+        }
+
+        String headerNames[] = new String[]{"자재 불출 ID","불출 일자", "자재 명","불출 수량","창고","구역", "불출 라인","등록인"};
+
+        int rowCount = 0; // 데이터가 저장될 행
+
+        Row headerRow = null;
+        Cell headerCell = null;
+
+        headerRow = sheet.createRow(rowCount++);
+        for(int i=0; i<headerNames.length; i++) {
+            headerCell = headerRow.createCell(i);
+            headerCell.setCellValue(headerNames[i]); // 데이터 추가
+            headerCell.setCellStyle(headerXssfCellStyle); // 스타일 추가
+        }
+
+        Row bodyRow = null;
+        Cell bodyCell = null;
+
+        for(MaterialDeliveryFormDto items : materialDeliveries) {
+            bodyRow = sheet.createRow(rowCount++);
+            int i = 0;
+
+            // 객체의 필드 값을 String으로 분리
+            Field[] fields = items.getClass().getDeclaredFields();
+            for (Field field : fields) {
+                field.setAccessible(true); // 접근 가능하도록 설정
+                Object value = field.get(items); // 필드 값 가져오기
+                String stringValue = String.valueOf(value); // String으로 변환
+
+                bodyCell = bodyRow.createCell(i);
+                bodyCell.setCellValue(stringValue); // 데이터 추가
+                bodyCell.setCellStyle(bodyXssfCellStyle); // 스타일 추가
+
+                i++;
+            }
+        }
+    }
+
+    public void ProductionExcel(String values,Sheet sheet,XSSFCellStyle headerXssfCellStyle,XSSFCellStyle bodyXssfCellStyle) throws IllegalAccessException {
+        List<ProductionFormDto> productionFormDtos = new ArrayList<ProductionFormDto>();
+
+        String filter = values.substring(1,values.length()-1);
+        for (String keyWord  : filter.split(",")){
+
+            ProductionFormDto productionFormDto = ProductionFormDto.of(productionService.findById(keyWord.trim()));
+
+            productionFormDtos.add(productionFormDto);
+        }
+
+        String headerNames[] = new String[]{"생산 실적 ID","조립 라인", "등록자 명","수량","제품 명","창고 명", "구역 명","등록 일자"};
+
+        int rowCount = 0; // 데이터가 저장될 행
+
+        Row headerRow = null;
+        Cell headerCell = null;
+
+        headerRow = sheet.createRow(rowCount++);
+        for(int i=0; i<headerNames.length; i++) {
+            headerCell = headerRow.createCell(i);
+            headerCell.setCellValue(headerNames[i]); // 데이터 추가
+            headerCell.setCellStyle(headerXssfCellStyle); // 스타일 추가
+        }
+
+        Row bodyRow = null;
+        Cell bodyCell = null;
+
+        for(ProductionFormDto items : productionFormDtos) {
+            bodyRow = sheet.createRow(rowCount++);
+            int i = 0;
+
+            // 객체의 필드 값을 String으로 분리
+            Field[] fields = items.getClass().getDeclaredFields();
+            for (Field field : fields) {
+                field.setAccessible(true); // 접근 가능하도록 설정
+                Object value = field.get(items); // 필드 값 가져오기
+                String stringValue = String.valueOf(value); // String으로 변환
+
+                bodyCell = bodyRow.createCell(i);
+                bodyCell.setCellValue(stringValue); // 데이터 추가
+                bodyCell.setCellStyle(bodyXssfCellStyle); // 스타일 추가
+                if(i == 7){
+                    break;
+                }
+                i++;
+            }
+        }
+    }
+    public void WarehousingExcel(String values,Sheet sheet,XSSFCellStyle headerXssfCellStyle,XSSFCellStyle bodyXssfCellStyle) throws IllegalAccessException {
+        List<WarehousingInAndOutFormDto> warehousingInAndOutFormDtos = new ArrayList<WarehousingInAndOutFormDto>();
+
+        String filter = values.substring(1,values.length()-1);
+        for (String keyWord  : filter.split(",")){
+            WarehousingInAndOutFormDto warehousingInAndOutFormDto = WarehousingInAndOutFormDto.of(logisticsService.widFindById(keyWord.trim()));
+            warehousingInAndOutFormDtos.add(warehousingInAndOutFormDto);
+        }
+
+        /* header data */
+        String headerNames[] = new String[]{"입고,출고 코드", "거래처 명", "창고 명","구역","상품 명","수량","입고, 출고 일자","상태"};
+
+        int rowCount = 0; // 데이터가 저장될 행
+
+        Row headerRow = null;
+        Cell headerCell = null;
+
+        headerRow = sheet.createRow(rowCount++);
+        for(int i=0; i<headerNames.length; i++) {
+            headerCell = headerRow.createCell(i);
+            headerCell.setCellValue(headerNames[i]); // 데이터 추가
+            headerCell.setCellStyle(headerXssfCellStyle); // 스타일 추가
+        }
+
+        Row bodyRow = null;
+        Cell bodyCell = null;
+
+        for(WarehousingInAndOutFormDto items : warehousingInAndOutFormDtos) {
+            bodyRow = sheet.createRow(rowCount++);
+            int i = 0;
+
+            // 객체의 필드 값을 String으로 분리
+            Field[] fields = items.getClass().getDeclaredFields();
+            for (Field field : fields) {
+                field.setAccessible(true); // 접근 가능하도록 설정
+                Object value = field.get(items); // 필드 값 가져오기
+                String stringValue = String.valueOf(value); // String으로 변환
+
+                bodyCell = bodyRow.createCell(i);
+                bodyCell.setCellValue(stringValue); // 데이터 추가
+                bodyCell.setCellStyle(bodyXssfCellStyle); // 스타일 추가
+
+                if(i == 7){
+                    break;
+                }
+                i++;
+            }
+        }
+    }
+
+    public void InventoryExcel(String values,Sheet sheet,XSSFCellStyle headerXssfCellStyle,XSSFCellStyle bodyXssfCellStyle) throws IllegalAccessException {
+        List<InventoryFormDto> inventoryFormDtos = new ArrayList<InventoryFormDto>();
+
+        String filter = values.substring(1,values.length()-1);
+        for (String keyWord  : filter.split(",")){
+            InventoryFormDto inventoryFormDto = InventoryFormDto.of(logisticsService.inFindById(keyWord.trim()));
+            inventoryFormDtos.add(inventoryFormDto);
+        }
+
+        /* header data */
+        String headerNames[] = new String[]{"재고 코드", "상품 코드", "상품 명","규격","총수량","거래처 명","창고 명","창고 분류","구역"};
+
+        int rowCount = 0; // 데이터가 저장될 행
+
+        Row headerRow = null;
+        Cell headerCell = null;
+
+        headerRow = sheet.createRow(rowCount++);
+        for(int i=0; i<headerNames.length; i++) {
+            headerCell = headerRow.createCell(i);
+            headerCell.setCellValue(headerNames[i]); // 데이터 추가
+            headerCell.setCellStyle(headerXssfCellStyle); // 스타일 추가
+        }
+
+        Row bodyRow = null;
+        Cell bodyCell = null;
+
+        for(InventoryFormDto items : inventoryFormDtos) {
+            bodyRow = sheet.createRow(rowCount++);
+            int i = 0;
+
+            // 객체의 필드 값을 String으로 분리
+            Field[] fields = items.getClass().getDeclaredFields();
+            for (Field field : fields) {
+                field.setAccessible(true); // 접근 가능하도록 설정
+                Object value = field.get(items); // 필드 값 가져오기
+                String stringValue = String.valueOf(value); // String으로 변환
+
+                bodyCell = bodyRow.createCell(i);
+                bodyCell.setCellValue(stringValue); // 데이터 추가
+                bodyCell.setCellStyle(bodyXssfCellStyle); // 스타일 추가
+
+                if(i == 8){
                     break;
                 }
                 i++;

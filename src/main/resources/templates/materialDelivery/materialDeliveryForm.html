@@ -28,21 +28,26 @@
 
 <div class="content" layout:fragment="content" id="content">
     <div id="dataTables">
-        <h2 id="title">자재 불출</h2>
+        <h1 id="title">자재 불출</h1>
 
         <button type="button" id="btn-modal">
             <ion-icon name="add-outline"></ion-icon>
         </button>
 
+        <button type="button" id="exportCSV" onclick="excel()">
+            <ion-icon name="cloud-download-outline"></ion-icon>
+        </button>
+
         <table id="myTable" style="width:100%;" class="display">
             <thead>
                 <tr>
+                    <th>불출 코드</th>
                     <th>불출 일자</th>
                     <th>불출 상품</th>
                     <th>불출 수량</th>
-                    <th>출발 창고</th>
-                    <th>출발 구역</th>
-                    <th>도착 공장</th>
+                    <th>창고</th>
+                    <th>구역</th>
+                    <th>불출 라인</th>
                     <th>등록인</th>
                 </tr>
             </thead>
@@ -57,7 +62,7 @@
                     <div id="container">
                         <div id="div-area">
                             <p>불출 상품<br>
-                                <select class="form-select" id="inId" name="inId" onchange="getSectionInfo(this.value)">
+                                <select class="custom-select" id="inId" name="inId" onchange="getSectionInfo(this.value)">
                                     <option value="">==상품 선택==</option>
                                     <option th:each="inventoryInFo : ${inventoryInFos}"
                                             th:value="${inventoryInFo.inId}"
@@ -67,21 +72,21 @@
                             </p>
 
                             <p>창고<br/>
-                                <select class="form-select" id="secCode" name="secCode" readonly>
+                                <select class="custom-select" id="secCode" name="secCode" readonly>
                                     <option value="">==창고 선택==</option>
                                 </select>
                             </p>
 
                             <p>구역<br/>
-                                <select class="form-select" id="stackAreaCategory" name="stackAreaCategory">
+                                <select class="custom-select" id="stackAreaCategory" name="stackAreaCategory">
                                     <option value="">==구역 선택==</option>
                                     </option>
                                 </select>
                             </p>
 
-                            <p>도착 공장<br/>
-                                <select class="form-select" id="productionLine" name="productionLine">
-                                    <option value="">==공장 선택==</option>
+                            <p>작업 라인 선택<br/>
+                                <select class="custom-select"id="productionLine" name="productionLine">
+                                    <option value="">==작업 라인 선택==</option>
                                     <option th:each="productionLineVal : ${T(com.Erp.constant.ProductionLine).values()}"
                                             th:value="${productionLineVal.name()}"
                                             th:text="${productionLineVal.name()}">
@@ -89,7 +94,7 @@
                                 </select>
                             </p>
                             <p>불출 수량<br>
-                                <input name="maDeliveryCount" id="maDeliveryCount" type="text">
+                                <input class="customInput" name="maDeliveryCount" id="maDeliveryCount" type="text">
                             </p>
 
                             <button id="saveBtn"  type="button" onclick="addMaDelivery()">

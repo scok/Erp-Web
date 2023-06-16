@@ -4,11 +4,8 @@ import com.Erp.constant.DivisionStatus;
 import com.Erp.dto.logistics.ProductFormDto;
 import com.Erp.dto.logistics.ProductionFormDto;
 import com.Erp.dto.logistics.SectionFormDto;
-import com.Erp.entity.Financial;
 import com.Erp.entity.Member;
 import com.Erp.entity.logistics.*;
-import com.Erp.repository.FinancialRepository;
-import com.Erp.service.FinancialService;
 import com.Erp.service.MemberService;
 import com.Erp.service.logistics.*;
 import lombok.RequiredArgsConstructor;
@@ -41,9 +38,6 @@ public class ProductionController {
 
     private final ProductionService productionService;
 
-    private final FinancialRepository financialRepository;
-    private final FinancialService financialService;
-
     //페이지 접속
     @GetMapping(value = "/list")
     public String goProductionList(Model model){
@@ -71,6 +65,8 @@ public class ProductionController {
     @Transactional
     public @ResponseBody ResponseEntity addProduction(@RequestBody @Valid ProductionFormDto dto, BindingResult error, Principal principal) {
         String errorMessage = "";
+
+        System.out.println(dto.toString());
 
         StringBuilder erromessages = new StringBuilder();
         if (error.hasErrors()) {
@@ -125,12 +121,13 @@ public class ProductionController {
             warehousingInAndOut = logisticsService.WarehousingSave(warehousingInAndOut);
 
             if (String.valueOf(warehousingInAndOut.getDivisionStatus()).equals("입고")) {
-                Inventory inventory = new Inventory();
-                inventory = inventorService.inventorService(section.getSecCode(), dto.getSACategory(), dto.getPrCode());
+                Inventory inventory = inventorService.inventorService(section.getSecCode(), dto.getSACategory(), dto.getPrCode());
 
                 if (inventory != null) {
                     inventorService.updateInQuantity(inventory, dto.getCount());
                 } else {
+                    //객체가 null 값이면 저장공간을 만들수 있도록 객체 생성을 해줘야 합니다.
+                    inventory = new Inventory();
                     inventory.setStackAreaCategory(dto.getSACategory());
                     inventory.setInQuantity(dto.getCount());
                     inventory.setInStandard(product.getPrStandard());

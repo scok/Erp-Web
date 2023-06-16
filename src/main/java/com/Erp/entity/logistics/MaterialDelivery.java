@@ -43,7 +43,7 @@ public class MaterialDelivery extends DistributionEntity{
     private StackAreaCategory stackAreaCategory; // 구역정보 불출받을 공장라인
 
 
-    public static MaterialDelivery createMaDelivery(MaterialDeliveryAddDto maDeliveryAddDto, Section section, Inventory inventory){
+    public static MaterialDelivery createMaDelivery(MaterialDeliveryAddDto maDeliveryAddDto, Section section, Inventory inventory,String memberName){
         MaterialDelivery materialDelivery = new MaterialDelivery();
 
         materialDelivery.setMaDeliveryDate(LocalDateTime.now());
@@ -53,6 +53,7 @@ public class MaterialDelivery extends DistributionEntity{
         materialDelivery.setMaDeliveryCount(maDeliveryAddDto.getMaDeliveryCount());
         materialDelivery.setProduct(inventory.getProduct());
         materialDelivery.setPageYandN("Y");
+        materialDelivery.setCreateName(memberName);
 
         return materialDelivery;
     }

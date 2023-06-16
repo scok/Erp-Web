@@ -22,6 +22,9 @@ public interface InventoryRepository extends JpaRepository<Inventory, Long> {
     @Query("select i from Inventory i where i.pageYandN = 'Y' And i.section.secCode = :secCode")
     List<Inventory> findInventorySecCode(@Param("secCode") String secCode);
 
-    @Query("SELECT i FROM Inventory i WHERE i.product.prDivCategory = '자재'")
-    List<Inventory> getinventoryInFo();
+    @Query("SELECT i FROM Inventory i WHERE i.product.prDivCategory = '자재' and i.inQuantity > 0 ")
+    List<Inventory> getMaterialInventory();
+
+    @Query("SELECT i FROM Inventory i WHERE i.product.prDivCategory = '제품' and i.inQuantity > 0 ")
+    List<Inventory> getProductInventory();
 }

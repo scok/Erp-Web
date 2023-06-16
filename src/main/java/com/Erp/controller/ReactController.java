@@ -2,6 +2,9 @@ package com.Erp.controller;
 
 import com.Erp.dto.ProductionChartDto;
 import com.Erp.dto.UserDto;
+import com.Erp.dto.logistics.InventoryFormDto;
+import com.Erp.entity.logistics.OrderSheet;
+import com.Erp.service.logistics.InventorService;
 import com.Erp.service.logistics.OrderSheetService;
 import com.Erp.service.logistics.ProductionService;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +20,7 @@ import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.Year;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +30,8 @@ import java.util.Map;
 public class ReactController {
 
     private final ProductionService productionService;
+    private final InventorService inventorService;
+
     @GetMapping(value = "/react/productionForm")
     public List<ProductionChartDto> reactPFD(){
 
@@ -50,8 +56,6 @@ public class ReactController {
                 .atStartOfDay();
 
         List<ProductionChartDto> productFormDtos =  productionService.productionGetMonthChartData(startDateTime,endDateTime);
-        System.out.println(productFormDtos.toString());
-
         return productFormDtos;
     }
 
@@ -87,7 +91,7 @@ public class ReactController {
 
         boolean isBefore = startDate.isBefore(endDate);
         if(isBefore == true){
-            List<ProductionChartDto> productionChartDtos = productionService.productionGetChartDataFilter(startDate,endDate);
+            List<ProductionChartDto> productionChartDtos = productionService.productionGetMonthChartData(startDate,endDate);
             if(productionChartDtos != null){
                 return new ResponseEntity<>(productionChartDtos,HttpStatus.OK);
             }else {
@@ -96,5 +100,19 @@ public class ReactController {
         }else {
             return new ResponseEntity<>("날짜를 다시 선택해주세요.",HttpStatus.BAD_REQUEST);
         }
+    }
+
+    //자재 재고를 받아옵니다.
+    @GetMapping(value = "/react/materialInventory")
+    public List<InventoryFormDto> reactMID(){
+        List<InventoryFormDto> inventoryFormDtos = inventorService.getMaterialInventory();
+        return inventoryFormDtos;
+    }
+
+    //제품 재고를 가져옵니다.
+    @GetMapping(value = "/react/productInventory")
+    public List<InventoryFormDto> reactPID(){
+        List<InventoryFormDto> inventoryFormDtos = inventorService.getProductInventory();
+        return inventoryFormDtos;
     }
 }

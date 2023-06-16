@@ -310,7 +310,7 @@ function changeTotalPrice(){
     }
 
     $("#esTotalPrice").attr("value",total);
-    $("#esTotalPrice").html(comma(total)); // 총 금액을 특정 요소에 반영
+    $("#esTotalPrice").html("Total: &#8361; "+ comma(total)); // 총 금액을 특정 요소에 반영
 }
 function deleteRow(code) { //테이블 한 행을 지웁니다. tr의 id를 찾고 그 행을 지워버립니다.
 
@@ -373,11 +373,16 @@ function deleteButton(){
 
 //라디오 버튼 클릭시
 function radioClick(value){
+    var pElement = document.getElementById("companion");
+    var inputElement = document.getElementById("esComment");
+    if(pElement != null || inputElement != null){
+        pElement.remove();
+        inputElement.remove();
+    }
     if(value == '반려'){  //반려시 코멘트를 작성해야합니다.
         $('#DivStatus')
         .append(`<p id="companion" name="companion">반려 사유</p>`)
-        .append(`<input type="textarea" id="esComment" name="esComment">`)
-        .append(`<br/>`);
+        .append(`<input class="customInput" type="textarea" id="esComment" name="esComment" style="width:50%">`)
     }
     if(value == '승인'){  //승인시 코멘트를 작성란을 삭제 합니다..
         var companionP = document.getElementById("companion");
@@ -553,7 +558,7 @@ function update(){
             }
 
             $("#esTotalPrice").attr("value",item.esTotalPrice);
-            $("#esTotalPrice").html(comma(item.esTotalPrice)); // 총 금액을 특정 요소에 반영
+            $("#esTotalPrice").html("Total: &#8361; "+ comma(item.esTotalPrice)); // 총 금액을 특정 요소에 반영
 
             setTimeout(function() { //지연작업 비동기 통신으로 셀렉트 박스를 그리기 때문에 지연작업이 필요함 => 다그리기 전에 호출해버려서 실패함
                 $("#prCode").val(data["data"].estimateDetail[0].product.prCode).prop("selected", true); //셀렉트 박스 체크

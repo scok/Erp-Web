@@ -1,14 +1,17 @@
 /*배경색 설정*/
 body{
-    background-color:#808080;
+    background-color:#F5F5F5;
 }
 /*전체 틀 설정.*/
 #content{
     margin:auto;
+    margin-bottom: 50px;
+    padding-bottom: 10px;
     width:90%;
     height:100%;
     background-color:white;
     border-radius: 0.35rem;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
 }
 /*전체틀 안에 영역 설정.*/
 #dataTables{
@@ -82,7 +85,7 @@ body{
     align-items: center;
     justify-content: center;
     background: rgba(255, 255, 255, 0.25);
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    box-shadow: 0 2px 8px 0 rgba(31, 38, 135, 0.37);
     backdrop-filter: blur(1.5px);
     -webkit-backdrop-filter: blur(1.5px);
     border-radius: 10px;
@@ -196,6 +199,7 @@ a {
     text-align: center;
     font-weight:bold;
     font-size:13px;
+    margin-bottom:10px;
 }
 .divisionStatus input[type=radio]+label{
     background-color: #fff;
@@ -239,7 +243,7 @@ a {
     padding: 3px 1px;
     text-decoration:none;
     text-shadow:0px 1px 0px #b23e35;
-    margin-bottom:10px;
+    margin-bottom:0px;
 
     width: 47px;
     height: 32px;

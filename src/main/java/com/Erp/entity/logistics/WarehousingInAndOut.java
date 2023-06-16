@@ -4,6 +4,7 @@ import com.Erp.constant.DivisionStatus;
 import com.Erp.constant.StackAreaCategory;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -38,6 +39,10 @@ public class WarehousingInAndOut extends DistributionEntity {
     @OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     @JoinColumn(name = "proCode")
     private Production production;
+
+    @OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @JoinColumn(name = "maDeliveryId")
+    private MaterialDelivery materialDelivery;
 
     public static WarehousingInAndOut of(OrderSheet orderSheet, OrderSheetDetail orderSheetDetail, Section section, String SACategory){
 

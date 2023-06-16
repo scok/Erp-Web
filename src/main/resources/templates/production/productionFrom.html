@@ -32,19 +32,26 @@
 
 <div class="content" layout:fragment="content" id="content">
     <div id="dataTables">
-        <h2 id="title">실적 등록</h2>
+        <h1 id="title">실적 등록</h1>
+
         <button type="button" id="btn-modal">
             <ion-icon name="add-outline"></ion-icon>
+        </button>
+
+        <button type="button" id="exportCSV" onclick="excel()">
+            <ion-icon name="cloud-download-outline"></ion-icon>
         </button>
 
         <table id="myTable" style="width:100%;" class="display">
             <thead>
                 <tr>
-                    <th><input type="checkbox" name="checkall" id="checkall"></th>
+                    <th>실적 코드</th>
                     <th>조립라인</th>
                     <th>등록자명</th>
                     <th>제품명</th>
                     <th>수량</th>
+                    <th>창고명</th>
+                    <th>구역명</th>
                     <th>등록일자</th>
                 </tr>
             </thead>
@@ -56,33 +63,31 @@
                 </div>
                 <div class="close-area">X</div>
                 <form action="" method="post" role="form" id="myForm" name="myForm">
-
+                    <div id="div-area">
                     <p>작업 라인 선택<br/>
-                        <select id="productionLine" name="productionLine" class="custom-select" style="width:200px;">
-                            <option value="">==작업 라인 선택==</option>
+                        <select id="productionLine" name="productionLine" class="custom-select">
                             <option th:each="dto : ${T(com.Erp.constant.ProductionLine).values()}"
                                     th:value="${dto.name()}"
                                     th:text="${dto.name()}"></option>
                         </select>
                     </p>
                     <p>제품 선택<br/>
-                        <select class="form-select" name="prCode" id="prCode">
-                            <option value="">==제품 선택==</option>
+                        <select name="prCode" id="prCode" class="custom-select" >
                             <option th:each="dto : ${productFormDtos}" th:value="${dto.prCode}"
                                     th:text="${dto.prName}"></option>
                         </select>
                     </p>
                     <p>수량<br>
-                        <input name="count" id="count" type="text">
+                        <input class="customInput" style="width:150px;"  name="count" id="count" type="text">
                     </p>
                     <p>창고 선택<br/>
-                        <select class="form-select" name="secCode" id="secCode">
+                        <select class="custom-select"  name="secCode" id="secCode">
                             <option th:each="dto : ${sectionFormDtos}" th:value="${dto.secCode}"
                                     th:text="${dto.secName}"></option>
                         </select>
                     </p>
                     <p>구역 선택<br/>
-                        <select class="form-select" name="SACategory" id="SACategory">
+                        <select class="custom-select"  name="SACategory" id="SACategory">
                             <option th:each="SACategory : ${T(com.Erp.constant.StackAreaCategory).values()}"
                                     th:value="${SACategory.name()}"
                                     th:text="${SACategory.name()}">
@@ -91,6 +96,7 @@
                     <button id="saveBtn" onclick="addProduction()" type="button">
                         <ion-icon name="save-outline"></ion-icon>
                     </button>
+                    </div>
                 </form>
             </div>
         </div>

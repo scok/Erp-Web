@@ -10,25 +10,28 @@ import lombok.ToString;
 @Getter @Setter@ToString
 public class InventoryFormDto {
 
-    private String prCode;  //상품 코드
-    
-    private String secName;  //창고명
+    private Long inId;  //재고 코드
 
-    private StackAreaCategory stackAreaCategory;     //구역 명
-    
+    private String prCode;  //상품 코드
+
     private String prName;     //품목 명
 
     private String osStandard; //규격
 
     private int arTotalCount;    //총수량
 
-    private String acName;    //총수량
+    private String acName;    //거래처 명
+
+    private String secName;  //창고명
 
     private SectionCategory secCategory; //창고 카테고리
+
+    private StackAreaCategory stackAreaCategory;     //구역 명
 
     public static InventoryFormDto of(Inventory inventory){
         InventoryFormDto inventoryFormDto = new InventoryFormDto();
 
+        inventoryFormDto.setInId(inventory.getInId());
         inventoryFormDto.setPrCode(inventory.getProduct().getPrCode());
         inventoryFormDto.setSecName(inventory.getSection().getSecName());
         inventoryFormDto.setStackAreaCategory(inventory.getStackAreaCategory());

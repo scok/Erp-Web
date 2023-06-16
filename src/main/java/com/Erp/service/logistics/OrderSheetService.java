@@ -197,4 +197,13 @@ public class OrderSheetService {
         orderSheet.setDivisionStatus(DivisionStatus.valueOf(status));
         return orderSheet;
     }
+
+    public List<OrderSheet> orderSheetListAll() {
+
+        return orderSheetRepository.findByAll();
+    }
+
+    public List<OrderSheet> orderSheetOsRecFilter(LocalDateTime startDateTime, LocalDateTime endDateTime) {
+        return orderSheetRepository.orderSheetOsRecFilter(startDateTime,endDateTime);
+    }
 }

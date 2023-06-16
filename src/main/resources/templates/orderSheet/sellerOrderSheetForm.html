@@ -37,21 +37,15 @@
             <input id="programming" type="radio" name="tab_item" value="출고" onclick="orderSheetClick(this.value)">
             <label class="tab_item" for="programming">완료</label>
 
-            <div class="tab_content" id="all_content">
-
-                <button type="button" id="updateBtn" onclick="update()">
-                    <ion-icon name="cloud-download-outline"></ion-icon>
-                </button>
-
-                <button type="button" id="deleteBtn" onclick="deletePageN()">
-                    <ion-icon name="trash-outline"></ion-icon>
-                </button>
-
-            </div>
-            <div class="tab_content" id="programming_content">
-
-            </div>
         </div>
+
+        <button type="button" id="updateBtn" onclick="update()">
+            <ion-icon name="cloud-download-outline"></ion-icon>
+        </button>
+
+        <button type="button" id="deleteBtn" onclick="deletePageN()">
+            <ion-icon name="trash-outline"></ion-icon>
+        </button>
 
         <table id="myTable" style="width:100%;" class="display">
             <thead>
