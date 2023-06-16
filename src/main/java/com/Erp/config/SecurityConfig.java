@@ -39,11 +39,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http .exceptionHandling().authenticationEntryPoint(new CustomAuthenticationEntryPoint());
         //로그인 안한 사용자가 어떤 페이지를 접속하려할 때 처리해주는 함수.
     }
-    
+
     //로그인 되어야만 권한 인증을하기때문에 그 외 css,js,img파일에 문제가 생긴다. 그것을 제외하기 위한 코드
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/css/**","/js/**","/img/**","/font/**");
+        web.ignoring().antMatchers("/css/**","/js/**","/img/**");
     }
 
     @Autowired

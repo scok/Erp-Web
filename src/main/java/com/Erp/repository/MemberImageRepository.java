@@ -10,12 +10,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public interface MemberImageRepository extends JpaRepository<MemberImage,String> {
+
+    // Member 객체로 MemberImage 가져오기
     MemberImage findByMember(Member member);
 
     @Transactional
     @Modifying
     @Query("DELETE FROM MemberImage mi WHERE mi.member.id = :memberId")
     void deleteByMemberId(String memberId);
-
-
 }

@@ -10,6 +10,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Value("${uploadPath}") //application.properties에 설정된 변수 값을 가져옵니다.
     String uploadPath;
 
+
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/images/**")

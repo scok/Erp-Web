@@ -23,53 +23,55 @@ import java.util.List;
 public class Member extends BaseEntity {
 
     @Id
-    @Column(unique = true)//unique = true 해당 값은 유니크한 값이 들어간다. 중복 x
-    private String id;  //사원번호
-
-    @Column( nullable = false)
-    private String password;    //password
+    @Column(unique = true)// unique = true 해당 값은 유니크한 값이 들어간다. 중복 x
+    private String id;  // 사번
 
     @Column(nullable = false)
-    private String name;
+    private String name; // 이름
 
     @Column(nullable = false)
-    private String birth; //생년월일
+    private String password; // 패스워드
+
+    @Column(nullable = false)
+    private String birth; // 생년월일
 
     @Column(nullable = false, unique = true)
-    private String email; //이메일
+    private String email; // 이메일
 
     @Column(nullable = false, unique = true)
-    private String phone; //핸드폰 번호
+    private String phone; // 핸드폰 번호
 
     @Column(nullable = false)
-    private String address;
+    private String address; // 주소
     
     @Column(nullable = false)
-    private LocalDate date; //입사날짜
+    private LocalDate date; // 입사 날짜
+    
+    @Column(nullable = false)
+    private String department; // 부서
 
     @Column(nullable = false)
-    private String department; //부서
+    private String position; // 직위
 
     @Column(nullable = false)
-    private String position; //직위
+    private String hobong; // 호봉
 
     @Column(nullable = false)
-    private String hobong; //직급
-
-    @Column(nullable = false)
-    private String bank; //계좌번호
-
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private MemberStatus status;//재직 현황
+    private String bank; // 계좌 번호
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private MemberRole role;//사용자&관리자
+    private MemberStatus status; // 재직 현황 (재직중, 퇴사)
 
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "member")
-    private MemberImage memberImage;
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private MemberRole role; //구분 (관리자, 사용자)
 
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "member") // Member 일대일 매핑
+    private MemberImage memberImage; // 이미지 저장 주소
+
+
+    // 사번을 자동으로 만들어 주는 메소드 (현재날짜를 가져와서 + 1)
     public static Member createid(MemberInsertDto memberInsertDto, PasswordEncoder passwordEncoder, JPAQueryFactory queryFactory){
         //입사년월
         int year = 0;
@@ -78,7 +80,7 @@ public class Member extends BaseEntity {
 
         Member member = new Member();
 
-        com.Erp.entity.QMember qbean = com.Erp.entity.QMember.member;
+        QMember qbean = QMember.member;
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         String strNowDate = memberInsertDto.getDate().format(formatter);
@@ -120,6 +122,7 @@ public class Member extends BaseEntity {
         return member;
     }
 
+    // 멤버정보 수정 메소드
     public static Member updateid(MemberUpdateDto memberUpdateDto, Member existingMember, PasswordEncoder passwordEncoder) {
         Member member = new Member();
 
@@ -150,13 +153,5 @@ public class Member extends BaseEntity {
         member.setRole(memberUpdateDto.getRole());
 
         return member;
-    }
-
-    public void addMember(List<Member> memberList, Member member) {
-        if (memberList.stream().anyMatch(m -> m.getId().equals(member.getId()))) {
-            // 이미 동일한 ID가 존재하는 경우 처리 로직
-            throw new IllegalArgumentException("이미 동일한 ID가 존재합니다.");
-        }
-        memberList.add(member);
     }
 }

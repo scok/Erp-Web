@@ -14,34 +14,34 @@ import java.time.LocalDate;
 @Getter@Setter@ToString
 public class MemberInsertDto{
 
-    private String password;
+    private String password; // 패스워드
 
-    private String name;
+    private String name; // 이름
 
-    private String birth; //생년월일
+    private String birth; // 생년월일
 
-    private String email; //이메일
+    private String email; // 이메일
 
-    private String phone; //핸드폰 번호
+    private String phone; // 핸드폰 번호
 
     private String address; // 주소
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private LocalDate date;
+    private LocalDate date; // 입사 날짜
 
-    private String department;
+    private String department; // 부서
 
-    private String position;
+    private String position; // 직위
 
-    private String hobong;
+    private String hobong; // 호봉
 
-    private String bank;
-
-    @Enumerated(EnumType.STRING)
-    private MemberStatus status;
+    private String bank; // 계좌 번호
 
     @Enumerated(EnumType.STRING)
-    private MemberRole role;
+    private MemberStatus status; // 재직 현황 (재직중, 퇴사)
+
+    @Enumerated(EnumType.STRING)
+    private MemberRole role; // 구분 (관리자, 사용자)
 }
 
 

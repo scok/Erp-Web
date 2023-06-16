@@ -21,9 +21,6 @@ public class MemberImageService {
     private final MemberImageRepository memberImageRepository;
     private final FileService fileService;
 
-    public  MemberImage getImageById(Long id) {
-        return memberImageRepository.findById(String.valueOf(id)).orElseThrow(() -> new IllegalArgumentException("유효하지 않은 ID 입니다."));
-    }
 
     //상품 이미지 정보 저장
     public void saveImage(MemberImage memberImage, MultipartFile uploadedFile, Member member) throws Exception {

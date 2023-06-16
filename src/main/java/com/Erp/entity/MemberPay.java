@@ -1,6 +1,7 @@
 package com.Erp.entity;
 
 import com.Erp.dto.MemberPayInsertDto;
+import com.Erp.dto.MemberPayUpdateDto;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -84,6 +85,35 @@ public class MemberPay extends BaseEntity {
         memberPay.setPlusMoney(memberPayInsertDto.getPlusMoney());
         memberPay.setMinusMoney(memberPayInsertDto.getMinusMoney());
         memberPay.setTotalMoney(memberPayInsertDto.getTotalMoney());
+
+        return memberPay;
+    }
+
+
+    // 급여 수정 콤마 제거후 저장
+    public static MemberPay updatePay(MemberPayUpdateDto memberPayUpdateDto, Member member, String payId) {
+        MemberPay memberPay = new MemberPay();
+        System.out.println("급여 수정 콤마 제거후 저장 들어왔니?");
+        memberPay.setMember(member);
+        memberPay.setId(Long.valueOf(payId));
+        memberPay.setSalary(memberPayUpdateDto.getSalary());
+        memberPay.setBonus(memberPayUpdateDto.getBonus());
+        memberPay.setNightPay(memberPayUpdateDto.getNightPay());
+        memberPay.setFoodPay(memberPayUpdateDto.getFoodPay());
+        memberPay.setCarPay(memberPayUpdateDto.getCarPay());
+        memberPay.setGoInsurance(memberPayUpdateDto.getGoInsurance());
+        memberPay.setGunInsurance(memberPayUpdateDto.getGunInsurance());
+        memberPay.setSanInsurance(memberPayUpdateDto.getSanInsurance());
+        memberPay.setKukInsurance(memberPayUpdateDto.getKukInsurance());
+        memberPay.setIncomeTax(memberPayUpdateDto.getIncomeTax());
+        memberPay.setLocalTax(memberPayUpdateDto.getLocalTax());
+        memberPay.setPlusMoney(memberPayUpdateDto.getPlusMoney());
+        memberPay.setMinusMoney(memberPayUpdateDto.getMinusMoney());
+        memberPay.setTotalMoney(memberPayUpdateDto.getTotalMoney());
+        System.out.println("member객체"+member);
+        System.out.println("memberPayUpdateDto.getSalary()"+memberPayUpdateDto.getSalary());
+        System.out.println("memberPayUpdateDto.getGoInsurance()"+memberPayUpdateDto.getGoInsurance());
+        System.out.println("member객체"+member);
 
         return memberPay;
     }

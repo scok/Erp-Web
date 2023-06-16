@@ -17,10 +17,10 @@ import java.time.LocalDateTime;
 public abstract class BaseTimeEntity {
     
     @CreatedDate //엔터티 생성시 자동으로 시간 기록
-    @Column(updatable = false)  // Enetity 수정시 나는 갱신 안 할래요
-    private LocalDateTime regDate;
+    @Column(updatable = false)  // Enetity 수정시 갱신 안함
+    private LocalDateTime regDate; // 생성 시간
 
     @LastModifiedDate //엔터니 수정시 자동으로 시간 기록
-    private LocalDateTime updateDate;
+    private LocalDateTime updateDate; // 수정 시간
 
 }

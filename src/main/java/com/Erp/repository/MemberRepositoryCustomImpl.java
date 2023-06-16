@@ -24,11 +24,11 @@ public class MemberRepositoryCustomImpl implements MemberRepositoryCustom{
     public Page<Member> getMemberListPage(MemberSearchDto searchDto, Pageable pageable) {
         QueryResults<Member> results = this.queryFactory
                 .selectFrom(QMember.member)
-                .where(sellStatusCondition(searchDto.getMemberStatus()),
-                        searchByCondition(searchDto.getSearchBy(), searchDto.getSearchQuery()))
-                .orderBy(QMember.member.id.desc())
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
+                .where(sellStatusCondition(searchDto.getMemberStatus()), // 재직현황 별 조회
+                        searchByCondition(searchDto.getSearchBy(), searchDto.getSearchQuery())) // 사번과 이름별 조회
+                .orderBy(QMember.member.id.desc()) // 사번으로 정렬
+                .offset(pageable.getOffset()) //
+                .limit(pageable.getPageSize()) // 최대 페이지 설정
                 .fetchResults();
 
         List<Member> content = results.getResults();
@@ -37,10 +37,13 @@ public class MemberRepositoryCustomImpl implements MemberRepositoryCustom{
         return new PageImpl<>(content, pageable, total);
     }
 
+
     public MemberRepositoryCustomImpl(EntityManager em) {
         this.queryFactory = new JPAQueryFactory(em);
     }
 
+
+    // 검색 엔진을 위한 메소드 (사번과 이름별 조회)
     private BooleanExpression searchByCondition(String searchBy, String searchQuery) {
         if(StringUtils.equals("name", searchBy)){ // 회원 이름으로 검색
             return QMember.member.name.like("%" + searchQuery + "%" ) ;
@@ -51,6 +54,9 @@ public class MemberRepositoryCustomImpl implements MemberRepositoryCustom{
 
         return null ;
     }
+
+
+    // 재직 현황별 검색을 위한 메소드
     private BooleanExpression sellStatusCondition(MemberStatus memberStatus) {
         return memberStatus == null ? null : QMember.member.status.eq(memberStatus) ;
     }
