@@ -9,6 +9,7 @@ import './weatherCssFile/css/div.css';
 
 import App from './home/Home';
 import User from './home/HomeUserInfo';
+import MyPage from './home/myPage';
 /*import App from './App';*/
 import reportWebVitals from './reportWebVitals';
 
@@ -16,6 +17,10 @@ import reportWebVitals from './reportWebVitals';
 ReactDOM.render(
   <User />,
   document.getElementById('userInfo')
+);
+ReactDOM.render(
+  <MyPage />,
+  document.getElementById('myPage')
 );
 ReactDOM.render(
     <App />,

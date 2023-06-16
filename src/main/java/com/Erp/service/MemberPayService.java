@@ -1,8 +1,11 @@
 package com.Erp.service;
 
 import com.Erp.dto.*;
+import com.Erp.entity.Financial;
+import com.Erp.entity.Income;
 import com.Erp.entity.Member;
 import com.Erp.entity.MemberPay;
+import com.Erp.repository.IncomeRepository;
 import com.Erp.repository.MemberPayRepository;
 import com.Erp.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;

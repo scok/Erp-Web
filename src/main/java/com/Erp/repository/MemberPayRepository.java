@@ -9,4 +9,10 @@ import java.util.List;
 @Repository
 public interface MemberPayRepository extends JpaRepository<MemberPay,String>, MemberPayRepositoryCustom {
     // MemberPayRepositoryCustom 상속
+
+    MemberPay findByMemberId(String id);
+
+    List<MemberPay> findAllByMemberId(String id);
+
+    MemberPay findMemberPayById(String id);
 }

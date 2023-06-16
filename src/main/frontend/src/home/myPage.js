@@ -57,13 +57,7 @@ function App() {
 
   return (
     <div>
-        <span class="nav__link" >
-            <img src={receivedData.userImage} name="person-sharp" class="nav__big__icon" />
-            <span class="nav_name">
-                 <p>{receivedData.userName}</p>
-                 <p>{receivedData.userRole}</p>
-            </span>
-        </span>
+        <a href={`http://localhost:8877/members/mypage/${receivedData.userId}`} class="collapse__sublink akorea">마이페이지</a>
     </div>
   );
 }

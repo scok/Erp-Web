@@ -27,12 +27,7 @@
           </div>
           <div class="nav__list">
             <!--유저 정보 표기란은 다른 클래스 이용필요. collapse 부트스트랩 사이트 cdn하면 충돌 일어남 사용 주의-->
-            <span class="nav__link" >
-                <img src="./sidebarImg/cat.png" name="person-sharp" class="nav__big__icon"></img>
-                <span class="nav_name">
-                    <div id="userInfo"></div>
-                </span>
-            </span>
+            <div id="userInfo"></div>
             <!--active-->
             <a href="/" class="nav__link">
               <ion-icon name="home-outline" class="nav__icon"></ion-icon>
@@ -47,15 +42,17 @@
 
               <ul class="collapse__menu">
                 <li class="nav-item">
-                  <a href="/members/admin/new" class="collapse__sublink akorea">직원 등록</a>
+                  <div id="myPage"></div>
                 </li>
                 <li class="nav-item">
-                  <a href="/members/list" class="collapse__sublink akorea">직원 리스트</a>
+                  <a href="http://localhost:8877/members/admin/new" class="collapse__sublink akorea">직원 등록</a>
                 </li>
                 <li class="nav-item">
-                  <a href="/members/admin/paydetail" class="collapse__sublink akorea">직원 급여 등록</a>
+                  <a href="http://localhost:8877/members/list" class="collapse__sublink akorea">직원 리스트</a>
                 </li>
-                <a href="/admin/detail/${session.User.id}" class="collapse__sublink akorea">마이페이지</a>
+                <li class="nav-item">
+                  <a href="http://localhost:8877/members/admin/payList" class="collapse__sublink akorea">급여 리스트</a>
+                </li>
               </ul>
             </div>
             <div href="#" class="nav__link collapse">

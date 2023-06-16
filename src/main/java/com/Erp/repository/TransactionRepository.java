@@ -40,7 +40,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     @Query("SELECT t FROM Transaction t ")
     List<Transaction> findAllData(Pageable pageable);
 
-    @Query(value = " SELECT * FROM transactions t WHERE YEAR(t.tr_Date) = :year AND t.quarter = :quarter ORDER BY t.tr_Date asc, t.quarter asc", nativeQuery = true)
+    @Query(value = " SELECT * FROM transactions t WHERE YEAR(t.tr_date) = :year AND t.quarter = :quarter ORDER BY t.tr_date asc, t.quarter asc", nativeQuery = true)
     List<Transaction> findTransactionList(@Param("year") Integer year, @Param("quarter") Integer quarter);
 
     @Query("select t.trDate, t.amount from Transaction t order by t.trDate")

@@ -77,6 +77,8 @@ public class IncomeService {
 
         List<Transaction> transactions = transactionRepository.findTransactionList(Integer.valueOf(income.getYear()), income.getQuarter());
 
+        System.out.println("거래 리스트 : " + transactions);
+
         income.setTransactions(transactions);
 
         Long sales_revenue = 0L;
@@ -111,14 +113,14 @@ public class IncomeService {
             MemberPay memberPay = memberPayRepository.findByMemberId(member.getId());
 
             if(memberPay != null){
-                salary += memberPay.getSalary() * 3;
-                bonus += memberPay.getBonus() * 3;
-                plusMoney += memberPay.getPlusMoney() * 3;
-                minusMoney += memberPay.getMinusMoney() * 3;
-                totalMoney += memberPay.getTotalMoney() * 3;
-                manage_expenses += (memberPay.getNightPay() + memberPay.getFoodPay() + memberPay.getCarPay() + memberPay.getKukInsurance() + memberPay.getGoInsurance() + memberPay.getSanInsurance() + memberPay.getGunInsurance()) * 3;
-                income_tax += memberPay.getIncomeTax() * 3;
-                localTax += memberPay.getLocalTax() * 3;
+                salary += memberPay.getSalary();
+                bonus += memberPay.getBonus();
+                plusMoney += memberPay.getPlusMoney();
+                minusMoney += memberPay.getMinusMoney();
+                totalMoney += memberPay.getTotalMoney();
+                manage_expenses += (memberPay.getNightPay() + memberPay.getFoodPay() + memberPay.getCarPay() + memberPay.getKukInsurance() + memberPay.getGoInsurance() + memberPay.getSanInsurance() + memberPay.getGunInsurance());
+                income_tax += memberPay.getIncomeTax();
+                localTax += memberPay.getLocalTax();
             }
         }
 
@@ -214,14 +216,14 @@ public class IncomeService {
             MemberPay memberPay = memberPayRepository.findByMemberId(member.getId());
 
             if(memberPay != null){
-                salary += memberPay.getSalary() * 3;
-                bonus += memberPay.getBonus() * 3;
-                plusMoney += memberPay.getPlusMoney() * 3;
-                minusMoney += memberPay.getMinusMoney() * 3;
-                totalMoney += memberPay.getTotalMoney() * 3;
-                manage_expenses += (memberPay.getNightPay() + memberPay.getFoodPay() + memberPay.getCarPay() + memberPay.getKukInsurance() + memberPay.getGoInsurance() + memberPay.getSanInsurance() + memberPay.getGunInsurance()) * 3;
-                income_tax += memberPay.getIncomeTax() * 3;
-                localTax += memberPay.getLocalTax() * 3;
+                salary += memberPay.getSalary();
+                bonus += memberPay.getBonus();
+                plusMoney += memberPay.getPlusMoney();
+                minusMoney += memberPay.getMinusMoney();
+                totalMoney += memberPay.getTotalMoney();
+                manage_expenses += (memberPay.getNightPay() + memberPay.getFoodPay() + memberPay.getCarPay() + memberPay.getKukInsurance() + memberPay.getGoInsurance() + memberPay.getSanInsurance() + memberPay.getGunInsurance());
+                income_tax += memberPay.getIncomeTax();
+                localTax += memberPay.getLocalTax();
             }
         }
 
@@ -283,6 +285,9 @@ public class IncomeService {
 
         for (Income income : incomes){
 
+            List<Member> members = memberRepository.findMemberYear(Integer.valueOf(income.getYear()), income.getQuarter());
+            saveData(income, members);
+
             Long sales_revenue = income.getSales_revenue();
             Long salary = income.getSalary();
             Long bonus = income.getBonus();
@@ -312,6 +317,9 @@ public class IncomeService {
         List<Income> incomes = incomeRepository.findSearchList(year);
 
         for (Income income : incomes){
+
+            List<Member> members = memberRepository.findMemberYear(Integer.valueOf(income.getYear()), income.getQuarter());
+            saveData(income, members);
 
             Long sales_revenue = income.getSales_revenue();
             Long salary = income.getSalary();

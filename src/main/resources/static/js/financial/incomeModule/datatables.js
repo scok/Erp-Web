@@ -264,7 +264,7 @@ $(document).ready(function(){
                 var total_span = total_manpower_tds[i].querySelector('span');
                 var sum = 0;
 
-                for(let j=0;j<manpower_group_trs.length;j++){
+                for(let j=4;j<6;j++){
 
                     let manpower_group_tds = manpower_group_trs[j].querySelectorAll('td');
                     let data_span = manpower_group_tds[i+2].querySelector('span');

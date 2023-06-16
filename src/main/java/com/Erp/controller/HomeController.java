@@ -32,6 +32,7 @@ public class HomeController {
 
                     UserDto result = memberRepository.findMemberInfo(id);
 
+                    System.out.println("id : " + id);
                     System.out.println("UserDto : " + result);
                     //유저 정보를 데이터 베이스와 연동하여 필요한 값만 가져옵니다
 

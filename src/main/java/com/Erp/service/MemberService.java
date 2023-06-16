@@ -6,6 +6,7 @@ import com.Erp.dto.MemberSearchDto;
 import com.Erp.dto.MemberUpdateDto;
 import com.Erp.entity.Member;
 import com.Erp.entity.MemberImage;
+import com.Erp.repository.IncomeRepository;
 import com.Erp.repository.MemberImageRepository;
 import com.Erp.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -129,6 +130,10 @@ public class MemberService implements UserDetailsService {
         return dto;
     }
 
+    public Member getMemberName(String code) {
+
+        return memberRepository.findMemberById(code);
+    }
 
     // 멤버 수정 save
     public void updateMember(Member member) {

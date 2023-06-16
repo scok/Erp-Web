@@ -38,8 +38,7 @@ public class UserDto {  //세션영역에 바인딩할 로그인한 사람의 �
         this.date = date;
         this.department = department;
         this.role = role;
-
-        if (imageUrl != null){
+        if(imageUrl != null){
             this.imageUrl = imageUrl;
         }
     }

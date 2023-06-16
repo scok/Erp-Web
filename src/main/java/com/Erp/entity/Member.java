@@ -119,6 +119,8 @@ public class Member extends BaseEntity {
         member.setStatus(memberInsertDto.getStatus());
         member.setRole(memberInsertDto.getRole());
 
+        System.out.println("멤버 : " + member);
+
         return member;
     }
 

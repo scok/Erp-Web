@@ -61,11 +61,16 @@ public class ReactController {
         Map<String, String> userInfo = new HashMap<String, String>();
 
         UserDto user = (UserDto) session.getAttribute("User");
+
+        String userId = user.getId();
         String userName = user.getName();
         String userRole = String.valueOf(user.getRole());
+        String userImage = user.getImageUrl();
 
+        userInfo.put("userId", userId);
         userInfo.put("userName", userName);
         userInfo.put("userRole", userRole);
+        userInfo.put("userImage", userImage);
         System.out.println(userInfo.toString());
         return userInfo;
     }
