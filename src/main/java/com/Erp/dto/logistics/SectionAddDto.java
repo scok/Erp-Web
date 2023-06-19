@@ -21,7 +21,6 @@ public class SectionAddDto {
     private String secCode;
 
     @JsonProperty("secName")
-    @NotBlank(message = "창고 이름은 필수입니다.")
     private String secName;
 
     @JsonProperty("secCategory")

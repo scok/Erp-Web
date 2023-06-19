@@ -166,6 +166,7 @@ function getAccountCategory(acCode){
         alert("거래처를 선택해주세요.");
         return;
     }
+
     $.ajax({
         url: "/accounts/getAccountCategory",
         type: "POST",
@@ -193,6 +194,23 @@ function addProduct(){
     var token = $('meta[name="_csrf"]').attr('content');
     var header = $('meta[name="_csrf_header"]').attr('content');
 
+    if($('#acCode').val() == null || ($('#acCode').val()).trim('')==''){
+        alert("거래처를 선택해주세요.");
+        return;
+    }
+
+    if($('#prName').val() == null || ($('#prName').val()).trim('')==''){
+        alert("상품명을 입력해주세요.");
+        return;
+    }
+
+    var prPrice = $('#prPrice').val();
+        if (isNaN(prPrice) || prPrice <= 0) {
+          alert("단가는 1 이상의 숫자를 입력해주세요.");
+          return;
+        }
+
+
     var formData = new FormData(document.forms.namedItem("myForm"));
     // 초기 등록시에는 code의 값이 없을수밖에 없으니 code에 값이 없으면 배열에 저장하지 않습니다.
 
@@ -203,7 +221,7 @@ function addProduct(){
            if(pair[1].replace(/\s/g, "") == ''){
            var message ='';
                 if(message = pair[0] == 'prCategory' ? message='상품 상세 분류' : message='상품 분류'){
-                    alert(message+"를 재대로 입력해주세요.");
+                    alert(message+"를 입력해주세요.");
                     return;
                 }
             }

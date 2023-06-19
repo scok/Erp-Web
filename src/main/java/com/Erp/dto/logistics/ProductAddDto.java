@@ -19,18 +19,15 @@ import javax.validation.constraints.NotNull;
 public class ProductAddDto {
 
     @JsonProperty("acCode")
-    @NotEmpty(message = "거래처를 선택해 주세요.")
     private String acCode;
 
     @JsonProperty("prCode")
     private String prCode;
 
     @JsonProperty("prName")
-    @NotBlank(message = "상품명은 필수 입력 값입니다.")
     private String prName; // 제품 이름
 
     @JsonProperty("prPrice")
-    @NotNull(message = "상품 단가는 필수 입력 값입니다.")
     private Long prPrice; // 단가
 
     private String prStandard;  //제품 규격

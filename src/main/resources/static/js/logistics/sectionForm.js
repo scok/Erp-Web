@@ -180,17 +180,23 @@ function addSection(){
     var token = $('meta[name="_csrf"]').attr('content');
     var header = $('meta[name="_csrf_header"]').attr('content');
 
-    var formData = new FormData(document.forms.namedItem("myForm"));
-
-    if(Math.sign($('#secMaxCount').val()) == -1 || $('#secMaxCount').val() == 0){
-        alert("최대 적재 수량을 알 수 없습니다.");
-        return ;
-    }
-
     if($('#secCategorySel').val() == null || ($('#secCategorySel').val()).trim('') == ''){
-        alert("창고를 선택해주세요.");
+        alert("창고 분류를 선택해주세요.");
         return ;
     }
+
+    if($('#secName').val() == null || ($('#secName').val()).trim('')==''){
+        alert("창고명을 입력해주세요.");
+        return;
+    }
+
+    var secMaxCount = $('#secMaxCount').val();
+    if (isNaN(secMaxCount) || secMaxCount <= 0) {
+      alert("최대 적재 수량은 1 이상의 숫자를 입력해주세요.");
+      return;
+    }
+
+    var formData = new FormData(document.forms.namedItem("myForm"));
 
     var array = {};
     for(var item of formData.entries()){
@@ -213,7 +219,7 @@ function addSection(){
         },
         error: function (request, status, error) {
             console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
-            alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n");
+            alert(request.responseText+"\n");
         }
     });
 }

@@ -205,8 +205,8 @@ function addMaDelivery(){
     }
 
     var pattern = /^\d+$/;
-    if (!pattern.test(maDeliveryCount) || maDeliveryCount<=0) {
-      alert("불출 수량을 재대로 입력해주세요.");
+    if (!pattern.test(maDeliveryCount) || maDeliveryCount <= 0) {
+      alert("불출 수량은 1이상의 숫자를 입력해주세요.");
       return;
     }
 
@@ -228,7 +228,6 @@ function addMaDelivery(){
             xhr.setRequestHeader(header,token);
         },
         success: function (data) {
-            alert("success");
             $('#myTable').DataTable().ajax.reload();
             modalOff();
         },

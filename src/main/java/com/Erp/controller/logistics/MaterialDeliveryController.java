@@ -1,6 +1,7 @@
 package com.Erp.controller.logistics;
 
 import com.Erp.constant.DivisionStatus;
+import com.Erp.dto.UserDto;
 import com.Erp.dto.logistics.InventoryDeliveryFormDto;
 import com.Erp.dto.logistics.MaterialDeliveryAddDto;
 import com.Erp.dto.logistics.MaterialDeliveryFormDto;
@@ -17,6 +18,7 @@ import com.Erp.service.logistics.SectionService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,7 +26,11 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -66,7 +72,16 @@ public class MaterialDeliveryController {
     // 등록하기
     @PostMapping(value = "/addMaterialDelivery")
     @Transactional
-    public @ResponseBody ResponseEntity addMaDelivery(@RequestBody MaterialDeliveryAddDto maDeliveryAddDto, BindingResult bindingResult, Principal principal) throws JsonProcessingException {
+    public @ResponseBody ResponseEntity addMaDelivery(@RequestBody MaterialDeliveryAddDto maDeliveryAddDto, BindingResult bindingResult, Principal principal, HttpServletRequest request) throws JsonProcessingException {
+        try {
+            getSession(request);
+        } catch (Exception e) {
+            String errorMessage = "생산팀만 게시글을 등록할 수 있습니다.";
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .body(errorMessage);
+        }
+
 
         Section section = sectionService.findBySecCode(maDeliveryAddDto.getSecCode());
         Inventory inventory = inventorService.findByInId(maDeliveryAddDto.getInId());
@@ -97,4 +112,19 @@ public class MaterialDeliveryController {
             return new ResponseEntity<>("재고를 확인해주세요.",HttpStatus.BAD_REQUEST);
         }
     }
+
+
+    public void getSession(HttpServletRequest request) throws Exception {
+        HttpSession session = request.getSession();
+        UserDto user = (UserDto) session.getAttribute("User");
+
+        if (!user.getDepartment().equals("생산팀")) {
+            throw new Exception("생산팀만 게시글을 등록할 수 있습니다.");
+        }
+    }
+
+
+
+
+
 }
