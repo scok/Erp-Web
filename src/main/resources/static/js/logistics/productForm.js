@@ -181,6 +181,11 @@ function getAccountCategory(acCode){
             if(data == "제품"){
                  $('#standard').append(`<input type="text" id="prStandard" class="customInput" name="prStandard" placeholder="제품 규격을 입력해주세요.">`);
             }
+
+//            if($('#standard').val() == null || ($('#standard').val()).trim('')==''){
+//                alert("제품 규격을 입력해주세요.");
+//                return;
+//            }
         },
         error: function (request, status) {
         alert(request.responseText);
@@ -234,6 +239,15 @@ function addProduct(){
             targetData[pair[0]]=pair[1];
         }
     }
+
+    if (targetData["prDivCategory"] == "제품") {
+            var prStandard = targetData["prStandard"];
+            if (prStandard == null || prStandard.trim() == '') {
+                alert("제품 규격을 입력해주세요.");
+                return;
+            }
+        }
+
     var paramData = JSON.stringify(targetData);
     $.ajax({
         url: "/products/addProduct",
