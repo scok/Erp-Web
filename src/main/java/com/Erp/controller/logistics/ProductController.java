@@ -1,5 +1,6 @@
 package com.Erp.controller.logistics;
 
+import com.Erp.dto.UserDto;
 import com.Erp.dto.logistics.AccountFormDto;
 import com.Erp.dto.logistics.ProductAddDto;
 import com.Erp.dto.logistics.ProductFormDto;
@@ -18,6 +19,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.security.Principal;
 import java.time.LocalDateTime;
@@ -58,7 +61,12 @@ public class ProductController {
 
     //상품 페이지 modal에 데이터를 넣어주는 메소드
     @PostMapping(value = "/updateProduct")
-    public @ResponseBody ResponseEntity updateData(@RequestBody String code){
+    public @ResponseBody ResponseEntity updateData(@RequestBody String code, HttpServletRequest request){
+
+        boolean department = this.getSession(request);
+        if(!department){
+            return new ResponseEntity<String>("수정 권한이 없습니다.", HttpStatus.BAD_REQUEST);
+        }
         //현재 문제점 Ajax로 넘겨 받은 데이터안에 ""가 붙어있어서 문제 발생.
         code = code.substring(1,code.length()-1);
         Product product = productService.findByCode(code);
@@ -67,7 +75,13 @@ public class ProductController {
     }
 
     @PostMapping(value = "/addProduct")
-    public @ResponseBody ResponseEntity addProduct(@RequestBody @Valid ProductAddDto dto, BindingResult error, Principal principal){
+    public @ResponseBody ResponseEntity addProduct(@RequestBody @Valid ProductAddDto dto, BindingResult error, Principal principal, HttpServletRequest request){
+
+        boolean department = this.getSession(request);
+        if(!department){
+            return new ResponseEntity<String>("등록 권한이 없습니다.", HttpStatus.BAD_REQUEST);
+        }
+
         String errorMessage = "";
 
         StringBuilder erromessages = new StringBuilder();
@@ -114,7 +128,12 @@ public class ProductController {
     }
 
     @PostMapping(value = "/deleteProduct")
-    public @ResponseBody ResponseEntity deleteAccount(@RequestBody List<String> code){
+    public @ResponseBody ResponseEntity deleteAccount(@RequestBody List<String> code, HttpServletRequest request){
+
+        boolean department = this.getSession(request);
+        if(!department){
+            return new ResponseEntity<String>("삭제 권한이 없습니다.", HttpStatus.BAD_REQUEST);
+        }
 
         productService.deleteAccount(code);
 
@@ -146,5 +165,19 @@ public class ProductController {
         ProductFormDto productFormDto = ProductFormDto.of(product);
 
         return new ResponseEntity<>(productFormDto,HttpStatus.OK);
+    }
+    public boolean getSession(HttpServletRequest request){
+
+        HttpSession session = request.getSession();
+        UserDto user = (UserDto) session.getAttribute("User");
+
+        boolean department = false;
+
+        if(user.getDepartment().equals("구매팀") || user.getDepartment().equals("영업팀")) {
+            department = true;
+            return department;
+        }else {
+            return department;
+        }
     }
 }

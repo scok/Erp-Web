@@ -1,5 +1,6 @@
 package com.Erp.controller;
 
+import com.Erp.dto.InventoryChartDto;
 import com.Erp.dto.ProductionChartDto;
 import com.Erp.dto.UserDto;
 import com.Erp.dto.logistics.InventoryFormDto;
@@ -104,9 +105,25 @@ public class ReactController {
     }
 
     //제품 재고를 가져옵니다.
+    @GetMapping(value = "/react/materialInventoryChart")
+    public List<InventoryChartDto> reactMICD(){
+        List<InventoryChartDto> inventoryFormDtos = inventorService.getMaterialInventoryChart();
+        System.out.println(inventoryFormDtos.toString());
+        return  inventoryFormDtos;
+    }
+
+    //테이블에 입력할 제품 재고를 가져옵니다.
     @GetMapping(value = "/react/productInventory")
     public List<InventoryFormDto> reactPID(){
         List<InventoryFormDto> inventoryFormDtos = inventorService.getProductInventory();
         return inventoryFormDtos;
+
+    }
+    //제품 재고를 가져옵니다.
+    @GetMapping(value = "/react/productInventoryChart")
+    public List<InventoryChartDto> reactPICD(){
+        List<InventoryChartDto> inventoryFormDtos = inventorService.getProductInventoryChart();
+        System.out.println(inventoryFormDtos.toString());
+        return  inventoryFormDtos;
     }
 }

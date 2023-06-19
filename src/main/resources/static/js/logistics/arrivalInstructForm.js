@@ -310,7 +310,7 @@ function update(){
             }
 
             $("#osTotalPrice").attr("value",item.osTotalPrice);
-            $("#osTotalPrice").html(comma(item.osTotalPrice)); // 총 금액을 특정 요소에 반영
+            $("#osTotalPrice").html("Total: &#8361; "+ comma(item.osTotalPrice)); // 총 금액을 특정 요소에 반영
 
             $("#osReceiptDate").attr("value",item.osReceiptDate);
             $("#osReceiptDate").html(item.osReceiptDate); // 입고 예정 일자 요소에 반영

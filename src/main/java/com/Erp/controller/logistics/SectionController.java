@@ -1,5 +1,6 @@
 package com.Erp.controller.logistics;
 
+import com.Erp.dto.UserDto;
 import com.Erp.dto.logistics.SectionAddDto;
 import com.Erp.dto.logistics.SectionFormDto;
 import com.Erp.entity.Member;
@@ -16,6 +17,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.security.Principal;
 import java.time.LocalDateTime;
@@ -49,7 +52,12 @@ public class SectionController {
     }
     // 저장하기
     @PostMapping(value = "/addSection")
-    public @ResponseBody ResponseEntity addSection(@RequestBody @Valid SectionAddDto sectionAddDto, BindingResult error, Principal principal){
+    public @ResponseBody ResponseEntity addSection(@RequestBody @Valid SectionAddDto sectionAddDto, BindingResult error, Principal principal, HttpServletRequest request){
+
+        boolean department = this.getSession(request);
+        if(!department){
+            return new ResponseEntity<String>("등록 권한이 없습니다.", HttpStatus.BAD_REQUEST);
+        }
 
         StringBuilder errorMessages = new StringBuilder();
 
@@ -84,7 +92,13 @@ public class SectionController {
 
     // 수정할 데이터 불러오기
     @PostMapping(value = "updateSection")
-    public @ResponseBody ResponseEntity updateSection(@RequestBody String code){
+    public @ResponseBody ResponseEntity updateSection(@RequestBody String code,HttpServletRequest request){
+
+        boolean department = this.getSession(request);
+        if(!department){
+            return new ResponseEntity<String>("수정 권한이 없습니다.", HttpStatus.BAD_REQUEST);
+        }
+
         code = code.substring(1,code.length()-1);
         Section section = sectionService.findBySecCode(code);
         SectionAddDto sectionAddDto = SectionAddDto.of(section);
@@ -95,7 +109,12 @@ public class SectionController {
 
     // 삭제하기
     @PostMapping(value = "/deleteSection")
-    public @ResponseBody ResponseEntity deleteSection(@RequestBody List<String> code){
+    public @ResponseBody ResponseEntity deleteSection(@RequestBody List<String> code, HttpServletRequest request){
+
+        boolean department = this.getSession(request);
+        if(!department){
+            return new ResponseEntity<String>("삭제 권한이 없습니다.", HttpStatus.BAD_REQUEST);
+        }
 
         sectionService.deleteSection(code);
 
@@ -115,6 +134,21 @@ public class SectionController {
         Map<String,SectionFormDto> sectionFormDtoList = sectionService.sectionMapProduct();
 
         return sectionFormDtoList;
+    }
+
+    public boolean getSession(HttpServletRequest request){
+
+        HttpSession session = request.getSession();
+        UserDto user = (UserDto) session.getAttribute("User");
+
+        boolean department = false;
+
+        if(user.getDepartment().equals("물류팀")) {
+            department = true;
+            return department;
+        }else {
+            return department;
+        }
     }
 
 }

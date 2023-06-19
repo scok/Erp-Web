@@ -1,5 +1,6 @@
 package com.Erp.controller.logistics;
 
+import com.Erp.dto.UserDto;
 import com.Erp.dto.logistics.*;
 import com.Erp.entity.logistics.OrderSheet;
 import com.Erp.entity.logistics.OrderSheetDetail;
@@ -17,6 +18,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -100,7 +103,14 @@ public class OrderSheetController {
 
     //주문서 페이지에 수정할 데이터 정보 modal에 데이터를 넣어주는 메소드
     @PostMapping(value = "/orderSheets/updateOrderSheet")
-    public @ResponseBody ResponseEntity updateData(@RequestBody String code){
+    public @ResponseBody ResponseEntity updateData(@RequestBody String code, HttpServletRequest request){
+
+        boolean department = this.getSession(request);
+
+        if(!department){
+            return new ResponseEntity<String>("수정 권한이 없습니다.", HttpStatus.BAD_REQUEST);
+        }
+
         //현재 문제점 Ajax로 넘겨 받은 데이터안에 ""가 붙어있어서 문제 발생.
         code = code.substring(1,code.length()-1);
 
@@ -117,7 +127,13 @@ public class OrderSheetController {
 
     //orderSheet 테이블 저장,수정 구역
     @PostMapping(value = "/orderSheets/updateOrderSheets")
-    public @ResponseBody ResponseEntity updateOrderSheets(@RequestBody Map<String,Object> osData) {
+    public @ResponseBody ResponseEntity updateOrderSheets(@RequestBody Map<String,Object> osData, HttpServletRequest request) {
+
+        boolean department = this.getSession(request);
+
+        if(!department){
+            return new ResponseEntity<String>("등록 권한이 없습니다.", HttpStatus.BAD_REQUEST);
+        }
 
         String errorMessage = "";
         OrderSheetAddmDto orderSheetAddmDto = null;    //견적서 정보와
@@ -174,10 +190,31 @@ public class OrderSheetController {
 
     //주문서 삭제 기능
     @PostMapping(value = "/orderSheets/deleteOrderSheets")
-    public @ResponseBody ResponseEntity deleteEstimate(@RequestBody List<String> code){
+    public @ResponseBody ResponseEntity deleteEstimate(@RequestBody List<String> code, HttpServletRequest request){
+
+        boolean department = this.getSession(request);
+
+        if(!department){
+            return new ResponseEntity<String>("삭제 권한이 없습니다.", HttpStatus.BAD_REQUEST);
+        }
 
         orderSheetService.deleteOrderSheet(code);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    public boolean getSession(HttpServletRequest request){
+
+        HttpSession session = request.getSession();
+        UserDto user = (UserDto) session.getAttribute("User");
+
+        boolean department = false;
+
+        if(user.getDepartment().equals("구매팀") || user.getDepartment().equals("영업팀") || user.getDepartment().equals("물류팀")) {
+            department = true;
+            return department;
+        }else {
+            return department;
+        }
     }
 }
 

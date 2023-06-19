@@ -15,6 +15,8 @@ import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 
 export default function CardContentOption(props) {
+    const ChartUrl = props.ChartUrl;
+
 
     const SearchBool = props.Search;
     const Url = props.Url;
@@ -80,7 +82,7 @@ export default function CardContentOption(props) {
                 {SearchBool && <PrChartDate filterData={onClickButton} />}
             </Grid>
             <Grid item xs={6}>
-                {SearchBool ? <PrChartData content={receivedData}/> : <InChartData content={receivedData}/>}
+                {SearchBool ? <PrChartData content={receivedData}/> : <InChartData ChartUrl={ChartUrl}/>}
             </Grid>
             <Grid item xs={6}>
                 {SearchBool ? <PrTableData content={receivedData}/> : <InTableData content={receivedData}/> }

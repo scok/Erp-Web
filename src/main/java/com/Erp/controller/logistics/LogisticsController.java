@@ -1,5 +1,6 @@
 package com.Erp.controller.logistics;
 
+import com.Erp.dto.UserDto;
 import com.Erp.dto.logistics.*;
 import com.Erp.dto.logistics.AccountFormDto;
 import com.Erp.entity.logistics.*;
@@ -12,6 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -75,7 +79,13 @@ public class LogisticsController {
     //입고,출고 등록 로직
     @Transactional
     @PostMapping(value = "/updateOrderSheets")
-    public @ResponseBody ResponseEntity OrderSheetInstructUpdate(@RequestBody Map<String,String> data) {
+    public @ResponseBody ResponseEntity OrderSheetInstructUpdate(@RequestBody Map<String,String> data, HttpServletRequest request) {
+        boolean department = this.getSession(request);
+
+        if(!department){
+            return new ResponseEntity<String>("등록 권한이 없습니다.", HttpStatus.BAD_REQUEST);
+        }
+
         String message="";
         //주문서 코드와 상태를 보내줍니다.
         OrderSheet orderSheet =  orderSheetService.OrderSheetStatusUpdate(data.get("osCode"),data.get("divisionStatus"));
@@ -149,7 +159,14 @@ public class LogisticsController {
 
     // 데이터 베이스에 있는 입고 테이블의 정보 조회
     @PostMapping(value = "/warehousingInAndOut/Detail")
-    public @ResponseBody ResponseEntity getWarehousingInAndOutDetail(@RequestBody String widId) {
+    public @ResponseBody ResponseEntity getWarehousingInAndOutDetail(@RequestBody String widId, HttpServletRequest request) {
+
+        boolean department = this.getSession(request);
+
+        if(!department){
+            return new ResponseEntity<String>("조회 권한이 없습니다.", HttpStatus.BAD_REQUEST);
+        }
+
         widId = widId.substring(1,widId.length()-1);
         WarehousingInAndOut warehousing = logisticsService.widFindById(widId);
         WarehousingInAndOutDetailDto warehousingInAndOutDetailDto = new WarehousingInAndOutDetailDto();
@@ -223,6 +240,21 @@ public class LogisticsController {
         map.put("SACategory",inventory.getStackAreaCategory());
 
         return map;
+    }
+
+    public boolean getSession(HttpServletRequest request){
+
+        HttpSession session = request.getSession();
+        UserDto user = (UserDto) session.getAttribute("User");
+
+        boolean department = false;
+
+        if(user.getDepartment().equals("물류팀")) {
+            department = true;
+            return department;
+        }else {
+            return department;
+        }
     }
 }
 

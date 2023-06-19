@@ -1,25 +1,83 @@
 import * as React from 'react';
 import { ResponsiveBar } from '@nivo/bar'
 
+import {useState} from 'react';
+import {useEffect} from 'react';
+import axios from 'axios';
+
 export default function ChartTable(props) {
-    const ChartDataList = props.content;    //가져온 데이터
-    const result = [];
 
-    const data = ChartDataList.map((item) => {
-        const name = "name";
-        const prName = item.prName
-        const secName = item.secName
+    const ChartUrl = props.ChartUrl;
 
-        if(!result[name]){
-            result[name] = secName;
-        }
-        result[name] = result[name].concat({ [prName] : item.arTotalCount});
+    /*수신 받은 데이터*/
+    const [ChartDataList ,setChartDataList] = useState(null);
 
-        return { [prName]:item.arTotalCount ,"창고" : secName};
-    })
+    /*데이터 로딩시 true로 변경*/
+    const [loading ,setLoading] = useState(false);
+
+    /*오류 발생시 정보가 들어 있는 예외 객체*/
+    const [error ,setError] = useState(null);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try{
+                /*State 초기화*/
+                setChartDataList(null);
+                setError(null);
+                setLoading(true);
+
+                const url = ChartUrl;
+
+                const response = await axios.get(url);
+
+                setChartDataList(response.data);
+
+                console.log('response.data');
+                console.log(response.data);
+
+            }catch(err){
+                setError(err);
+
+            }/*end try...catch*/
+
+            setLoading(false);
+
+        };/*end fetchData*/
+
+        fetchData();/*called fetchData function*/
+
+    },[]);/*end useEffect*/
+
+    if(loading == true){
+        return <div>데이터 로딩 중입니다.</div>;
+    }
+    if(error){
+        return <div></div>;
+    }
+    if(!ChartDataList){
+        return null;
+    }
+
+    const prName = ChartDataList.map((item) => item.prName);
+    const keys = [...new Set(prName)];
+
+    console.log(keys);
+
+    const data = [];
+    ChartDataList.forEach((item) => {
+    const existingData = data.find((obj) => obj.secName === item.secName);
+    if (existingData) {
+        existingData[item.prName] = item.inQuantity;
+    } else {
+        const newData = {
+            secName: item.secName,
+            [item.prName]: item.inQuantity
+        };
+        data.push(newData);
+    }
+    });
 
     console.log(data);
-    console.log(result);
 
     return(
     <div style={{ width: '800px', height: '500px', margin: '0 auto' }}>
@@ -27,9 +85,9 @@ export default function ChartTable(props) {
             /* chart에 사용될 데이터*/
             data = {data}
             /*chart에 보여질 데이터 key (측정되는 값) */
-            keys= {["LCD 패널","LCD메인보드"]}
+            keys= {keys}
             /*keys들을 그룹화하는 index key (분류하는 값)*/
-            indexBy="창고"
+            indexBy="secName"
             groupMode="grouped"
             margin={{ top: 50, right: 130, bottom: 50, left: 60 }}
             padding={0.3}
@@ -73,6 +131,7 @@ export default function ChartTable(props) {
                     id: 'lines'
                 }
             ]}
+            borderRadius={4}
             borderColor={{
                 from: 'color',
                 modifiers: [
@@ -96,9 +155,9 @@ export default function ChartTable(props) {
                 tickSize: 5,
                 tickPadding: 5,
                 tickRotation: 0,
-                legend: 'food',
+                legend: '수량',
                 legendPosition: 'middle',
-                legendOffset: -40
+                legendOffset: -55
             }}
             labelSkipWidth={12}
             labelSkipHeight={12}
@@ -107,7 +166,7 @@ export default function ChartTable(props) {
                 modifiers: [
                     [
                         'darker',
-                        1.6
+                        '3'
                     ]
                 ]
             }}
