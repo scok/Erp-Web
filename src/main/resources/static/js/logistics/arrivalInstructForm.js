@@ -179,8 +179,6 @@ function radioClick(value){
                 xhr.setRequestHeader(header,token);
             },
             success: function (data) {
-                console.log(data);
-
                 //selectBox 불러오기
                 var selectBox = document.getElementById('secCode');
                 // 기존 옵션들을 모두 제거
@@ -196,9 +194,8 @@ function radioClick(value){
             },
             error: function (request, status) {
                 alert(request.responseText);
-                console.log("code:"+request.status+"\n"+"견적서 message:"+request.responseText+"\n");
             }
-            });
+        });
     }
 }
 
@@ -291,13 +288,11 @@ function update(){
         success: function (data) {
             modalOn();
             var item = data["data"];
-            console.log(item);
             $("#acCode").val(item.acCode).prop("selected", true); //셀렉트 박스 체크
 
             $("#acCode").prop("disabled", true);    //거래처 셀렉트 박스를 읽기 전용으로 바꿔 줍니다.
 
             for (var osdItem of item.orderSheetDetails){
-                console.log(osdItem);
                 var tableTd = '<tr id='+osdItem.product.prCode+'> <td>' + item.acCategory + '</td>';
                 tableTd += '<td id='+item.osCode+'-prName value='+osdItem.product.prName+'>' + osdItem.product.prName + '</td>';
                 tableTd += '<td id='+osdItem.product.prCode+'-osPrice value='+osdItem.osPrice+'>' + comma(osdItem.osPrice) + '</td>';
@@ -326,7 +321,7 @@ function update(){
             .append(`<input type="hidden" id="osCode" name="osCode" value=${item.osCode}>`);
         },
         error: function (request, status) {
-            alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n");
+            alert(request.responseText);
         }
     })
 }
@@ -363,74 +358,8 @@ function deletePageN(){
             $('#myTable').DataTable().ajax.reload();
         },
         error: function (request, status) {
-            alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n");
+            alert(request.responseText);
         }
     });
 }
 
-
-/*$(".modal_close").on("click", function () {
-    action_popup.close(this);
-});*/
-
-/**
- *  alert, confirm 대용 팝업 메소드 정의 <br/>
- *  timer : 애니메이션 동작 속도 <br/>
- *  alert : 경고창 <br/>
- *  confirm : 확인창 <br/>
- *  open : 팝업 열기 <br/>
- *  close : 팝업 닫기 <br/>
- */
-var action_popup = {
-    confirm: function (txt, callback) {
-        if (txt == null || txt.trim() == "") {
-            console.warn("confirm message is empty.");
-            return;
-        } else if (callback == null || typeof callback != 'function') {
-            console.warn("callback is null or not function.");
-            return;
-        } else {
-            $(".type-confirm .btn_ok").on("click", function () {
-                $(this).unbind("click");
-                callback(true);
-                action_popup.close(this);
-            });
-            this.open("type-confirm", txt);
-        }
-    },
-
-    alert: function (txt) {
-        if (txt == null || txt.trim() == "") {
-            console.warn("confirm message is empty.");
-            return;
-        } else {
-            this.open("type-alert", txt);
-        }
-    },
-
-    open: function (type, txt) {
-        var popup = $("." + type);
-        popup.find(".menu_msg").text(txt);
-        $("body").append("<div class='dimLayer'></div>");
-        $(".dimLayer").css('height', $(document).height()).attr("target", type);
-        popup.fadeIn(this.timer);
-    },
-
-    close: function (target) {
-        var modal = $(target).closest(".modal-section");
-        var dimLayer;
-        if (modal.hasClass("type-confirm")) {
-            dimLayer = $(".dimLayer[target=type-confirm]");
-            $(".type-confirm .btn_ok").unbind("click");
-        } else if (modal.hasClass("type-alert")) {
-            dimLayer = $(".dimLayer[target=type-alert]")
-        } else {
-            console.warn("close unknown target.")
-            return;
-        }
-        modal.fadeOut(this.timer);
-        setTimeout(function () {
-            dimLayer != null ? dimLayer.remove() : "";
-        }, this.timer);
-    }
-}

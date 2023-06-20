@@ -98,9 +98,6 @@
                         </p>
                         <p>구역 선택<br/>
                             <select class="custom-select" name="SACategory" id="SACategory">
-                                <option th:each="SACategory : ${T(com.Erp.constant.StackAreaCategory).values()}"
-                                        th:value="${SACategory.name()}"
-                                        th:text="${SACategory.name()}">
                             </select>
                         </p>
                     </div>

@@ -219,7 +219,7 @@ function addSection(){
         },
         error: function (request, status, error) {
             console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
-            alert(request.responseText+"\n");
+            alert(request.responseText);
         }
     });
 }
@@ -261,7 +261,7 @@ function update(){
             }, 150);
         },
         error: function (request, status) {
-            alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n");
+           alert(request.responseText);
         }
     });
 }
@@ -298,7 +298,7 @@ function deletePageN(){
             modalOff();
         },
         error: function (request, status) {
-            alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n");
+           alert(request.responseText);
         }
     });
 }

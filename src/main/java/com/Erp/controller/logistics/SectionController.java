@@ -1,11 +1,15 @@
 package com.Erp.controller.logistics;
 
+import com.Erp.constant.StackAreaCategory;
 import com.Erp.dto.UserDto;
 import com.Erp.dto.logistics.SectionAddDto;
 import com.Erp.dto.logistics.SectionFormDto;
 import com.Erp.entity.Member;
-import com.Erp.entity.logistics.Section;
+import com.Erp.entity.logistics.*;
 import com.Erp.service.MemberService;
+import com.Erp.service.logistics.InventorService;
+import com.Erp.service.logistics.LogisticsService;
+import com.Erp.service.logistics.OrderSheetService;
 import com.Erp.service.logistics.SectionService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
@@ -23,9 +27,8 @@ import javax.validation.Valid;
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping(value = "/section")
@@ -34,6 +37,8 @@ public class SectionController {
 
     private final SectionService sectionService;
     private final MemberService memberService;
+    private final OrderSheetService orderSheetService;
+    private final InventorService inventorService;
 
     @GetMapping(value = "/list")
     public String goSectionList(){
@@ -129,11 +134,74 @@ public class SectionController {
         return sectionFormDtoList;
     }
 
-    @GetMapping(value = "/getSectionsProduct")
-    public @ResponseBody Map<String,SectionFormDto> getSectionsProduct() {
-        Map<String,SectionFormDto> sectionFormDtoList = sectionService.sectionMapProduct();
+    @PostMapping(value = "/getSectionsProduct")
+    public @ResponseBody ResponseEntity getSectionsProduct(@RequestBody String code) {
+        // 주문서 정보를 가져와 주문서 디테일에 있는 상품들이 창고에 재고로 존재하는지 확인합니다.
+        code = code.substring(1,code.length()-1);
+        OrderSheet orderSheet = orderSheetService.findByCode(code);
+        List<OrderSheetDetail> orderSheetDetails = orderSheet.getOrderSheetDetails();
 
-        return sectionFormDtoList;
+        List<String> sectionCodes = new ArrayList<String>();
+        List<String> targetSecCode = new ArrayList<String>();
+        List<Inventory> targetInventory = new ArrayList<Inventory>();
+        int index = 1;
+
+        for (OrderSheetDetail orderSheetDetail : orderSheetDetails){
+            //재고에 동일한 상품의 재고가 있는지 확인합니다.
+            List<Inventory> inventories = inventorService.findByProductAndOsQuantity(orderSheetDetail.getProduct().getPrCode(),
+                    orderSheetDetail.getOsQuantity());
+            if(inventories == null) {
+                return new ResponseEntity<>("재고가 있는 제품이 없습니다.", HttpStatus.BAD_REQUEST);
+            }else if (index ==1){   //첫 번째는 무조건 sectionCodes담습니다.
+                for(Inventory inventory: inventories){
+                    targetSecCode.add(inventory.getSection().getSecCode());
+                    targetInventory.add(inventory);
+                }
+                sectionCodes = targetSecCode.stream().distinct().collect(Collectors.toList());//중복 제거하는 중
+                index ++;
+            }else{
+                int count = 1;
+                for (String secCode : sectionCodes){
+                    for (Inventory inventory: inventories){
+                        if(secCode.equals(inventory.getSection().getSecCode())){
+                            //창고 아이디와 구역 정보가 동일한게 있으면 클리어 하고 창고 코드를 넣습니다.
+                            sectionCodes.clear();
+                            sectionCodes.add(secCode);
+                            targetInventory.clear();
+                            targetInventory.add(inventory);
+                            count++;
+                            break;
+                        }
+                    }
+                    if(index == 2){
+                        break;
+                    }
+                }
+                if (count == 1){
+                    return new ResponseEntity<>("동일한 창고에 같은 구역에 재고가 있는 제품이 없습니다.", HttpStatus.BAD_REQUEST);
+                }
+            }
+        }
+        System.out.println(sectionCodes.toString());
+        Map<String,Object> map = new HashMap<String,Object>();
+        if(sectionCodes.size() >= 1){
+            List<SectionFormDto> sectionFormDtos = new ArrayList<>();
+            for (String secCode: sectionCodes){
+                SectionFormDto sectionFormDto = sectionService.sectionProduct(secCode);
+                sectionFormDtos.add(sectionFormDto);
+            }
+            map.put("secData",sectionFormDtos);
+            map.put("inData",targetInventory);
+            return new ResponseEntity<>(map,HttpStatus.OK);
+        }else if(sectionCodes.size() == 1){
+            SectionFormDto sectionFormDto = sectionService.sectionProduct(sectionCodes.toString());
+            map.put("secData",sectionFormDto);
+            map.put("inData",targetInventory);
+
+            return new ResponseEntity<>(map,HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>("프로그램에 문제가 발생하였습니다.", HttpStatus.BAD_REQUEST);
+        }
     }
 
     public boolean getSession(HttpServletRequest request){

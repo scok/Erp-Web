@@ -152,7 +152,7 @@ public class OrderSheetController {
                 orderSheetDetailAddmDtos.add(orderSheetDetailAddmDto);
             }
         }
-        if(String.valueOf(orderSheetAddmDto.getDivisionStatus()) == "입하대기"){
+        if(String.valueOf(orderSheetAddmDto.getDivisionStatus()) == "입하대기" || String.valueOf(orderSheetAddmDto.getDivisionStatus()) == "출하대기"){
             LocalDateTime dateTime = LocalDateTime.now();
 
             if(orderSheetAddmDto.getOsReceiptDate() == null){

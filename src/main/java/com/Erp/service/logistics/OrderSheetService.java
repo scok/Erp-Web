@@ -183,6 +183,7 @@ public class OrderSheetService {
     }
 
     //주문서 삭제 공정
+    @Transactional
     public void deleteOrderSheet(List<String> code) {
         for (String osCode :  code){
             OrderSheet orderSheet = orderSheetRepository.findById(osCode).orElseThrow(EntityNotFoundException::new);

@@ -267,7 +267,7 @@ function update(){
             }
         },
         error: function (request, status) {
-            alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n");
+            alert(request.responseText);
         }
     })
 }

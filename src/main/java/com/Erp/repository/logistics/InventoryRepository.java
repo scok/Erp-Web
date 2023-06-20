@@ -42,4 +42,6 @@ public interface InventoryRepository extends JpaRepository<Inventory, Long> {
             "group by i.section.secCode, i.product.prCode ")
     List<InventoryChartDto> getChartProductInventory();
 
+    @Query("SELECT i FROM Inventory i WHERE i.product.prCode = :prCode and i.inQuantity >= :osQuantity ")
+    List<Inventory> findByProductAndOsQuantity(@Param("prCode") String prCode, @Param("osQuantity") int osQuantity);
 }
