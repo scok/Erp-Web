@@ -43,7 +43,7 @@ public class OrderSheetController {
 
         return "/orderSheet/buyOrderSheetForm";
     }
-
+    
     // 데이터 베이스에 있는 구매 주문서 정보를 조회
     @GetMapping(value = "/buyOrderSheets/check")
     public @ResponseBody Object buyOrderSheetSelectAll(Model model) {
@@ -152,7 +152,7 @@ public class OrderSheetController {
                 orderSheetDetailAddmDtos.add(orderSheetDetailAddmDto);
             }
         }
-        if(String.valueOf(orderSheetAddmDto.getDivisionStatus()) == "입하대기"){
+        if(String.valueOf(orderSheetAddmDto.getDivisionStatus()) == "입하대기" || String.valueOf(orderSheetAddmDto.getDivisionStatus()) == "출하대기"){
             LocalDateTime dateTime = LocalDateTime.now();
 
             if(orderSheetAddmDto.getOsReceiptDate() == null){
@@ -176,7 +176,7 @@ public class OrderSheetController {
                     orderSheetDetail = OrderSheetDetail.createCode(orderSheetDetailAddmDto,product);
                     orderSheetDetail = orderSheetService.orderSheetDetailSave(orderSheetDetail);
                 }else{
-                    orderSheetDetail = orderSheetService.orderSheetDetailUpdate(orderSheetDetailAddmDto,product);
+                   orderSheetDetail = orderSheetService.orderSheetDetailUpdate(orderSheetDetailAddmDto,product);
                 }
                 orderSheetDetails.add(orderSheetDetail);
             }
@@ -217,3 +217,4 @@ public class OrderSheetController {
         }
     }
 }
+

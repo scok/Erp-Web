@@ -195,7 +195,7 @@ $(document).ready(function () {
                 $('#productTable tbody').append(tableTd);
             },
             error: function (request, status) {
-                alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n");
+                alert(request.responseText);
             }
         });
     });
@@ -289,7 +289,7 @@ function AcCodeChange(value) {
                 }
             },
             error: function (request, status) {
-                alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n");
+                alert(request.responseText);
             }
      });
 
@@ -586,7 +586,7 @@ function update(){
             }
         },
         error: function (request, status) {
-            alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n");
+            alert(request.responseText);
         }
     })
 }
@@ -624,7 +624,7 @@ function deletePageN(){
             modalOff();
         },
         error: function (request, status) {
-            alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n");
+            alert(request.responseText);
         }
     });
 }
@@ -753,7 +753,7 @@ function estimateClick(values){
             })
         },
         error: function (request, status) {
-            alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n");
+            alert(request.responseText);
         }
     });
 }

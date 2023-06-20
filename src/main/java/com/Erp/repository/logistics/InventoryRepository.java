@@ -1,7 +1,7 @@
 package com.Erp.repository.logistics;
 
 import com.Erp.constant.StackAreaCategory;
-import com.Erp.dto.logistics.InventoryChartDto;
+import com.Erp.dto.InventoryChartDto;
 import com.Erp.entity.logistics.Inventory;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -42,4 +42,6 @@ public interface InventoryRepository extends JpaRepository<Inventory, Long> {
             "group by i.section.secCode, i.product.prCode ")
     List<InventoryChartDto> getChartProductInventory();
 
+    @Query("SELECT i FROM Inventory i WHERE i.product.prCode = :prCode and i.inQuantity >= :osQuantity ")
+    List<Inventory> findByProductAndOsQuantity(@Param("prCode") String prCode, @Param("osQuantity") int osQuantity);
 }

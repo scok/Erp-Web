@@ -1,7 +1,7 @@
 package com.Erp.service.logistics;
 
 import com.Erp.constant.StackAreaCategory;
-import com.Erp.dto.logistics.InventoryChartDto;
+import com.Erp.dto.InventoryChartDto;
 import com.Erp.dto.logistics.InventoryFormDto;
 import com.Erp.entity.logistics.Inventory;
 import com.Erp.repository.logistics.InventoryRepository;
@@ -24,16 +24,13 @@ public class InventorService {
     //창고명,구역,상품 코드가 같은 재고를 가져옵니다.
     @Transactional
     public Inventory inventorService(String escCode, StackAreaCategory stackAreaCategory, String prCode){
-        Inventory inventory = new Inventory();
-        inventory =  inventoryRepository.getInventoryInFo(escCode,stackAreaCategory,prCode);
-        return inventory;
+        return inventoryRepository.getInventoryInFo(escCode,stackAreaCategory,prCode);
     }
 
     //수량을 업데이트 합니다.
     @Transactional
     public void updateInQuantity(Inventory inventory, int inQuantity) {
-        int totalCount = inventory.getInQuantity() + inQuantity;
-        inventory.setInQuantity(totalCount);
+        inventory.setInQuantity(inQuantity);
     }
 
     //설정한 창고의 재고만 가져옵니다.
@@ -85,4 +82,8 @@ public class InventorService {
         return inventories;
     }
 
+    //견적서 디테일에 있는 상품 정보 1건에 대한 재고 수량이 있는지 파악합니다.
+    public List<Inventory> findByProductAndOsQuantity(String prCode, int osQuantity) {
+        return inventoryRepository.findByProductAndOsQuantity(prCode,osQuantity);
+    }
 }

@@ -47,7 +47,7 @@ public class MaterialDeliveryController {
     private final InventorService inventorService;
     private final SectionService sectionService;
     private final LogisticsService logisticsService;
-
+    
     // 리스트 불러오기
     @GetMapping(value = "/list")
     public String goMaterialDeliveryList(Model model){

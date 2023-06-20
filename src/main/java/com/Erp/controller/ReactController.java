@@ -1,10 +1,12 @@
 package com.Erp.controller;
 
+import com.Erp.dto.InventoryChartDto;
 import com.Erp.dto.ProductionChartDto;
 import com.Erp.dto.UserDto;
-import com.Erp.dto.logistics.InventoryChartDto;
 import com.Erp.dto.logistics.InventoryFormDto;
+import com.Erp.entity.logistics.OrderSheet;
 import com.Erp.service.logistics.InventorService;
+import com.Erp.service.logistics.OrderSheetService;
 import com.Erp.service.logistics.ProductionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,7 +18,10 @@ import javax.servlet.http.HttpSession;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.Year;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,17 +66,11 @@ public class ReactController {
         Map<String, String> userInfo = new HashMap<String, String>();
 
         UserDto user = (UserDto) session.getAttribute("User");
-
-        String userId = user.getId();
         String userName = user.getName();
         String userRole = String.valueOf(user.getRole());
-        String userImage = user.getImageUrl();
 
-        userInfo.put("userId", userId);
         userInfo.put("userName", userName);
         userInfo.put("userRole", userRole);
-        userInfo.put("userImage", userImage);
-        System.out.println(userInfo.toString());
         return userInfo;
     }
     @PostMapping(value = "/react/filterDate")

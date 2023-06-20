@@ -116,7 +116,7 @@ public class AccountController {
     //구매, 영업 거래처 페이지에 데이터 1건을 보내줍니다.
     @PostMapping(value = "/accounts/updateAccount")
     public @ResponseBody ResponseEntity buyUpdateData(@RequestBody String code, HttpServletRequest request){
-
+        
         boolean department = this.getSession(request);
 
         if(!department){

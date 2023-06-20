@@ -17,7 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -86,13 +88,14 @@ public class LogisticsController {
     @Transactional
     @PostMapping(value = "/updateOrderSheets")
     public @ResponseBody ResponseEntity OrderSheetInstructUpdate(@RequestBody Map<String,String> data, HttpServletRequest request) {
+        String message="";
         boolean department = this.getSession(request);
 
         if(!department){
-            return new ResponseEntity<String>("등록 권한이 없습니다.", HttpStatus.BAD_REQUEST);
+            message ="등록 권한이 없습니다.";
+            throw new RuntimeException(message);
         }
 
-        String message="";
         //주문서 코드와 상태를 보내줍니다.
         OrderSheet orderSheet =  orderSheetService.OrderSheetStatusUpdate(data.get("osCode"),data.get("divisionStatus"));
         Section section =sectionService.findBySecCode(data.get("secCode"));
@@ -146,34 +149,25 @@ public class LogisticsController {
                     throw new RuntimeException(message);
                 }
             }else if(data.get("divisionStatus").equals("출고")){
-                secTotalCount = section.getSecTotalCount() -orderSheetDetail.getOsQuantity();
-                if(orderSheetDetail.getOsQuantity() < secTotalCount){ //창고의 맥스 수량보다 많이 입고 시킬시 감지
+                if(secTotalCount == 0){
+                    secTotalCount = section.getSecTotalCount() - orderSheetDetail.getOsQuantity();
+                }else{
+                    secTotalCount -= orderSheetDetail.getOsQuantity();
+                }
+                if(orderSheetDetail.getOsQuantity() <= secTotalCount){ //창고의 맥스 수량보다 많이 입고 시킬시 감지
                     WarehousingInAndOut warehousingInAndOut = WarehousingInAndOut.of(orderSheet,orderSheetDetail,section,data.get("SACategory"));
                     warehousingInAndOut = logisticsService.WarehousingSave(warehousingInAndOut);
 
-                    //거래처 서비스로직 구현
-                    transactionService.inAndOut(warehousingInAndOut);
+                    Inventory inventory = new Inventory();
+                    inventory = inventorService.inventorService(section.getSecCode(),warehousingInAndOut.getStackAreaCategory(),orderSheetDetail.getProduct().getPrCode());
 
-                    Long raw_mt = orderSheetDetail.getOsQuantity() * (orderSheetDetail.getOsSupplyValue() + orderSheetDetail.getOsTaxAmount());
+                    System.out.println("수량확인");
+                    System.out.println(inventory.toString());
 
-                    OrderSheet orderSheet1 = orderSheetDetail.getOrderSheet();
-
-                    Short year = (short) orderSheet1.getOsReceiptDate().getYear();
-                    int quarter = (orderSheet1.getOsReceiptDate().getMonthValue() - 1) / 3 + 1;
-
-                    for (int i = quarter; i < 5; i++) {
-                        Financial financial = financialRepository.findFinancialQuarter(year, i);
-
-                        if(financial != null){
-
-                            financial.setRaw_mt_inven(financial.getRaw_mt_inven() - raw_mt);
-
-                            financialService.saveData(financial);
-                        }
+                    if(inventory == null){
+                        message ="구역을 다시 선택해주세요.";
+                        throw new RuntimeException(message);
                     }
-
-                    Inventory inventory = inventorService.inventorService(section.getSecCode(),warehousingInAndOut.getStackAreaCategory(),orderSheetDetail.getProduct().getPrCode());
-
                     int inQuantity = inventory.getInQuantity() - orderSheetDetail.getOsQuantity();
                     inventorService.updateInQuantity(inventory,inQuantity);
                 }else{

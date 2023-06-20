@@ -188,7 +188,7 @@ function addAccount(){
             modalOff();
         },
         error: function (request, status) {
-            alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n");
+            alert(request.responseText);
         }
     });
 };
@@ -230,7 +230,7 @@ function update(){
             modalOn();
         },
         error: function (request, status) {
-            alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n");
+            alert(request.responseText);
         }
     });
 }
@@ -266,7 +266,7 @@ function deletePageN(){
             $('#myTable').DataTable().ajax.reload();
         },
         error: function (request, status) {
-            alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n");
+            alert(request.responseText);
         }
     });
 }

@@ -71,6 +71,10 @@ export default function DataTable(props) {
         data: data,
         borderColor: color[index],
         borderWidth: 2,
+        datalabels : {
+                    anchor: 'end', // 표시 위치
+                    align: 'top',  // 표시위치에서 어디쪽으로 배치할지
+        }
       };
     });
 

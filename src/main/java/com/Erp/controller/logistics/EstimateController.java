@@ -90,7 +90,7 @@ public class EstimateController {
         if(!department){
             return new ResponseEntity<String>("수정 권한이 없습니다.", HttpStatus.BAD_REQUEST);
         }
-
+        
         //현재 문제점 Ajax로 넘겨 받은 데이터안에 ""가 붙어있어서 문제 발생.
         code = code.substring(1,code.length()-1);
 
@@ -125,7 +125,7 @@ public class EstimateController {
                 Map<String, String> innerMap = (Map<String, String>) value; // 맵으로 변환해주는 문장
                 estimateAddmDto = EstimateAddmDto.EsMapMapper(innerMap);
 
-            }else {
+           }else {
                 Map<String, String> innerMap = (Map<String, String>) value; // 맵으로 변환해주는 문장
                 EstimateDetailAddmDto estimateDetailAddmDto = EstimateDetailAddmDto.EsdMapMapper(innerMap);
                 estimateDetailAddmDtos.add(estimateDetailAddmDto);
@@ -241,3 +241,4 @@ public class EstimateController {
         }
     }
 }
+

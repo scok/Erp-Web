@@ -80,18 +80,12 @@ public class SectionService {
         return map;
     }
 
-    //제품 창고만 가져옵니다.
-    public Map<String,SectionFormDto> sectionMapProduct() {
-        List<Section> sectionList = sectionRepository.findSectionProduct();
-        Map<String ,SectionFormDto> map = new HashMap<String ,SectionFormDto>();
+    //특정 제품 창고를 가져옵니다.
+    public SectionFormDto sectionProduct(String secCode) {
+        Section section = sectionRepository.findById(secCode).orElseThrow(EntityNotFoundException::new);
+        SectionFormDto sectionFormDto = SectionFormDto.of(section);
 
-        for (Section section : sectionList){
-            int i = 1;
-            SectionFormDto sectionFormDto = SectionFormDto.of(section);
-            map.put("data"+ String.valueOf(i),sectionFormDto);
-        }
-
-        return map;
+        return sectionFormDto;
     }
 
     //자재 창고만 가져옵니다.

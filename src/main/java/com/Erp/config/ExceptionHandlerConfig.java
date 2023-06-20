@@ -5,12 +5,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 //예외를 감지하고 롤백을 수행하는 클래스 입니다.
 @ControllerAdvice
 public class ExceptionHandlerConfig{
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity handleRuntimeException(RuntimeException ex) {
+    public @ResponseBody ResponseEntity handleRuntimeException(RuntimeException ex) {
         // 롤백 수행
         TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 
@@ -20,6 +21,6 @@ public class ExceptionHandlerConfig{
 
         // ResponseEntity 반환
         // ...
-        return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<String>(message, HttpStatus.BAD_REQUEST);
     }
 }

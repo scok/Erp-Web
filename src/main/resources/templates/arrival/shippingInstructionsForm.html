@@ -13,20 +13,20 @@
     <meta th:if="${_csrf}" name="_csrf_parameter" th:content="${_csrf.parameterName}"/>
 </head>
 <th:block layout:fragment="script">
-<script th:src="@{/js/logistics/arrivalInstructForm.js}"></script>
-<script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/select/1.3.3/js/dataTables.select.min.js"></script>
-<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <script th:src="@{/js/logistics/arrivalInstructForm.js}"></script>
+    <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/select/1.3.3/js/dataTables.select.min.js"></script>
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 
-<script src="https://cdn.datatables.net/buttons/1.5.2/js/dataTables.buttons.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.5.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.html5.min.js"></script>
 </th:block>
 <th:block layout:fragment="css">
-<link th:href="@{/css/distributionCenter.css}" rel="stylesheet">
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css" />
-<link rel="stylesheet" herf="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.8.8/semantic.min.css" />
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.semanticui.min.css" />
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/select/1.3.3/css/select.dataTables.min.css" />
+    <link th:href="@{/css/distributionCenter.css}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" herf="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.8.8/semantic.min.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.semanticui.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/select/1.3.3/css/select.dataTables.min.css" />
 </th:block>
 
 <div class="content" layout:fragment="content" id="content">
@@ -38,16 +38,16 @@
 
         <table id="myTable" style="width:100%;" class="display">
             <thead>
-            <tr>
-                <th style="text-align: center;" ><input type="checkbox" name="checkall" id="checkall"></th>
-                <th>구분</th>
-                <th>품명</th>
-                <th>총금액</th>
-                <th>거래처 명</th>
-                <th>거래처 대표자 명</th>
-                <th>거래처 홈페이지</th>
-                <th>상태</th>
-            </tr>
+                <tr>
+                    <th style="text-align: center;" ><input type="checkbox" name="checkall" id="checkall"></th>
+                    <th>구분</th>
+                    <th>품명</th>
+                    <th>총금액</th>
+                    <th>거래처 명</th>
+                    <th>거래처 대표자 명</th>
+                    <th>거래처 홈페이지</th>
+                    <th>상태</th>
+                </tr>
             </thead>
         </table>
         <div id="modal" class="modal-overlay">
@@ -71,20 +71,20 @@
                     </p>
                     <table id="productTable" style="">
                         <thead>
-                        <tr>
-                            <th>거래 유형</th>
-                            <th>품명</th>
-                            <th>단가</th>
-                            <th>규격</th>
-                            <th>수량</th>
-                            <th>공급가액</th>
-                            <th>세액</th>
-                        </tr>
+                            <tr>
+                                <th>거래 유형</th>
+                                <th>품명</th>
+                                <th>단가</th>
+                                <th>규격</th>
+                                <th>수량</th>
+                                <th>공급가액</th>
+                                <th>세액</th>
+                            </tr>
                         </thead>
                         <tbody id="tableBody">
                         </tbody>
                     </table>
-                    <p id="osTotalPrice" name="osTotalPrice"></p>
+                        <p id="osTotalPrice" name="osTotalPrice"></p>
                     <br/>
                     <div id="DivStatus" class="divisionStatus">
                         <input type="radio" id="divisionStatus" name="divisionStatus" value="출고" onclick="radioClick(this.value)">
@@ -98,9 +98,6 @@
                         </p>
                         <p>구역 선택<br/>
                             <select class="custom-select" name="SACategory" id="SACategory">
-                                <option th:each="SACategory : ${T(com.Erp.constant.StackAreaCategory).values()}"
-                                        th:value="${SACategory.name()}"
-                                        th:text="${SACategory.name()}">
                             </select>
                         </p>
                     </div>

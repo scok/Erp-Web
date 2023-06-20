@@ -301,7 +301,7 @@ function update(){
             $("#prDivCategory").val(data.prDivCategory).prop("selected", true); //셀렉트 박스 체크
 
             if(data.prDivCategory == "제품"){
-                $('#standard').append(`<input type="text" id="prStandard" name="prStandard" placeholder="제품 규격을 입력해주세요.">`);
+                $('#standard').append(`<input type="text" class="customInput" id="prStandard" name="prStandard" placeholder="제품 규격을 입력해주세요.">`);
             }
 
             for (let [key, value] of entries) {
