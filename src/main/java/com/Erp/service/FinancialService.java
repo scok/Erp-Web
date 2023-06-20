@@ -123,6 +123,8 @@ public class FinancialService {
 
         for (Financial financial : financials){
 
+            saveData(financial);
+
             Income income = financial.getIncomes();
 
             Long fixture_mt = 0L;
@@ -148,6 +150,8 @@ public class FinancialService {
         List<Financial> financials = financialRepository.findSearchList(year);
 
         for (Financial financial : financials){
+
+            saveData(financial);
 
             Income income = financial.getIncomes();
 
