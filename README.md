@@ -96,7 +96,7 @@ KOSMO 웹 기반 ERP 프로젝트
 | | | 데이터 분석 | 재무상태표, 손익계산서 데이터 차트 |
 *****
 ## 4. 출력 화면
-
+* [ERP프로젝트 최종.pdf](https://github.com/scok/Erp-Web/blob/master/ERP%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8%20%EC%B5%9C%EC%A2%85.pdf)
 
 ## ○ 참고문서
 * [Chart.js](https://www.chartjs.org/docs/latest/)
