@@ -35,7 +35,6 @@ public class FinancialController {
 
         Pattern pattern = Pattern.compile("\\d{4}");
         String searchValue = formData.get("columns[31][search][value]").toString();
-        System.out.println("검색 값 : " + formData);
         Matcher matcher = pattern.matcher(searchValue);
 
         Short year = 0;
@@ -48,8 +47,6 @@ public class FinancialController {
         }
 
         int draw = Integer.parseInt(formData.get("draw").get(0));
-        int start = Integer.parseInt(formData.get("start").get(0));
-        int length = Integer.parseInt(formData.get("length").get(0));
 
         int total = (int)financialRepository.count();
 

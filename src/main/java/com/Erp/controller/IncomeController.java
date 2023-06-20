@@ -28,13 +28,16 @@ public class IncomeController {
     private final IncomeRepository incomeRepository;
     private final IncomeService incomeService;
 
+    // 손익계산서 페이지 이동
     @GetMapping(value = "/incomes/income")
     public String goIncome(){ return "/financial/incomeForm"; }
 
+    // 손익계산서 페이지 로딩 및 갱신
     @GetMapping(value = "/incomes/dataSetting")
     @ResponseBody
     public IncomeData getList(@Valid IncomeData data, @RequestParam MultiValueMap<String, String> formData) {
 
+        // 갱신할 연도를 찾음
         Pattern pattern = Pattern.compile("\\d{4}");
         String searchValue = formData.get("columns[33][search][value]").toString();
         Matcher matcher = pattern.matcher(searchValue);
@@ -49,14 +52,13 @@ public class IncomeController {
         }
 
         int draw = Integer.parseInt(formData.get("draw").get(0));
-        int start = Integer.parseInt(formData.get("start").get(0));
-        int length = Integer.parseInt(formData.get("length").get(0));
 
         int total = (int)incomeRepository.count();
 
         List<IncomeDto> incomeDtos = new ArrayList<>();
 
-        if(year == 0){
+        // 연도에 따라 손익계산서 데이터 찾기
+        if(year == 0){ // 값이 없을 때
             incomeDtos = incomeService.findIncomesList();
         }else{
             incomeDtos = incomeService.findIncomesList(year);
@@ -70,6 +72,7 @@ public class IncomeController {
         return data;
     }
 
+    // 손익계산서 추가
     @PostMapping("/incomes/dataAdd")
     public @ResponseBody ResponseEntity addData(@RequestBody IncomeDto dto, HttpServletRequest request){
 
@@ -80,13 +83,14 @@ public class IncomeController {
 
         Short year = 0;
 
-        if(user.getDepartment().equals("재무")){
+        if(user.getDepartment().equals("재무")){ // 재무 팀만 등록 가능하도록 제한
             year = incomeService.addData(dto);
         }
 
         return new ResponseEntity(year, HttpStatus.OK);
     }
 
+    // 손익계산서 수정
     @PostMapping("/incomes/dataSave")
     public @ResponseBody ResponseEntity saveData(@RequestBody SaveDto dto) throws Exception {
 

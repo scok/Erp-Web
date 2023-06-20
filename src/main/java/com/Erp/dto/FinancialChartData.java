@@ -12,7 +12,7 @@ public class FinancialChartData {
     private Long paid_capital; // 자기자본
     private Long total_liabilities; // 총 부채
     private Long total_capital; // 총 자본
-    private Short year;
+    private Short year; // 연도
 
     public FinancialChartData(Long total_assets, Long current_assets, Long tangible_assets, Long paid_capital, Long total_liabilities, Long total_capital, Short year) {
         this.total_assets = total_assets;

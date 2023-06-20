@@ -80,6 +80,7 @@ $(document).ready(function(){
         }
     });
 
+    // 숫자 데이터에 콤마 붙이기
     function comma(value){
         value = String(value);
         return value.replace(/(\d)(?=(?:\d{3})+(?!\d))/g, '$1, ');

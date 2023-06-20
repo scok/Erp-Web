@@ -2,7 +2,6 @@ package com.Erp.service;
 
 import com.Erp.constant.ProductDivisionCategory;
 import com.Erp.constant.TransactionCategory;
-import com.Erp.dto.FinancialDto;
 import com.Erp.dto.IncomeDto;
 import com.Erp.dto.SaveDto;
 import com.Erp.entity.*;
@@ -24,10 +23,12 @@ public class IncomeService {
     private final FinancialRepository financialRepository;
     private final MemberPayRepository memberPayRepository;
 
+    // 데이터 추가
     public Short addData(IncomeDto dto) {
 
         List<Income> incomes = incomeRepository.findSearchList(dto.getYear());
 
+        // 기존의 손익계산서 없을 시
         if(incomes.size() == 0){
             for (int i = 1; i < 5; i++) {
                 Income income = new Income(0L, dto.getYear(), i);
@@ -73,6 +74,7 @@ public class IncomeService {
         }
     }
 
+    // 총합 계산 후 저장
     public void saveData(Income income, List<Member> members) {
 
         List<Transaction> transactions = transactionRepository.findTransactionList(Integer.valueOf(income.getYear()), income.getQuarter());
@@ -277,6 +279,7 @@ public class IncomeService {
         }
     }
 
+    // 화면 데이터 불러오기
     public List<IncomeDto> findIncomesList(){
 
         List<IncomeDto> incomeDtos = new ArrayList<>();
@@ -310,6 +313,7 @@ public class IncomeService {
         return incomeDtos;
     }
 
+    // 화면 데이터(연도) 불러오기
     public List<IncomeDto> findIncomesList(Short year){
 
         List<IncomeDto> incomeDtos = new ArrayList<>();
@@ -341,7 +345,7 @@ public class IncomeService {
         return incomeDtos;
     }
 
-
+    // 데이터 수정
     public Long updateData(SaveDto dto) throws Exception {
 
         Long id = dto.getNum();

@@ -13,7 +13,7 @@ public class AllChartData {
     private Long operate_income; // 운용 이익
     private Long sales_revenue; // 판매 수익
     private Long total_assets; // 총 자산
-    private Short year;
+    private Short year; // 연도
 
     public AllChartData(Long total_revenue, Long netIncome, Long operate_expenses, Long mNum, Long operate_income, Long sales_revenue, Long total_assets, Short year) {
         this.total_revenue = total_revenue;

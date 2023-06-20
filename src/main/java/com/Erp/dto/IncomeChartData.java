@@ -10,7 +10,7 @@ public class IncomeChartData {
     private Long operate_revenue; // 영업 수익
     private Long operate_expenses; // 영업 비용
     private Long netIncome ; // 당기 순이익
-    private Short year;
+    private Short year; // 연도
 
     public IncomeChartData(Long sales_revenue, Long operate_revenue, Long operate_expenses, Long netIncome, Short year) {
         this.sales_revenue = sales_revenue;

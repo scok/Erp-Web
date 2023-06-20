@@ -1,7 +1,6 @@
 package com.Erp.entity;
 
 import com.Erp.dto.FinancialDto;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -61,6 +60,7 @@ public class Financial {
     @JoinColumn(name = "income_id")
     private Income incomes  ;
 
+    // 데이터 항목에 따라 동작하는 데이터 수정 메소드
     public void setDynamicField(String fieldName, Object fieldValue) throws Exception{
         String setterName = "set" + Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1);
         Method setter = getClass().getMethod(setterName, fieldValue.getClass());
@@ -70,6 +70,7 @@ public class Financial {
     public Financial() {
     }
 
+    // 초기화
     public Financial(Long number, Short year, Integer quarter) {
         this.quarter = quarter;
         this.cash = number;

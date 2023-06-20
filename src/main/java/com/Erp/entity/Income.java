@@ -73,6 +73,7 @@ public class Income {
     @OneToMany(mappedBy = "income", cascade = CascadeType.ALL)
     private List<Transaction> transactions = new ArrayList<>();
 
+    // 데이터 항목에 따라 동작하는 데이터 수정 메소드
     public void setDynamicField(String fieldName, Object fieldValue) throws Exception{
         String setterName = "set" + Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1);
         Method setter = getClass().getMethod(setterName, fieldValue.getClass());
@@ -82,6 +83,7 @@ public class Income {
     public Income() {
     }
 
+    // 초기화
     public Income(Long initNum, Short year, Integer quarter) {
         this.quarter = quarter;
         this.sales_revenue = initNum;

@@ -22,10 +22,11 @@ public class AnalysisController {
     private final FinancialRepository financialRepository;
     private final MemberRepository memberRepository;
 
-
+    // 분석 페이지 이동
     @GetMapping(value = "/analyses/analysis")
     public String goAnalysis(){ return "/financial/analysisForm"; }
 
+    // 손익계산서 차트 데이터 불러오기
     @GetMapping("/analysis/getIncomeChartData")
     public @ResponseBody List<IncomeChartData> getIncomeChartDataList(){
 
@@ -36,6 +37,7 @@ public class AnalysisController {
         return incomeChartData;
     }
 
+    // 재무상태표 차트 데이터 불러오기
     @GetMapping("/analysis/getFinancialChartData")
     public @ResponseBody List<FinancialChartData> getFinancialChartDataList(){
 
@@ -46,6 +48,7 @@ public class AnalysisController {
         return financialChartData;
     }
 
+    // 한눈에 보기 차트 데이터 불러오기
     @GetMapping("/analysis/getAllChartData")
     public @ResponseBody List<AllChartData> getAllChartDataList(){
 

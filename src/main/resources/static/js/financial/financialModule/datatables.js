@@ -6,6 +6,7 @@ $(document).ready(function(){
 
     var data_length = 0;
 
+    // 데이터 테이블 AJAX로 불러오기
     table = $("#example").DataTable({
         ordering : false,
         paging : false,

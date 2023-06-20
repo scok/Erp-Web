@@ -2,7 +2,6 @@ package com.Erp.service;
 
 import com.Erp.constant.ProductDivisionCategory;
 import com.Erp.dto.FinancialDto;
-import com.Erp.dto.IncomeDto;
 import com.Erp.dto.SaveDto;
 import com.Erp.entity.Financial;
 import com.Erp.entity.Income;
@@ -18,7 +17,6 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -29,10 +27,12 @@ public class FinancialService {
     private final InventoryRepository inventoryRepository;
     private final ProductRepository productRepository;
 
+    // 데이터 추가
     public Short addData(FinancialDto dto) {
 
         List<Financial> financials = financialRepository.findSearchList(dto.getYear());
 
+        // 기존의 재무 상태표 없을 시
         if(financials.size() == 0){
             for (int i = 1; i < 5; i++) {
                 Financial financial = new Financial(0L, dto.getYear(), i);
@@ -55,6 +55,7 @@ public class FinancialService {
         }
     }
 
+    // 총합 계산 후 저장
     public void saveData(Financial financial){
 
         Income income = financial.getIncomes();
@@ -63,6 +64,7 @@ public class FinancialService {
         long raw_mat_inven = 0L;
         long product_inven = 0L;
 
+        // 항목 수정 후 총합 다시 계산
         if(inventory.size() != 0){
             for (Inventory bean : inventory){
 
@@ -101,6 +103,7 @@ public class FinancialService {
         financialRepository.save(financial);
     }
 
+    // 데이터 수정
     public Long updateData(SaveDto dto) throws Exception{
 
         Long id = dto.getNum();
@@ -115,6 +118,7 @@ public class FinancialService {
         return financial.getId();
     }
 
+    // 화면 데이터 불러오기
     public List<FinancialDto> findFinancialsList() {
 
         List<FinancialDto> financialDtos = new ArrayList<>();
@@ -143,6 +147,7 @@ public class FinancialService {
         return financialDtos;
     }
 
+    // 화면 데이터(연도) 불러오기
     public List<FinancialDto> findFinancialsList(Short year) {
 
         List<FinancialDto> financialDtos = new ArrayList<>();

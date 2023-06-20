@@ -12,6 +12,7 @@ $(document).ready(function(){
 
     var currentCell = null;
 
+    // 테이블 항목 더블 클릭 시 수정 창 출력
     $('td.editable').on('dblclick', function(){
 
         if(currentCell && currentCell !== this){
@@ -29,6 +30,7 @@ $(document).ready(function(){
         input.focus();
     });
 
+    // 엔터 누를 시 데이터 수정
     $(document).on('keyup', 'td.editable input', function(){
 
         if(event.which === 13){
