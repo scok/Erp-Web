@@ -1,5 +1,6 @@
 package com.Erp.controller.logistics;
 
+import com.Erp.dto.UserDto;
 import com.Erp.dto.logistics.*;
 import com.Erp.entity.Member;
 import com.Erp.entity.logistics.*;
@@ -16,6 +17,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -80,7 +83,14 @@ public class EstimateController {
 
     //견적서 페이지에 수정할 데이터 정보 modal에 데이터를 넣어주는 메소드
     @PostMapping(value = "/estimates/updateEstimate")
-    public @ResponseBody ResponseEntity updateData(@RequestBody String code){
+    public @ResponseBody ResponseEntity updateData(@RequestBody String code, HttpServletRequest request){
+
+        boolean department = this.getSession(request);
+
+        if(!department){
+            return new ResponseEntity<String>("수정 권한이 없습니다.", HttpStatus.BAD_REQUEST);
+        }
+
         //현재 문제점 Ajax로 넘겨 받은 데이터안에 ""가 붙어있어서 문제 발생.
         code = code.substring(1,code.length()-1);
 
@@ -97,7 +107,13 @@ public class EstimateController {
 
     //Estimate 테이블 저장,수정 구역
     @PostMapping(value = "/estimates/addEstimate")
-    public @ResponseBody ResponseEntity addEstimate(@RequestBody Map<String,Object> esData, Principal principal) {
+    public @ResponseBody ResponseEntity addEstimate(@RequestBody Map<String,Object> esData, Principal principal, HttpServletRequest request) {
+
+        boolean department = this.getSession(request);
+
+        if(!department){
+            return new ResponseEntity<String>("작성 권한이 없습니다.", HttpStatus.BAD_REQUEST);
+        }
 
         EstimateAddmDto estimateAddmDto = null;    //견적서 정보와
         List<EstimateDetailAddmDto> estimateDetailAddmDtos = new ArrayList<EstimateDetailAddmDto>(); //견적서 디테일 정보
@@ -109,7 +125,7 @@ public class EstimateController {
                 Map<String, String> innerMap = (Map<String, String>) value; // 맵으로 변환해주는 문장
                 estimateAddmDto = EstimateAddmDto.EsMapMapper(innerMap);
 
-           }else {
+            }else {
                 Map<String, String> innerMap = (Map<String, String>) value; // 맵으로 변환해주는 문장
                 EstimateDetailAddmDto estimateDetailAddmDto = EstimateDetailAddmDto.EsdMapMapper(innerMap);
                 estimateDetailAddmDtos.add(estimateDetailAddmDto);
@@ -175,11 +191,17 @@ public class EstimateController {
     }
 
     @PostMapping(value = "/estimates/deleteEstimate")
-    public @ResponseBody ResponseEntity deleteEstimate(@RequestBody List<String> code){
+    public @ResponseBody ResponseEntity deleteEstimate(@RequestBody List<String> code, HttpServletRequest request){
+
+        boolean department = this.getSession(request);
+
+        if(!department){
+            return new ResponseEntity<String>("삭제 권한이 없습니다.", HttpStatus.BAD_REQUEST);
+        }
 
         estimateService.deleteEstimate(code);
 
-        return new ResponseEntity<>("1",HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     // 데이터 베이스에 있는 구매 주문서 상태별 정보를 조회
@@ -203,5 +225,19 @@ public class EstimateController {
 
         return data;
     }
-}
 
+    public boolean getSession(HttpServletRequest request){
+
+        HttpSession session = request.getSession();
+        UserDto user = (UserDto) session.getAttribute("User");
+
+        boolean department = false;
+
+        if(user.getDepartment().equals("구매팀") || user.getDepartment().equals("영업팀")) {
+            department = true;
+            return department;
+        }else {
+            return department;
+        }
+    }
+}

@@ -63,11 +63,11 @@ export default function FullWidthTabs() {
 
     return (
     <Box sx={{ bgcolor: 'background.paper', width: '100%'}}>
-        <AppBar position="static">
+        <AppBar position="static" style={{backgroundColor: '#73685d'}}>
             <Tabs
                 value={value}
                 onChange={handleChange}
-                indicatorColor="secondary"
+                indicatorColor='primary'
                 textColor="inherit"
                 variant="fullWidth"
                 aria-label="full width tabs example"
@@ -88,11 +88,11 @@ export default function FullWidthTabs() {
             </TabPanel>
             <TabPanel value={value} index={1} dir={theme.direction}>
                 <CardHeader command={'자재 재고 현황'}/>
-                <CardContent Search={false} Url={'/react/materialInventory'} />
+                <CardContent Search={false} Url={'/react/materialInventory'} ChartUrl={'/react/materialInventoryChart'} />
             </TabPanel>
             <TabPanel value={value} index={2} dir={theme.direction}>
                 <CardHeader command={'제품 재고 현황'}/>
-                <CardContent Search={false} Url={'/react/productInventory'}/>
+                <CardContent Search={false} Url={'/react/productInventory'} ChartUrl={'/react/productInventoryChart'}/>
             </TabPanel>
         </SwipeableViews>
     </Box>

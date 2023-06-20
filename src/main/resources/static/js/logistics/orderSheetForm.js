@@ -103,24 +103,24 @@ $(document).ready(function () {
    });
 
    $('#customSelect').on("change",function(){
-      table.search('').draw();
-      table.columns().search('').draw();
+       table.search('').draw();
+       table.columns().search('').draw();
    });
 
-   $('.dataTables_filter input').unbind().bind('keyup', function () {
+    $('.dataTables_filter input').unbind().bind('keyup', function () {
 
-      var colValue = document.querySelector('#customSelect').value;
+       var colValue = document.querySelector('#customSelect').value;
 
-      var colHeaders = table.columns().header().toArray();
+       var colHeaders = table.columns().header().toArray();
 
-      var targetIndex = colHeaders.findIndex(function(header) {
-        return header.innerHTML === colValue;
-      });
+       var targetIndex = colHeaders.findIndex(function(header) {
+         return header.innerHTML === colValue;
+       });
 
-      var keyWord = this.value;
+       var keyWord = this.value;
 
-      table.column(targetIndex).search(keyWord).draw();
-   });
+       table.column(targetIndex).search(keyWord).draw();
+    });
 
    /* 날짜검색 이벤트 리바인딩 */
    $('#myTable_filter').prepend('<input type="date" id="toDate" placeholder="yyyy-MM-dd">');
@@ -271,7 +271,7 @@ function changeTotalPrice(){
     }
 
     $("#osTotalPrice").attr("value",total);
-    $("#osTotalPrice").html(comma(total)); // 총 금액을 특정 요소에 반영
+    $("#osTotalPrice").html("Total: &#8361; "+ comma(total)); // 총 금액을 특정 요소에 반영
 }
 //거래처를 선택하면 동적으로 거래처와 매핑된 상품을 가져옵니다.
 function AcCodeChange(value) {
@@ -353,6 +353,15 @@ function modalOff() {
 //정규 표현식을 이용한 자릿수 표현
 function comma(num){
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+//동적 버튼 보이기
+function createButton(){
+    $("#saveBtn").css("display", "");//삭제 기능을 안보이게 해줍니다.
+}
+//동적 버튼 숨기기.
+function deleteButton(){
+    $("#saveBtn").css("display", "none");//삭제 기능을 안보이게 해줍니다.
 }
 
 //데이터 초기 등록 및 수정
@@ -483,6 +492,7 @@ function update(){
             xhr.setRequestHeader(header,token);
         },
         success: function (data) {
+            createButton();
             modalOn();
 
             var item = data["data"];
@@ -511,7 +521,7 @@ function update(){
             }
 
             $("#osTotalPrice").attr("value",item.osTotalPrice);
-            $("#osTotalPrice").html(comma(item.osTotalPrice)); // 총 금액을 특정 요소에 반영
+            $("#osTotalPrice").html("Total: &#8361; "+ comma(item.osTotalPrice)); // 총 금액을 특정 요소에 반영
 
             $("#osReceiptDate").attr("value",item.osReceiptDate);
             $("#osReceiptDate").html(item.osReceiptDate); // 총 금액을 특정 요소에 반영
@@ -525,6 +535,10 @@ function update(){
 
             $('#myForm')
             .append(`<input type="hidden" id="osCode" name="osCode" value=${item.osCode}>`);
+
+            if(item.divisionStatus === '입고'){
+                deleteButton();
+            }
         },
         error: function (request, status) {
             alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n");
@@ -610,7 +624,7 @@ function orderSheetClick(values){
             xhr.setRequestHeader(header,token);
         },
         success: function (result) {
-            $('#myTable').DataTable({
+            var table = $('#myTable').DataTable({
                 data:result.data,
                 dataSrc:"",
                 order : [[1, 'desc']],
@@ -662,35 +676,36 @@ function orderSheetClick(values){
             /* Column별 검색기능 추가 */
             $('#myTable_filter').prepend('<select id="customSelect"></select>');
             $('#myTable > thead > tr').children().each(function (indexInArray, valueOfElement) {
-              if(valueOfElement.innerHTML !="등록일자" && indexInArray != 0 && valueOfElement.innerHTML !="총금액"){
-                  $('#customSelect').append('<option>'+valueOfElement.innerHTML+'</option>');
-              }
+                if(valueOfElement.innerHTML !="등록일자" && indexInArray != 0 && valueOfElement.innerHTML !="총금액"){
+                    $('#customSelect').append('<option>'+valueOfElement.innerHTML+'</option>');
+                }
             });
 
             $('#customSelect').on("change",function(){
-              table.search('').draw();
-              table.columns().search('').draw();
+                table.search('').draw();
+                table.columns().search('').draw();
             });
 
             $('.dataTables_filter input').unbind().bind('keyup', function () {
 
-              var colValue = document.querySelector('#customSelect').value;
+                 var colValue = document.querySelector('#customSelect').value;
 
-              var colHeaders = table.columns().header().toArray();
+                 var colHeaders = table.columns().header().toArray();
 
-              var targetIndex = colHeaders.findIndex(function(header) {
-                return header.innerHTML === colValue;
-              });
+                 var targetIndex = colHeaders.findIndex(function(header) {
+                    return header.innerHTML === colValue;
+                 });
 
-              var keyWord = this.value;
-              table.column(targetIndex).search(keyWord).draw();
+                 var keyWord = this.value;
+
+                 table.column(targetIndex).search(keyWord).draw();
             });
 
             /* 날짜검색 이벤트 리바인딩 */
             $('#myTable_filter').prepend('<input type="date" id="toDate" placeholder="yyyy-MM-dd">');
             $('#myTable_filter').prepend('<input type="date" id="fromDate" placeholder="yyyy-MM-dd"> ~');
             $('#toDate, #fromDate').unbind().bind("change",function(){
-              table.draw();
+                table.draw();
             })
         },
         error: function (request, status) {

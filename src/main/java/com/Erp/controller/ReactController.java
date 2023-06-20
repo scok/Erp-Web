@@ -2,10 +2,9 @@ package com.Erp.controller;
 
 import com.Erp.dto.ProductionChartDto;
 import com.Erp.dto.UserDto;
+import com.Erp.dto.logistics.InventoryChartDto;
 import com.Erp.dto.logistics.InventoryFormDto;
-import com.Erp.entity.logistics.OrderSheet;
 import com.Erp.service.logistics.InventorService;
-import com.Erp.service.logistics.OrderSheetService;
 import com.Erp.service.logistics.ProductionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,10 +16,7 @@ import javax.servlet.http.HttpSession;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.Month;
-import java.time.Year;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -110,9 +106,25 @@ public class ReactController {
     }
 
     //제품 재고를 가져옵니다.
+    @GetMapping(value = "/react/materialInventoryChart")
+    public List<InventoryChartDto> reactMICD(){
+        List<InventoryChartDto> inventoryFormDtos = inventorService.getMaterialInventoryChart();
+        System.out.println(inventoryFormDtos.toString());
+        return  inventoryFormDtos;
+    }
+
+    //테이블에 입력할 제품 재고를 가져옵니다.
     @GetMapping(value = "/react/productInventory")
     public List<InventoryFormDto> reactPID(){
         List<InventoryFormDto> inventoryFormDtos = inventorService.getProductInventory();
         return inventoryFormDtos;
+
+    }
+    //제품 재고를 가져옵니다.
+    @GetMapping(value = "/react/productInventoryChart")
+    public List<InventoryChartDto> reactPICD(){
+        List<InventoryChartDto> inventoryFormDtos = inventorService.getProductInventoryChart();
+        System.out.println(inventoryFormDtos.toString());
+        return  inventoryFormDtos;
     }
 }

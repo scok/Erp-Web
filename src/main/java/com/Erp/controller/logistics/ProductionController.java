@@ -1,6 +1,7 @@
 package com.Erp.controller.logistics;
 
 import com.Erp.constant.DivisionStatus;
+import com.Erp.dto.UserDto;
 import com.Erp.dto.logistics.ProductFormDto;
 import com.Erp.dto.logistics.ProductionFormDto;
 import com.Erp.dto.logistics.SectionFormDto;
@@ -21,6 +22,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.security.Principal;
 import java.time.LocalDateTime;
@@ -68,7 +71,14 @@ public class ProductionController {
 
     @PostMapping(value = "/addProduction")
     @Transactional
-    public @ResponseBody ResponseEntity addProduction(@RequestBody @Valid ProductionFormDto dto, BindingResult error, Principal principal) {
+    public @ResponseBody ResponseEntity addProduction(@RequestBody @Valid ProductionFormDto dto, BindingResult error, Principal principal, HttpServletRequest request) {
+
+        boolean department = this.getSession(request);
+
+        if(!department){
+            return new ResponseEntity<String>("등록 권한이 없습니다.", HttpStatus.BAD_REQUEST);
+        }
+
         String errorMessage = "";
 
         System.out.println(dto.toString());
@@ -147,6 +157,21 @@ public class ProductionController {
             return new ResponseEntity<>(HttpStatus.OK);
         }else{
             return new ResponseEntity<>("창고에 여유 공간이 없습니다.",HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    public boolean getSession(HttpServletRequest request){
+
+        HttpSession session = request.getSession();
+        UserDto user = (UserDto) session.getAttribute("User");
+
+        boolean department = false;
+
+        if(user.getDepartment().equals("생산팀")) {
+            department = true;
+            return department;
+        }else {
+            return department;
         }
     }
 }

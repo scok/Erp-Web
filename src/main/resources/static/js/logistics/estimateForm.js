@@ -614,11 +614,10 @@ function deletePageN(){
         type: "POST",
         contentType:"application/json",
         data: paramData,
-        dataType: "json",
         beforeSend:function(xhr){
             xhr.setRequestHeader(header,token);
         },
-        success: function (data) {
+        success: function () {
             alert("success");
             var selectRadio = $('.tabs2').find('input[type="radio"]:checked').val();    //선택되어 있는 라디오 버튼 값.
             estimateClick(selectRadio);
@@ -758,5 +757,4 @@ function estimateClick(values){
         }
     });
 }
-
 

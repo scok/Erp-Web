@@ -1,6 +1,7 @@
 package com.Erp.repository.logistics;
 
 import com.Erp.constant.StackAreaCategory;
+import com.Erp.dto.logistics.InventoryChartDto;
 import com.Erp.entity.logistics.Inventory;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -25,6 +26,20 @@ public interface InventoryRepository extends JpaRepository<Inventory, Long> {
     @Query("SELECT i FROM Inventory i WHERE i.product.prDivCategory = '자재' and i.inQuantity > 0 ")
     List<Inventory> getMaterialInventory();
 
+    @Query("select NEW com.Erp.dto.InventoryChartDto(i.section.secCode, i.product.prCode, i.section.secName, i.product.prName, sum(i.inQuantity))" +
+            "from Inventory i " +
+            "WHERE i.product.prDivCategory = '자재' and i.inQuantity > 0 "+
+            "group by i.section.secCode, i.product.prCode ")
+    List<InventoryChartDto> getChartMaterialInventory();
+
+
     @Query("SELECT i FROM Inventory i WHERE i.product.prDivCategory = '제품' and i.inQuantity > 0 ")
     List<Inventory> getProductInventory();
+
+    @Query("select NEW com.Erp.dto.InventoryChartDto(i.section.secCode, i.product.prCode, i.section.secName, i.product.prName, sum(i.inQuantity))" +
+            "from Inventory i " +
+            "WHERE i.product.prDivCategory = '제품' and i.inQuantity > 0 "+
+            "group by i.section.secCode, i.product.prCode ")
+    List<InventoryChartDto> getChartProductInventory();
+
 }

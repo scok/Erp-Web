@@ -235,7 +235,7 @@
                                 <div class="col-md-5" style="text-align: center; margin-top:40px; margin-bottom:-40px;">
                                     <div class="image-container">
                                         <label for="memberImage">
-                                            <img style="width: 250px;border: 1px solid #d1d3e2;border-radius: 0.35rem;" id="preview-image"
+                                            <img style="width: 250px;height: 280px;margin-top:-18px; border: 1px solid #d1d3e2;border-radius: 0.35rem;" id="preview-image"
                                                  src="https://dummyimage.com/500x500/ffffff/000000.png&text=preview+image">
                                             <input style="display:block;" type="file" class="memberImage" id="memberImage" name="memberImage">
                                         </label>
@@ -254,24 +254,24 @@
                                     </div>
 
                                     <div class="tooltip">
-                                    <label class="small mb-1" th:for="birth">Birth</label>
-                                    <input type="text" class="form-control form-control-user" th:field="*{birth}"
-                                           placeholder="생년월일">
-                                    <span class="tooltiptext tooltip-bottom">8자리 형식으로 입력해 주세요. (ex:19910101)</span>
+                                        <label class="small mb-1" th:for="birth">Birth</label>
+                                        <input type="text" class="form-control form-control-user" th:field="*{birth}"
+                                               placeholder="생년월일">
+                                        <span class="tooltiptext tooltip-bottom">8자리 형식으로 입력해 주세요. (ex:19910101)</span>
                                     </div>
 
                                     <div class="tooltip">
-                                    <label class="small mb-1" th:for="phone">Phone number</label>
-                                    <input type="text" class="form-control form-control-user" th:field="*{phone}"
-                                           placeholder="핸드폰 번호">
-                                    <span class="tooltiptext tooltip-bottom">'-'은 제외하고 입력해 주세요. (ex:01012345678)</span>
+                                        <label class="small mb-1" th:for="phone">Phone number</label>
+                                        <input type="text" class="form-control form-control-user" th:field="*{phone}"
+                                               placeholder="핸드폰 번호">
+                                        <span class="tooltiptext tooltip-bottom">'-'은 제외하고 입력해 주세요. (ex:01012345678)</span>
                                     </div>
 
                                     <div class="tooltip">
-                                    <label class="small mb-1" th:for="email">Email</label>
-                                    <input type="text" class="form-control form-control-user" th:field="*{email}"
-                                           placeholder="이메일">
-                                    <span class="tooltiptext tooltip-bottom">이메일 형식으로 입력해 주세요. (ex:abcd@gmail.com)</span>
+                                        <label class="small mb-1" th:for="email">Email</label>
+                                        <input type="text" class="form-control form-control-user" th:field="*{email}"
+                                               placeholder="이메일">
+                                        <span class="tooltiptext tooltip-bottom">이메일 형식으로 입력해 주세요. (ex:abcd@gmail.com)</span>
                                     </div>
                                 </div>
                             </div>

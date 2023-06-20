@@ -342,6 +342,7 @@ a {
   text-align: center;
   font-weight: bold;
   transition: all 0.2s ease;
+  margin-bottom: 10px;
 }
 .tab_item:hover {
   opacity: 0.75;
