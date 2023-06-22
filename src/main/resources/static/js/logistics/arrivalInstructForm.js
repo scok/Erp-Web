@@ -166,36 +166,83 @@ function radioClick(value){
         var myUrl ="";
         if(link[4].substring(0,3) == "buy"){  //현재 접속한 url을 가공하여 구매 ,판매인지 구분합니다.
             myUrl = "/section/getSectionsMaterial";
-        }else if(link[4].substring(0,6) == "seller"){
-            myUrl = "/section/getSectionsProduct";
-        }
+            $.ajax({
+                url: myUrl,
+                type: "GET",
+                contentType:'application/json',
+                dataType: "json",
+                beforeSend:function(xhr){
+                    xhr.setRequestHeader(header,token);
+                },
+                success: function (data) {
+                    //selectBox 불러오기
+                    var selectBox = document.getElementById('secCode');
+                    // 기존 옵션들을 모두 제거
+                    selectBox.innerHTML = '<option value="">==창고 선택==</option>';
 
-        $.ajax({
-            url: myUrl,
-            type: "GET",
-            contentType:'application/json',
-            dataType: "json",
-            beforeSend:function(xhr){
-                xhr.setRequestHeader(header,token);
-            },
-            success: function (data) {
-                //selectBox 불러오기
-                var selectBox = document.getElementById('secCode');
-                // 기존 옵션들을 모두 제거
-                selectBox.innerHTML = '<option value="">==창고 선택==</option>';
-
-                // 데이터를 기반으로 새로운 옵션들을 추가
-                for (var item of Object.values(data)) {
-                    var option = document.createElement('option');
-                    option.value = item["secCode"];
-                    option.textContent = item["secName"];
-                    selectBox.appendChild(option);
+                    // 데이터를 기반으로 새로운 옵션들을 추가
+                    for (var item of Object.values(data)) {
+                        var option = document.createElement('option');
+                        option.value = item["secCode"];
+                        option.textContent = item["secName"];
+                        selectBox.appendChild(option);
+                    }
+                },
+                error: function (request, status) {
+                    alert(request.responseText);
                 }
-            },
-            error: function (request, status) {
-                alert(request.responseText);
-            }
-        });
+            });
+        }else if(link[4].substring(0,6) == "seller"){
+            targetCode = $('#osCode').val();
+            myUrl = "/section/getSectionsProduct";
+            $.ajax({
+                url: myUrl,
+                type: "POST",
+                contentType:'application/json',
+                data: JSON.stringify(targetCode),
+                dataType: "json",
+                beforeSend:function(xhr){
+                    xhr.setRequestHeader(header,token);
+                },
+                success: function (data) {
+                    console.log(data);
+
+                    var secData = data["secData"];
+                    console.log(secData);
+
+                    var inData = data["inData"];
+                    console.log(inData);
+                    //selectBox 불러오기
+                    var selectBox = document.getElementById('secCode');
+                    // 기존 옵션들을 모두 제거
+                    selectBox.innerHTML = '<option value="">==창고 선택==</option>';
+
+                    // 데이터를 기반으로 새로운 옵션들을 추가
+                    for (var item of Object.values(secData)) {
+                        var option = document.createElement('option');
+                        option.value = item["secCode"];
+                        option.textContent = item["secName"];
+                        selectBox.appendChild(option);
+                    }
+
+                    //selectBox 불러오기
+                    var selectSACBox = document.getElementById('SACategory');
+                    // 기존 옵션들을 모두 제거
+                    selectSACBox.innerHTML = '';
+
+                    // 데이터를 기반으로 새로운 옵션들을 추가
+                    for (var item of Object.values(inData)) {
+                        var option = document.createElement('option');
+                        option.value = item["stackAreaCategory"];
+                        option.textContent = item["stackAreaCategory"];
+                        selectSACBox.appendChild(option);
+                    }
+                },
+                error: function (request, status) {
+                    alert(request.responseText);
+                }
+            });
+        }
     }
 }
 
@@ -229,11 +276,11 @@ function OrderSheetUpdate(){
 
     var array = {}
     for(var item of formData.entries()){
-        if(item[0] == "secCode" || item[0] == "SACategory"){
+        if(item[0] == "secCode"){
             if(item[1] != null && item[1] != ''){
                 array[item[0]]=item[1];
             }else{
-                alert("창고 또는 구역을 선택해주세요.");
+                alert("창고를 선택해주세요.");
                 return;
             }
         }else{
@@ -253,9 +300,8 @@ function OrderSheetUpdate(){
             modalOff();
             alert("저장 성공");
         },
-        error: function (message,request, status) {
-            alert(Object.values(message));
-            console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n");
+        error: function (request, status) {
+            alert(request.responseJSON.message);
         }
    });
 }
@@ -325,41 +371,5 @@ function update(){
         }
     })
 }
-//웹페이지 삭제 기능.
-function deletePageN(){
 
-    var token = $('meta[name="_csrf"]').attr('content');
-    var header = $('meta[name="_csrf_header"]').attr('content');
-
-    var checkList = $('input[name=checker]:checked');
-    if(checkList.length == 0 ){
-        alert('1개 이상 선택해주세요.');
-        return
-    }
-
-    var values = [];
-    checkList.each(function() {
-      values.push($(this).val());
-    });
-
-    var paramData = JSON.stringify(values);
-
-     $.ajax({
-        url: "/orderSheets/deleteOrderSheets",
-        type: "POST",
-        contentType:"application/json",
-        data: paramData,
-        dataType: "json",
-        beforeSend:function(xhr){
-            xhr.setRequestHeader(header,token);
-        },
-        success: function (data) {
-            alert("success");
-            $('#myTable').DataTable().ajax.reload();
-        },
-        error: function (request, status) {
-            alert(request.responseText);
-        }
-    });
-}
 

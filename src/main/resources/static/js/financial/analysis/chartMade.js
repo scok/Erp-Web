@@ -364,8 +364,6 @@ function drawTRNIChart(xValues, yValues1, yValues2){
                         const position = context.chart.canvas.getBoundingClientRect();
                         const bodyFont = Chart.helpers.toFont(tooltipModel.options.bodyFont);
 
-                        console.log(context.chart.chartArea);
-
                         // Display, position, and set styles for font
                         tooltipEl.style.opacity = 1;
                         tooltipEl.style.position = 'absolute';
@@ -623,6 +621,16 @@ function drawMNumChart(yValues1, yValues2){
 
 function drawOEMNChart(xValues, yValues1, yValues2){
 
+    const allYData = [...yValues1];
+    var data = Math.floor(Math.floor(Math.max(...allYData)));
+    var dataString = data.toString();
+    var firstDigit = parseInt(dataString[0]) + 1;
+    var suggestedMax = parseInt(firstDigit + '0'.repeat(dataString.length - 1));
+
+    const allYData2 = [...yValues2];
+    var suggestedMax2 = Math.floor(Math.max(...allYData2));
+    suggestedMax2 = Math.ceil(suggestedMax2/10) *10;
+
     const hoverLine = {
         id: 'hoverLine',
         beforeDraw: chart => {
@@ -658,12 +666,14 @@ function drawOEMNChart(xValues, yValues1, yValues2){
                 {
                   label:'운영 비용',
                   backgroundColor: CHART_COLORS.blue2,
-                  data: yValues1
+                  data: yValues1,
+                  yAxisID: 'left-y-axis'
                 },
                 {
                   label:'직원 수',
                   backgroundColor: CHART_COLORS.red2,
-                  data: yValues2
+                  data: yValues2,
+                  yAxisID: 'right-y-axis'
                 }
             ]
         },
@@ -750,8 +760,6 @@ function drawOEMNChart(xValues, yValues1, yValues2){
                         const position = context.chart.canvas.getBoundingClientRect();
                         const bodyFont = Chart.helpers.toFont(tooltipModel.options.bodyFont);
 
-                        console.log(context.chart.chartArea);
-
                         // Display, position, and set styles for font
                         tooltipEl.style.opacity = 1;
                         tooltipEl.style.position = 'absolute';
@@ -775,6 +783,27 @@ function drawOEMNChart(xValues, yValues1, yValues2){
                 x:{
                     grid:{
                         display: false
+                    }
+                },
+                'left-y-axis':{
+                    id:'left-y-axis',
+                    position: 'left',
+                    max: suggestedMax + 10,
+                    min: (suggestedMax + 10) * -1,
+                    ticks:{
+                        stepSize: (suggestedMax + 10) * 2 / 10
+                    }
+                },
+                'right-y-axis':{
+                    id:'right-y-axis',
+                    position: 'right',
+                    max: suggestedMax2 + 10,
+                    min: (suggestedMax2 + 10) * -1,
+                    ticks:{
+                        stepSize: (suggestedMax2 + 10) * 2 / 10
+                    },
+                    grid: {
+                        drawOnChartArea: false
                     }
                 }
             }
@@ -1154,8 +1183,6 @@ function drawOITOChart(xValues, yValues1, yValues2){
                         const position = context.chart.canvas.getBoundingClientRect();
                         const bodyFont = Chart.helpers.toFont(tooltipModel.options.bodyFont);
 
-                        console.log(context.chart.chartArea);
-
                         // Display, position, and set styles for font
                         tooltipEl.style.opacity = 1;
                         tooltipEl.style.position = 'absolute';
@@ -1392,8 +1419,6 @@ function drawKeyFinancialChart(xValues, yValues1, yValues2, yValues3, yValues4, 
 
                         const position = context.chart.canvas.getBoundingClientRect();
                         const bodyFont = Chart.helpers.toFont(tooltipModel.options.bodyFont);
-
-                        console.log(context.chart.chartArea);
 
                         // Display, position, and set styles for font
                         tooltipEl.style.opacity = 1;
@@ -1654,7 +1679,6 @@ function drawKeyFinancialChart2(xValues, yValues1, yValues2, yValues3){
     var dataString = data.toString();
     var firstDigit = parseInt(dataString[0]) + 1;
     var suggestedMax = parseInt(firstDigit + '0'.repeat(dataString.length - 1));
-    console.log(suggestedMax);
     const allYData2 = [...yValues3];
     var suggestedMax2 = Math.floor(Math.max(...allYData2));
     suggestedMax2 = Math.ceil(suggestedMax2/10) *10;

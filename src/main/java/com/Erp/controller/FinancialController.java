@@ -78,7 +78,7 @@ public class FinancialController {
 
         Short year = 0;
 
-        if(user.getDepartment().equals("재무")){
+        if(user.getDepartment().equals("재무팀")){
             year = financialService.addData(dto);
         }
 

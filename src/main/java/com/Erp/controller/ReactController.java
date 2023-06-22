@@ -66,13 +66,19 @@ public class ReactController {
         Map<String, String> userInfo = new HashMap<String, String>();
 
         UserDto user = (UserDto) session.getAttribute("User");
+
+        String userId = user.getId();
         String userName = user.getName();
         String userRole = String.valueOf(user.getRole());
+        String userImage = user.getImageUrl();
 
+        userInfo.put("userId", userId);
         userInfo.put("userName", userName);
         userInfo.put("userRole", userRole);
+        userInfo.put("userImage", userImage);
         return userInfo;
     }
+
     @PostMapping(value = "/react/filterDate")
     public @ResponseBody ResponseEntity reactPFD(@RequestBody Map<String,LocalDateTime> request){
         // 시작 날짜와 종료 날짜를 받아옴

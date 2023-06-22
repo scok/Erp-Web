@@ -149,7 +149,8 @@ public class IncomeService {
         long tax_expenses = 0L;
 
         total_revenue = income.getSales_revenue() + income.getInterest() + income.getRental() + income.getInvestment() + income.getLicensing();
-        total_expenses = income.getSalary() + income.getBonus() + income.getPlusMoney() + income.getMinusMoney() + income.getTotalMoney() + income.getManage_expenses() + income.getAdvertising() + income.getOffice_rent() + income.getAccService_costs() + income.getConsulting_costs() + income.getFixtures() + income.getRaw_mat_cost() + income.getComponents_cost();
+        total_expenses = income.getTotalMoney() + income.getManage_expenses() + income.getAdvertising() + income.getOffice_rent() + income.getAccService_costs() + income.getConsulting_costs() + income.getFixtures() + income.getRaw_mat_cost() + income.getComponents_cost();
+        System.out.println("aaa " + total_expenses);
         operate_revenue = total_revenue;
         operate_expenses = total_expenses - income.getRaw_mat_cost() - income.getComponents_cost();
         operate_income = operate_revenue - operate_expenses;
@@ -252,7 +253,7 @@ public class IncomeService {
         long tax_expenses = 0L;
 
         total_revenue = income.getSales_revenue() + income.getInterest() + income.getRental() + income.getInvestment() + income.getLicensing();
-        total_expenses = income.getSalary() + income.getBonus() + income.getPlusMoney() + income.getMinusMoney() + income.getTotalMoney() + income.getManage_expenses() + income.getAdvertising() + income.getOffice_rent() + income.getAccService_costs() + income.getConsulting_costs() + income.getFixtures() + income.getRaw_mat_cost() + income.getComponents_cost();
+        total_expenses = income.getTotalMoney() + income.getManage_expenses() + income.getAdvertising() + income.getOffice_rent() + income.getAccService_costs() + income.getConsulting_costs() + income.getFixtures() + income.getRaw_mat_cost() + income.getComponents_cost();
         operate_revenue = total_revenue;
         operate_expenses = total_expenses - income.getRaw_mat_cost() - income.getComponents_cost();
         operate_income = operate_revenue - operate_expenses;

@@ -56,10 +56,9 @@ public class AnalysisController {
 
         allChartData = incomeRepository.findChartDataList2();
 
-        Long num = memberRepository.countDistinctById();
-
         for (AllChartData allChartData1 : allChartData){
 
+            Long num = memberRepository.countDistinctById(Integer.valueOf(allChartData1.getYear()));
             allChartData1.setMNum(num);
         }
 

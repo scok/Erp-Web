@@ -33,6 +33,6 @@ public interface MemberRepository extends JpaRepository<Member, String>, Queryds
     @Query("select new com.Erp.dto.UserDto(u.id, u.name, u.birth, u.email, u.phone, u.date, u.department,u.role, m.imageUrl) from Member u LEFT JOIN u.memberImage m where u.id = :id")
     UserDto selectAll(@Param("id") String id);
 
-    @Query("SELECT COUNT(DISTINCT(m.id)) FROM Member m")
-    Long countDistinctById();
+    @Query("SELECT COUNT(DISTINCT(m.id)) FROM Member m WHERE YEAR(m.date) <= :year")
+    Long countDistinctById(@Param("year") Integer year);
 }

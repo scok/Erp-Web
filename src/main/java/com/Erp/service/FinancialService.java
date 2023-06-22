@@ -59,7 +59,7 @@ public class FinancialService {
     public void saveData(Financial financial){
 
         Income income = financial.getIncomes();
-        List<Inventory> inventory = inventoryRepository.getInventoryAll();
+        List<Inventory> inventory = inventoryRepository.getInventoryYear(Integer.valueOf(financial.getYear()), financial.getQuarter());
 
         long raw_mat_inven = 0L;
         long product_inven = 0L;

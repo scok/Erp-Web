@@ -83,7 +83,7 @@ public class IncomeController {
 
         Short year = 0;
 
-        if(user.getDepartment().equals("재무")){ // 재무 팀만 등록 가능하도록 제한
+        if(user.getDepartment().equals("재무팀")){ // 재무 팀만 등록 가능하도록 제한
             year = incomeService.addData(dto);
         }
 

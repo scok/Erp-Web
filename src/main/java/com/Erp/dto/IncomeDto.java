@@ -81,7 +81,7 @@ public class IncomeDto {
         this.fixtures = income.getFixtures();
         this.raw_mat_cost = raw_mat_cost;
         this.components_cost = components_cost;
-        this.total_expenses = this.salary + this.bonus + this.plusMoney + this.minusMoney + this.totalMoney + this.manage_expenses + this.advertising + this.office_rent + this.accService_costs + this.consulting_costs + this.fixtures + this.raw_mat_cost + this.components_cost;
+        this.total_expenses = this.totalMoney + this.manage_expenses + this.advertising + this.office_rent + this.accService_costs + this.consulting_costs + this.fixtures + this.raw_mat_cost + this.components_cost;
 
         this.operate_revenue = this.sales_revenue;
         this.operate_expenses = this.total_expenses - this.raw_mat_cost - this.components_cost;

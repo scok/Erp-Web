@@ -20,6 +20,9 @@ public interface InventoryRepository extends JpaRepository<Inventory, Long> {
     @Query("select i from Inventory i where i.pageYandN = 'Y' and i.inQuantity > 0 ")
     List<Inventory> getInventoryAll();
 
+    @Query(value = "select * from inventory i where i.page_yandn = 'Y' and YEAR(i.reg_date) = :year and FLOOR((MONTH(i.reg_date) - 1)/ 3) + 1 = :quarter", nativeQuery = true)
+    List<Inventory> getInventoryYear(@Param("year") Integer year, @Param("quarter") Integer quarter);
+
     @Query("select i from Inventory i where i.pageYandN = 'Y' And i.section.secCode = :secCode")
     List<Inventory> findInventorySecCode(@Param("secCode") String secCode);
 

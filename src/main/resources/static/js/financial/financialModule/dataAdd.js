@@ -21,7 +21,7 @@ $(document).ready(function(){
     // 폼 추가
     $('#form_add_btn').on('click', function(){
 
-        let new_year = currentYear;
+        let new_year = currentYear - 2;
 
         var year_select = document.getElementById('year_select');
 
